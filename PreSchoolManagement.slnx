@@ -1,0 +1,11 @@
+<Solution>
+  <Project Path="PreSchoolManagement.Api.Tests/PreSchoolManagement.Api.Tests.csproj" />
+  <Project Path="PreSchoolManagement.Api/PreSchoolManagement.Api.csproj" />
+  <Project Path="PreSchoolManagement.Application.Tests/PreSchoolManagement.Application.Tests.csproj" />
+  <Project Path="PreSchoolManagement.Application/PreSchoolManagement.Application.csproj" />
+  <Project Path="PreSchoolManagement.Domain/PreSchoolManagement.Domain.csproj" />
+  <Project Path="PreSchoolManagement.Infrastructure.Tests/PreSchoolManagement.Infrastructure.Tests.csproj" />
+  <Project Path="PreSchoolManagement.Infrastructure/PreSchoolManagement.Infrastructure.csproj" />
+  <Project Path="PreSchoolManagement.Persistence/PreSchoolManagement.Persistence.csproj" />
+  <Project Path="PreSchoolManagement.Shared/PreSchoolManagement.Shared.csproj" />
+</Solution>
