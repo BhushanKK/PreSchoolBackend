@@ -11,6 +11,7 @@ public class DeleteCasteMasterHandler(ICasteMasterService service) : IRequestHan
     public async Task<ApiResponse<int>> Handle(DeleteCasteMasterCommand request, CancellationToken cancellationToken)
     {
         if (request.CasteId <= 0)
+        
             return ApiResponse<int>.FailureResponse("Invalid caste id.", (int)HttpStatusCode.BadRequest);
 
         var existing = await service.GetByIdAsync(request.CasteId, cancellationToken);
