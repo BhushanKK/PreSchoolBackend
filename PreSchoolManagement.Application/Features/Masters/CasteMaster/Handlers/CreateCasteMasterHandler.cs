@@ -1,11 +1,13 @@
 using MediatR;
 using AutoMapper;
+using System.Net;
 using FluentValidation;
+using PreSchoolManagement.Shared.Utils;
 using SchoolManagement.Domain.Entities;
 using SchoolAdmission.Domain.ResponseModels;
 using SchoolAdmission.Infrastructure.Interfaces;
+using SchoolAdmission.Domain.Utils;
 using SchoolAdmission.Application.Features.CasteMasters.Commands;
-using System.Net;
 
 namespace SchoolAdmission.Application.Features.Handlers;
 
@@ -20,14 +22,14 @@ public class CreateCasteMasterHandler(ICasteMasterService service, IValidator<Cr
             return ApiResponse<int>.FailureResponse(message, (int)HttpStatusCode.BadRequest);
         }
 
-        var exists = await service.IsExistsAsync(request.Caste ?? string.Empty, SchoolAdmission.Domain.Utils.OperationType.Add, null, cancellationToken);
+        var exists = await service.IsExistsAsync(request.Caste ?? string.Empty, OperationType.Add, null, cancellationToken);
         if (exists)
-            return ApiResponse<int>.FailureResponse("Caste already exists.", (int)HttpStatusCode.Conflict);
+            return ApiResponse<int>.FailureResponse(MessageHelper.AlreadyExists(EntityDescription.Caste.ToString()), (int)HttpStatusCode.Conflict);
 
         var entity = mapper.Map<CasteMaster>(request);
 
         await service.AddAsync(entity, cancellationToken);
 
-        return ApiResponse<int>.SuccessResponse(entity.CasteID, "Caste created successfully.", (int)HttpStatusCode.Created);
+        return ApiResponse<int>.SuccessResponse(entity.CasteID, MessageHelper.Added(EntityDescription.Caste.ToString()), (int)HttpStatusCode.Created);
     }
 }

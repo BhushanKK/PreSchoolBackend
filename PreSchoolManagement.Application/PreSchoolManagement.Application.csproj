@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PreSchoolManagement.Domain\PreSchoolManagement.Domain.csproj" />
     <ProjectReference Include="..\PreSchoolManagement.Infrastructure\PreSchoolManagement.Infrastructure.csproj" />
+    <ProjectReference Include="..\PreSchoolManagement.Shared\PreSchoolManagement.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

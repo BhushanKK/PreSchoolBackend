@@ -5,7 +5,7 @@ using SchoolAdmission.Api.Endpoints;
 using SchoolAdmission.Api.Extensions;
 using SchoolAdmission.Api.Middlewares;
 using SchoolAdmission.Application.Features.CasteMasters.Commands;
-using SchoolAdmission.Application.Features.Masters.CasteMaster.Mappings;
+using SchoolAdmission.Application.Features.Mappings;
 using SchoolAdmission.Application.Features.Masters.CasteMaster.Validators;
 using SchoolAdmission.Infrastructure.Data;
 using SchoolManagement.Domain;
@@ -24,8 +24,6 @@ if (!Directory.Exists(logDirectory))
     Directory.CreateDirectory(logDirectory);
 
 DeleteOldLogFiles(logDirectory, TimeSpan.FromDays(7));
-Log.Information("Starting up the application...");
-//New project
 
 // Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
