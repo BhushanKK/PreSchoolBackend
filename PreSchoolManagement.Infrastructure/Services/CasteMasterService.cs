@@ -16,25 +16,55 @@ public class CasteMasterService(ApplicationDbContext context) : ICasteMasterServ
     public async Task<CasteMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
         => await _context.CasteMasters.FindAsync([id], cancellationToken);
 
-    public async Task<CasteMaster?> GetByIdWithCategoryAsync(int id, CancellationToken cancellationToken)
-        => await _context.CasteMasters.FindAsync([id], cancellationToken);
-
     public async Task AddAsync(CasteMaster caste, CancellationToken cancellationToken)
     {
-        await _context.CasteMasters.AddAsync(caste, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
+        await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+
+        try
+        {
+            await _context.CasteMasters.AddAsync(caste, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 
     public async Task UpdateAsync(CasteMaster caste, CancellationToken cancellationToken)
     {
-        _context.CasteMasters.Update(caste);
-        await _context.SaveChangesAsync(cancellationToken);
+        await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+
+        try
+        {
+            _context.CasteMasters.Update(caste);
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 
     public async Task DeleteAsync(CasteMaster caste, CancellationToken cancellationToken)
     {
-        _context.CasteMasters.Remove(caste);
-        await _context.SaveChangesAsync(cancellationToken);
+        await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+
+        try
+        {
+            _context.CasteMasters.Remove(caste);
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 
     public Task<bool> IsExistsAsync(string caste, OperationType operation, int? casteId, CancellationToken cancellationToken)
