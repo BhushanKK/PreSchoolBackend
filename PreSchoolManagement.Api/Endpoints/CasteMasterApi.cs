@@ -1,6 +1,4 @@
 using MediatR;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using SchoolAdmission.Application.Features.CasteMasters.Commands;
 using SchoolAdmission.Application.Features.CasteMasters.Queries;
 using SchoolAdmission.Domain.Dtos;
@@ -19,32 +17,27 @@ public static class CasteMasterApi
             .WithSummary("Get all caste masters")
             .WithDescription("Returns all caste master records.")
             .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status500InternalServerError)
-            .WithOpenApi();
+            .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapGet("/{id:int}", GetById)
             .WithName("GetCasteById")
             .WithSummary("Get caste by Id")
-            .WithDescription("Returns a caste master record by Id.")
-            .WithOpenApi();
+            .WithDescription("Returns a caste master record by Id.");
 
         group.MapPost("/", Create)
             .WithName("CreateCaste")
             .WithSummary("Create caste")
-            .WithDescription("Creates a new caste master record.")
-            .WithOpenApi();
+            .WithDescription("Creates a new caste master record.");
 
         group.MapPut("/{id:int}", Update)
             .WithName("UpdateCaste")
             .WithSummary("Update caste")
-            .WithDescription("Updates an existing caste master record.")
-            .WithOpenApi();
+            .WithDescription("Updates an existing caste master record.");
 
         group.MapDelete("/{id:int}", Delete)
             .WithName("DeleteCaste")
             .WithSummary("Delete caste")
-            .WithDescription("Deletes a caste master record.")
-            .WithOpenApi();
+            .WithDescription("Deletes a caste master record.");
 
         return app;
     }
@@ -66,10 +59,7 @@ public static class CasteMasterApi
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetByIdCasteMasterQuery
-            {
-                CasteId = id
-            },
+            new GetByIdCasteMasterQuery(id),
             cancellationToken);
 
         return TypedResults.Ok(result);
@@ -113,10 +103,7 @@ public static class CasteMasterApi
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new DeleteCasteMasterCommand
-            {
-                CasteId = id
-            },
+            new DeleteCasteMasterCommand(id),
             cancellationToken);
 
         return TypedResults.Ok(result);
