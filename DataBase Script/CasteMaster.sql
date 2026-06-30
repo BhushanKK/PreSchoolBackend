@@ -5,12 +5,12 @@
 IF OBJECT_ID('dbo.CasteMaster', 'U') IS NULL
 BEGIN
 CREATE TABLE [dbo].[CasteMaster](
-	[CasteID] [bigint] IDENTITY(1,1) NOT NULL,
-	[CategoryID] [bigint] NULL,
+	[CasteID] [int] IDENTITY(1,1) NOT NULL,
+	[CategoryID] [int] NULL,
 	[CasteName] [nvarchar](100) NULL,
-	[EntryBy] [bigint] NULL,
+	[EntryBy] [int] NULL,
 	[EntryDate] [datetime] NULL,
-	[ModifyBy] [bigint] NULL,
+	[ModifyBy] [int] NULL,
 	[ModifyDate] [datetime] NULL,
 	
  CONSTRAINT [PK__CasteMas__463E23CC9E1A07F6] PRIMARY KEY CLUSTERED 
