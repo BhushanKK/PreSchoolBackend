@@ -17,12 +17,12 @@ public class CreateCasteMasterHandler(ICasteMasterService service, IValidator<Cr
         if (!validationResult.IsValid)
         {
             var message = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
-            return ApiResponse<int>.FailureResponse(message, 400);
+            return ApiResponse<int>.FailureResponse(message, (int)HttpStatusCode.BadRequest);
         }
 
         var exists = await service.IsExistsAsync(request.Caste ?? string.Empty, SchoolAdmission.Domain.Utils.OperationType.Add, null, cancellationToken);
         if (exists)
-            return ApiResponse<int>.FailureResponse("Caste already exists.", 409);
+            return ApiResponse<int>.FailureResponse("Caste already exists.", (int)HttpStatusCode.Conflict);
 
         var entity = mapper.Map<CasteMaster>(request);
 

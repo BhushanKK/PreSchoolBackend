@@ -4,7 +4,4 @@ using SchoolManagement.Domain.Entities;
 
 namespace SchoolAdmission.Application.Features.CasteMasters.Queries;
 
-public class GetByIdCasteMasterQuery : IRequest<ApiResponse<CasteMaster?>>
-{
-    public int CasteId { get; set; }
-}
+public record GetByIdCasteMasterQuery(int CasteId) : IRequest<ApiResponse<CasteMaster?>>;

@@ -1,3 +1,4 @@
+using System.Net;
 using MediatR;
 using SchoolAdmission.Application.Features.CasteMasters.Queries;
 using SchoolAdmission.Domain.ResponseModels;
@@ -8,18 +9,16 @@ namespace SchoolAdmission.Application.Features.Handlers;
 
 public class GetByIdCasteMasterHandler(ICasteMasterService service) : IRequestHandler<GetByIdCasteMasterQuery, ApiResponse<CasteMaster?>>
 {
-    private readonly ICasteMasterService _service = service;
-
     public async Task<ApiResponse<CasteMaster?>> Handle(GetByIdCasteMasterQuery request, CancellationToken cancellationToken)
     {
         if (request.CasteId <= 0)
-            return ApiResponse<CasteMaster?>.FailureResponse("Invalid caste id.", 400);
+            return ApiResponse<CasteMaster?>.FailureResponse("Invalid caste id.", (int)HttpStatusCode.BadRequest);
 
-        var data = await _service.GetByIdAsync(request.CasteId, cancellationToken);
+        var data = await service.GetByIdAsync(request.CasteId, cancellationToken);
 
         if (data is null)
-            return ApiResponse<CasteMaster?>.FailureResponse("Caste not found.", 404);
+            return ApiResponse<CasteMaster?>.FailureResponse("Caste not found.", (int)HttpStatusCode.NotFound);
 
-        return ApiResponse<CasteMaster?>.SuccessResponse(data, "Caste retrieved successfully.", 200);
+        return ApiResponse<CasteMaster?>.SuccessResponse(data, "Caste retrieved successfully.", (int)HttpStatusCode.OK);
     }
 }
