@@ -1,4 +1,6 @@
 using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using SchoolAdmission.Application.Features.CasteMasters.Commands;
 using SchoolAdmission.Application.Features.CasteMasters.Queries;
 using SchoolAdmission.Domain.Dtos;
@@ -9,43 +11,114 @@ public static class CasteMasterApi
 {
     public static IEndpointRouteBuilder MapCasteMasterEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/castemaster");
+        var group = app.MapGroup("/api/castemaster")
+                       .WithTags("Caste Master");
 
-        group.MapGet("", async (ISender sender, CancellationToken cancellationToken) =>
-        {
-            var query = new GetAllCasteMasterQuery();
-            return await sender.Send(query, cancellationToken);
-        });
+        group.MapGet("/", GetAll)
+            .WithName("GetAllCastes")
+            .WithSummary("Get all caste masters")
+            .WithDescription("Returns all caste master records.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithOpenApi();
 
-        group.MapGet("/{id:int}", async (int id, ISender sender, CancellationToken cancellationToken) =>
-        {
-            var query = new GetByIdCasteMasterQuery { CasteId = id };
-            return await sender.Send(query, cancellationToken);
-        });
+        group.MapGet("/{id:int}", GetById)
+            .WithName("GetCasteById")
+            .WithSummary("Get caste by Id")
+            .WithDescription("Returns a caste master record by Id.")
+            .WithOpenApi();
 
-        group.MapPost("", async (CreateCasteMasterCommand command, ISender sender, CancellationToken cancellationToken) =>
-        {
-            return await sender.Send(command, cancellationToken);
-        });
+        group.MapPost("/", Create)
+            .WithName("CreateCaste")
+            .WithSummary("Create caste")
+            .WithDescription("Creates a new caste master record.")
+            .WithOpenApi();
 
-        group.MapPut("/{id:int}", async (int id, CasteMasterCommandDto request, ISender sender, CancellationToken cancellationToken) =>
-        {
-            var command = new UpdateCasteMasterCommand
-            {
-                CasteId = id,
-                CategoryId = request.CategoryId,
-                Caste = request.Caste
-            };
+        group.MapPut("/{id:int}", Update)
+            .WithName("UpdateCaste")
+            .WithSummary("Update caste")
+            .WithDescription("Updates an existing caste master record.")
+            .WithOpenApi();
 
-            return await sender.Send(command, cancellationToken);
-        });
-
-        group.MapDelete("/{id:int}", async (int id, ISender sender, CancellationToken cancellationToken) =>
-        {
-            var command = new DeleteCasteMasterCommand { CasteId = id };
-            return await sender.Send(command, cancellationToken);
-        });
+        group.MapDelete("/{id:int}", Delete)
+            .WithName("DeleteCaste")
+            .WithSummary("Delete caste")
+            .WithDescription("Deletes a caste master record.")
+            .WithOpenApi();
 
         return app;
+    }
+
+    private static async Task<IResult> GetAll(
+        ISender sender,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new GetAllCasteMasterQuery(),
+            cancellationToken);
+
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<IResult> GetById(
+        int id,
+        ISender sender,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new GetByIdCasteMasterQuery
+            {
+                CasteId = id
+            },
+            cancellationToken);
+
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<IResult> Create(
+        CreateCasteMasterCommand command,
+        ISender sender,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            command,
+            cancellationToken);
+
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<IResult> Update(
+        int id,
+        CasteMasterCommandDto request,
+        ISender sender,
+        CancellationToken cancellationToken)
+    {
+        var command = new UpdateCasteMasterCommand
+        {
+            CasteId = id,
+            CategoryId = request.CategoryId,
+            Caste = request.Caste
+        };
+
+        var result = await sender.Send(
+            command,
+            cancellationToken);
+
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<IResult> Delete(
+        int id,
+        ISender sender,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new DeleteCasteMasterCommand
+            {
+                CasteId = id
+            },
+            cancellationToken);
+
+        return TypedResults.Ok(result);
     }
 }

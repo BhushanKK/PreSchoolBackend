@@ -32,6 +32,12 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.CasteID);
         });
 
+        modelBuilder.Entity<CategoryMaster>(entity =>
+        {
+            entity.ToTable("CategoryMaster");
+            entity.HasKey(e => e.CategoryId);
+        });
+
         modelBuilder.Entity<CommiteeMaster>(entity =>
         {
             entity.ToTable("CommiteeMaster");
