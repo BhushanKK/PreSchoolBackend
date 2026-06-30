@@ -10,6 +10,8 @@ using SchoolAdmission.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//New project
+
 // Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
