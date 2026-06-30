@@ -21,8 +21,8 @@ builder.Services.AddAutoMapper(typeof(CasteMasterProfile));
 
 var app = builder.Build();
 
+app.MapCasteMasterEndpoints();
 app.MapOpenApi();
 app.MapScalarApiReference();
-app.MapCasteMasterEndpoints();
 
 app.Run();
