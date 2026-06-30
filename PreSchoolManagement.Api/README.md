@@ -21,7 +21,8 @@ A modern PreSchool Management System built with:
 - Infrastructure
 - Persistence
 - API
+- Shared
 
 ## Status
 
-🚧 Project setup completed.
+Project setup completed.

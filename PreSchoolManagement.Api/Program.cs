@@ -47,6 +47,7 @@ builder.Services.AddAutoMapper(typeof(CasteMasterProfile));
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<AuditMiddleware>();
 
 // OpenApi
@@ -68,9 +69,7 @@ app.Run();
 static void DeleteOldLogFiles(string logDirectory, TimeSpan retentionPeriod)
 {
     if (!Directory.Exists(logDirectory))
-    {
         return;
-    }
 
     var cutoffTime = DateTime.UtcNow.Subtract(retentionPeriod);
 
