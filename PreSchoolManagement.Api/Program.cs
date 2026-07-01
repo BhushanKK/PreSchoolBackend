@@ -1,6 +1,9 @@
 using Serilog;
-using Scalar.AspNetCore;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 using SchoolAdmission.Api.Endpoints;
 using SchoolAdmission.Api.Extensions;
 using SchoolAdmission.Api.Middlewares;
@@ -25,6 +28,24 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // OpenApi
 builder.Services.AddOpenApi();
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 // Application Services
 builder.Services.AddMasterServices();
 builder.Services.AddMediatRServices();
@@ -35,6 +56,8 @@ var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<AuditMiddleware>();
+app.UseAuthentication();
+app.UseAuthorization();
 
 // OpenApi
 app.MapOpenApi();
@@ -49,5 +72,6 @@ app.MapScalarApiReference(options =>
 
 // Endpoints
 app.MapCasteMasterEndpoints();
+app.MapAuthEndpoints();
 
 app.Run();

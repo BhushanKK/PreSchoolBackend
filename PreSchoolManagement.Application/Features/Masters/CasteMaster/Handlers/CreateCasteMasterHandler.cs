@@ -28,7 +28,7 @@ public class CreateCasteMasterHandler(ICasteMasterService service, IValidator<Cr
 
         var entity = mapper.Map<CasteMaster>(request);
         entity.EntryDate = DateTime.UtcNow;
-        entity.EntryBy = 1; 
+        entity.EntryBy = Guid.NewGuid();
 
         await service.AddAsync(entity, cancellationToken);
 

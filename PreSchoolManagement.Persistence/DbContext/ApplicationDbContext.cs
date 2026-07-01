@@ -14,6 +14,7 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<DivisionMaster> DivisionMasters => Set<DivisionMaster>();
     public DbSet<RoleMaster> Roles => Set<RoleMaster>();
     public DbSet<HolidayMaster> HolidayMasters => Set<HolidayMaster>();
+    public DbSet<UserDetailsMaster> UserDetailsMasters => Set<UserDetailsMaster>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -69,6 +70,12 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.ToTable("HolidayMaster");
             entity.HasKey(e => e.HolidayId);
+        });
+
+        modelBuilder.Entity<UserDetailsMaster>(entity =>
+        {
+            entity.ToTable("UserDetailsMaster");
+            entity.HasKey(e => e.UserId);
         });
 
         modelBuilder.Entity<AuditLog>(entity =>
