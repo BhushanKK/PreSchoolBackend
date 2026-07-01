@@ -3,5 +3,10 @@ public enum EntityDescription
 {
     Caste,
     Category,
-    Religion
+    Religion,
+    Country,
+    State,
+    District,
+    AcademicYear,
+    FinancialYear
 }
