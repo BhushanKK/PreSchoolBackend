@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using SchoolAdmission.Infrastructure.Interfaces;
 using SchoolAdmission.Infrastructure.Services;
 

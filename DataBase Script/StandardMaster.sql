@@ -7,7 +7,6 @@ BEGIN
     CREATE TABLE dbo.StandardMaster
     (
         StandardId     INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-        SectionId      INT NOT NULL,
         StandardName   NVARCHAR(100) NOT NULL,
         EntryBy        INT NULL,
         EntryDate      DATETIME NULL,
@@ -27,7 +26,6 @@ GO
 INSERT INTO dbo.StandardMaster
 (
     StandardId,
-    SectionId,
     StandardName,
     EntryBy,
     EntryDate,
@@ -35,10 +33,10 @@ INSERT INTO dbo.StandardMaster
     ModifyDate
 )
 VALUES
-(1, 1, N'Play Group', NULL, NULL, NULL, NULL),
-(2, 1, N'Nursery',    NULL, NULL, NULL, NULL),
-(3, 1, N'Junior KG',  NULL, NULL, NULL, NULL),
-(4, 1, N'Senior KG',  NULL, NULL, NULL, NULL);
+(1,  N'Play Group', NULL, NULL, NULL, NULL),
+(2,  N'Nursery',    NULL, NULL, NULL, NULL),
+(3,  N'Junior KG',  NULL, NULL, NULL, NULL),
+(4,  N'Senior KG',  NULL, NULL, NULL, NULL);
 
 GO
 

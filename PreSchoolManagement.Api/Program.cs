@@ -1,15 +1,11 @@
-using FluentValidation;
-using Microsoft.EntityFrameworkCore;
+using Serilog;
 using Scalar.AspNetCore;
+using Microsoft.EntityFrameworkCore;
 using SchoolAdmission.Api.Endpoints;
 using SchoolAdmission.Api.Extensions;
 using SchoolAdmission.Api.Middlewares;
-using SchoolAdmission.Application.Features.CasteMasters.Commands;
-using SchoolAdmission.Application.Features.Mappings;
-using SchoolAdmission.Application.Features.Masters.CasteMaster.Validators;
 using SchoolAdmission.Infrastructure.Data;
 using SchoolManagement.Domain;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,13 +31,9 @@ builder.Services.AddOpenApi();
 
 // Application Services
 builder.Services.AddMasterServices();
-
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(CreateCasteMasterCommand).Assembly));
-
-builder.Services.AddValidatorsFromAssemblyContaining<CreateCasteMasterCommandValidator>();
-
-builder.Services.AddAutoMapper(typeof(CasteMasterProfile));
+builder.Services.AddMediatRServices();
+builder.Services.AddValidatorServices();
+builder.Services.AddMapperServices();
 
 var app = builder.Build();
 
