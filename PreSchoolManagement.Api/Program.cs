@@ -5,21 +5,17 @@ using SchoolAdmission.Api.Endpoints;
 using SchoolAdmission.Api.Extensions;
 using SchoolAdmission.Api.Middlewares;
 using SchoolAdmission.Infrastructure.Data;
-using SchoolManagement.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<AuditContext>();
+builder.Services.AddAuditServices();
 
 builder.Host.UseSerilog((context, services, loggerConfiguration) =>
     loggerConfiguration.ReadFrom.Configuration(context.Configuration));
 
-var logDirectory = Path.Combine(builder.Environment.ContentRootPath, "Logs");
+var logDirectory = LogFileCleanupExtensions.EnsureLogDirectory(builder.Environment.ContentRootPath);
 
-if (!Directory.Exists(logDirectory))
-    Directory.CreateDirectory(logDirectory);
-
-DeleteOldLogFiles(logDirectory, TimeSpan.FromDays(7));
+LogFileCleanupExtensions.DeleteOldLogFiles(logDirectory, TimeSpan.FromDays(7));
 
 // Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -55,26 +51,3 @@ app.MapScalarApiReference(options =>
 app.MapCasteMasterEndpoints();
 
 app.Run();
-
-static void DeleteOldLogFiles(string logDirectory, TimeSpan retentionPeriod)
-{
-    if (!Directory.Exists(logDirectory))
-        return;
-
-    var cutoffTime = DateTime.UtcNow.Subtract(retentionPeriod);
-
-    foreach (var file in Directory.EnumerateFiles(logDirectory, "*.log", SearchOption.TopDirectoryOnly))
-    {
-        if (File.GetLastWriteTimeUtc(file) < cutoffTime)
-        {
-            try
-            {
-                File.Delete(file);
-            }
-            catch (Exception ex)
-            {
-                Log.Warning(ex, "Failed to delete old log file: {FilePath}", file);
-            }
-        }
-    }
-}
