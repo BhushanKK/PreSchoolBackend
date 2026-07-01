@@ -27,6 +27,8 @@ public class CreateCasteMasterHandler(ICasteMasterService service, IValidator<Cr
             return ApiResponse<int>.FailureResponse(MessageHelper.AlreadyExists(EntityDescription.Caste.ToString()), (int)HttpStatusCode.Conflict);
 
         var entity = mapper.Map<CasteMaster>(request);
+        entity.EntryDate = DateTime.UtcNow;
+        entity.EntryBy = 1; 
 
         await service.AddAsync(entity, cancellationToken);
 
