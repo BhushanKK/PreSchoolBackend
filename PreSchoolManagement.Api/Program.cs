@@ -8,7 +8,7 @@ using SchoolAdmission.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuditServices();
+builder.Services.AddCommonServices();
 
 builder.Host.UseSerilog((context, services, loggerConfiguration) =>
     loggerConfiguration.ReadFrom.Configuration(context.Configuration));
