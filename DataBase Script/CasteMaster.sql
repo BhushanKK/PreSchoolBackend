@@ -8,9 +8,9 @@ CREATE TABLE [dbo].[CasteMaster](
 	[CasteID] [int] IDENTITY(1,1) NOT NULL,
 	[CategoryID] [int] NULL,
 	[CasteName] [nvarchar](100) NULL,
-	[EntryBy] [int] NULL,
+	[EntryBy] [uniqueidentifier] NULL,
 	[EntryDate] [datetime] NULL,
-	[ModifyBy] [int] NULL,
+	[ModifyBy] [uniqueidentifier] NULL,
 	[ModifyDate] [datetime] NULL,
 	
  CONSTRAINT [PK__CasteMas__463E23CC9E1A07F6] PRIMARY KEY CLUSTERED 

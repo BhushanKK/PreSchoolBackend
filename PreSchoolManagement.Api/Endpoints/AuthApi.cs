@@ -33,7 +33,7 @@ public static class AuthApi
     {
         var result = await sender.Send(new RegisterUserCommand(request.UserName, request.Email, request.Password, request.RoleId), cancellationToken);
         return result.Success ? TypedResults.Ok(result) : Results.Json(result, statusCode: result.StatusCode);
-    }
+        }
 
     private static async Task<IResult> Login(LoginRequest request, ISender sender, CancellationToken cancellationToken)
     {

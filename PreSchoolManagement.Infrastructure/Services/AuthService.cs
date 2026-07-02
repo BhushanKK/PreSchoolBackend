@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SchoolAdmission.Domain.Dtos;
 using SchoolAdmission.Infrastructure.Data;
@@ -12,7 +13,7 @@ using Serilog;
 
 namespace SchoolAdmission.Infrastructure.Services;
 
-public class AuthService(ApplicationDbContext context) : IAuthService
+public class AuthService(ApplicationDbContext context, IConfiguration configuration) : IAuthService
 {
     public async Task<UserDetailsMaster?> GetUserByUserNameAsync(string userName, CancellationToken cancellationToken)
         => await context.Set<UserDetailsMaster>()
@@ -27,6 +28,7 @@ public class AuthService(ApplicationDbContext context) : IAuthService
         try
         {
             var passwordHash = HashPassword(password, out var salt);
+
             user.PasswordHash = passwordHash;
             user.PasswordSalt = Convert.ToBase64String(salt);
             user.IsActive = true;
@@ -37,6 +39,7 @@ public class AuthService(ApplicationDbContext context) : IAuthService
 
             await context.Set<UserDetailsMaster>().AddAsync(user, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
+
             return true;
         }
         catch (Exception ex)
@@ -49,6 +52,7 @@ public class AuthService(ApplicationDbContext context) : IAuthService
     public async Task<AuthTokenResponse?> LoginAsync(string userName, string password, CancellationToken cancellationToken)
     {
         var user = await GetUserByUserNameAsync(userName, cancellationToken);
+
         if (user is null || !user.IsActive || user.IsDeleted)
             return null;
 
@@ -56,33 +60,38 @@ public class AuthService(ApplicationDbContext context) : IAuthService
             return null;
 
         var response = GenerateTokenResponse(user);
+
         user.RefreshToken = response.RefreshToken;
         user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
         user.LastLoginDate = DateTime.UtcNow;
-        user.EntryDate = DateTime.UtcNow;
 
         await context.SaveChangesAsync(cancellationToken);
+
         return response;
     }
 
-    public Task<AuthTokenResponse?> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
+    public async Task<AuthTokenResponse?> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
     {
-        var user = context.Set<UserDetailsMaster>()
-            .FirstOrDefault(x => x.RefreshToken == refreshToken && x.RefreshTokenExpiry > DateTime.UtcNow);
+        var user = await context.Set<UserDetailsMaster>()
+            .FirstOrDefaultAsync(x =>
+                x.RefreshToken == refreshToken &&
+                x.RefreshTokenExpiry > DateTime.UtcNow,
+                cancellationToken);
 
         if (user is null)
-        {
-            return Task.FromResult<AuthTokenResponse?>(null);
-        }
+            return null;
 
         var response = GenerateTokenResponse(user);
+
         user.RefreshToken = response.RefreshToken;
         user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
-        context.SaveChanges();
-        return Task.FromResult<AuthTokenResponse?>(response);
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        return response;
     }
 
-    private static AuthTokenResponse GenerateTokenResponse(UserDetailsMaster user)
+    private AuthTokenResponse GenerateTokenResponse(UserDetailsMaster user)
     {
         var accessToken = GenerateJwtToken(user);
         var refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
@@ -95,7 +104,7 @@ public class AuthService(ApplicationDbContext context) : IAuthService
         };
     }
 
-    private static string GenerateJwtToken(UserDetailsMaster user)
+    private string GenerateJwtToken(UserDetailsMaster user)
     {
         var claims = new List<Claim>
         {
@@ -104,12 +113,14 @@ public class AuthService(ApplicationDbContext context) : IAuthService
             new("role", user.RoleId.ToString())
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super-secret-key-for-jwt-auth-123456"));
+        var key = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));
+
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: "PreSchoolManagement",
-            audience: "PreSchoolManagementClient",
+            issuer: configuration["Jwt:Issuer"],
+            audience: configuration["Jwt:Audience"],
             claims: claims,
             expires: DateTime.UtcNow.AddMinutes(60),
             signingCredentials: creds);
@@ -120,6 +131,7 @@ public class AuthService(ApplicationDbContext context) : IAuthService
     private static string HashPassword(string password, out byte[] salt)
     {
         salt = RandomNumberGenerator.GetBytes(16);
+
         var hash = Rfc2898DeriveBytes.Pbkdf2(
             Encoding.UTF8.GetBytes(password),
             salt,
@@ -133,11 +145,10 @@ public class AuthService(ApplicationDbContext context) : IAuthService
     private static bool VerifyPassword(string password, string storedHash, string? storedSalt)
     {
         if (string.IsNullOrWhiteSpace(storedSalt))
-        {
             return false;
-        }
 
         var salt = Convert.FromBase64String(storedSalt);
+
         var hash = Rfc2898DeriveBytes.Pbkdf2(
             Encoding.UTF8.GetBytes(password),
             salt,
@@ -148,3 +159,4 @@ public class AuthService(ApplicationDbContext context) : IAuthService
         return Convert.ToBase64String(hash) == storedHash;
     }
 }
+

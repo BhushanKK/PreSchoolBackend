@@ -52,10 +52,22 @@ builder.Services.AddMediatRServices();
 builder.Services.AddValidatorServices();
 builder.Services.AddMapperServices();
 
-var app = builder.Build();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<AuditMiddleware>();
+app.UseHttpsRedirection();
+app.UseCors("ReactPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -71,6 +83,7 @@ app.MapScalarApiReference(options =>
 });
 
 // Endpoints
+
 app.MapCasteMasterEndpoints();
 app.MapAuthEndpoints();
 
