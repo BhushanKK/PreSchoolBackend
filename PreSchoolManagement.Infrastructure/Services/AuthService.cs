@@ -110,7 +110,10 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
         {
             new("sub", user.UserId.ToString()),
             new("name", user.UserName),
-            new("role", user.RoleId.ToString())
+            new("role", user.RoleId.ToString()),
+            new("userName", user.UserName ?? string.Empty),
+            new("email", user.Email ?? string.Empty),
+            new("mobileNo", user.MobileNumber ?? string.Empty)
         };
 
         var key = new SymmetricSecurityKey(
