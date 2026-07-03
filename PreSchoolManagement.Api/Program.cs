@@ -40,7 +40,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
         };
     });
 
@@ -51,7 +51,6 @@ builder.Services.AddMasterServices();
 builder.Services.AddMediatRServices();
 builder.Services.AddValidatorServices();
 builder.Services.AddMapperServices();
-
 
 builder.Services.AddCors(options =>
 {
@@ -84,11 +83,6 @@ app.MapScalarApiReference(options =>
 
 // Endpoints
 
-app.MapCasteMasterEndpoints();
-
-app.MapReligionMasterEndpoints();
-
-app.MapAuthEndpoints();
-
+app.MapApplicationEndpoints();
 
 app.Run();
