@@ -16,6 +16,7 @@ public class RegisterRequest
     public string Password { get; set; } = string.Empty;
 
     public int RoleId { get; set; } = 1;
+    public string MobileNumber { get; set; } = string.Empty;
 }
 
 public class AuthTokenResponse

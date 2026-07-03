@@ -13,15 +13,14 @@ public class RegisterUserHandler(IAuthService authService) : IRequestHandler<Reg
     {
         var existingUser = await authService.GetUserByUserNameAsync(request.UserName, cancellationToken);
         if (existingUser is not null)
-        {
             return ApiResponse<AuthTokenResponse>.FailureResponse("User already exists", 409);
-        }
 
         var user = new UserDetailsMaster
         {
             UserId = Guid.NewGuid(),
             UserName = request.UserName,
             Email = request.Email,
+            MobileNumber = request.MobileNumber,
             RoleId = request.RoleId,
             IsActive = true,
             IsDeleted = false,

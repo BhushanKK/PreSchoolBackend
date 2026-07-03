@@ -31,9 +31,9 @@ public static class AuthApi
 
     private static async Task<IResult> Register(RegisterRequest request, ISender sender, CancellationToken cancellationToken)
     {
-        var result = await sender.Send(new RegisterUserCommand(request.UserName, request.Email, request.Password, request.RoleId), cancellationToken);
+        var result = await sender.Send(new RegisterUserCommand(request.UserName, request.Email, request.Password, request.RoleId,request.MobileNumber), cancellationToken);
         return result.Success ? TypedResults.Ok(result) : Results.Json(result, statusCode: result.StatusCode);
-        }
+    }
 
     private static async Task<IResult> Login(LoginRequest request, ISender sender, CancellationToken cancellationToken)
     {

@@ -108,10 +108,9 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
     {
         var claims = new List<Claim>
         {
-            new("sub", user.UserId.ToString()),
-            new("name", user.UserName),
-            new("role", user.RoleId.ToString()),
+            new("userId", user.UserId.ToString()),
             new("userName", user.UserName ?? string.Empty),
+            new("roleId", user.RoleId.ToString()),
             new("email", user.Email ?? string.Empty),
             new("mobileNo", user.MobileNumber ?? string.Empty)
         };
