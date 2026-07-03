@@ -78,7 +78,7 @@ public static class ReligionMasterApi
 
     private static async Task<IResult> Update(
         int id,
-        ReligionMasterCommandDto request,
+        ReligionMasterDto request,
         ISender sender,
         CancellationToken cancellationToken)
     {

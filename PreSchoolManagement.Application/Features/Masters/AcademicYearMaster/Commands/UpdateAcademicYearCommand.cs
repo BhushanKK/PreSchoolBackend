@@ -4,4 +4,4 @@ using SchoolAdmission.Domain.ResponseModels;
 
 namespace SchoolAdmission.Application.Features.Commands;
 
-public class UpdateRoleMasterCommand : RoleMasterDto, IRequest<ApiResponse<int>>;
+public class UpdateAcademicYearMasterCommand : AcademicYearMasterDto, IRequest<ApiResponse<int>>;

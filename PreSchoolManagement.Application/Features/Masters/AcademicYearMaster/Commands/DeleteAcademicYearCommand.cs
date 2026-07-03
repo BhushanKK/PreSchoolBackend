@@ -1,7 +1,6 @@
 using MediatR;
-using SchoolAdmission.Domain.Dtos;
 using SchoolAdmission.Domain.ResponseModels;
 
 namespace SchoolAdmission.Application.Features.Commands;
 
-public class UpdateRoleMasterCommand : RoleMasterDto, IRequest<ApiResponse<int>>;
+public record DeleteAcademicYearMasterCommand(int academicYearId) : IRequest<ApiResponse<int>>;

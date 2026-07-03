@@ -8,6 +8,7 @@ public static class MapperExtensions
     {
         services.AddAutoMapper(typeof(CasteMasterProfile));
         services.AddAutoMapper(typeof(ReligionMasterProfile));
+        services.AddAutoMapper(typeof(AcademicYearMasterProfile));
 
         return services;
     }

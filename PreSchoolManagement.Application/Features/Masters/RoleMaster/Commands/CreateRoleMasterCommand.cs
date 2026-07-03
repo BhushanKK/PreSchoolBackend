@@ -4,4 +4,4 @@ using SchoolAdmission.Domain.ResponseModels;
 
 namespace SchoolAdmission.Application.Features.Commands;
 
-public class CreateRoleMasterCommand : RoleMasterCommonDto, IRequest<ApiResponse<int>>;
+public class CreateRoleMasterCommand : RoleMasterDto, IRequest<ApiResponse<int>>;

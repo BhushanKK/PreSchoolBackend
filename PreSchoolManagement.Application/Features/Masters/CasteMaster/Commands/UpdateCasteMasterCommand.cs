@@ -4,4 +4,4 @@ using SchoolAdmission.Domain.ResponseModels;
 
 namespace SchoolAdmission.Application.Features.Commands;
 
-public class UpdateCasteMasterCommand : CasteMasterCommandDto, IRequest<ApiResponse<int>>;
+public class UpdateCasteMasterCommand : CasteMasterDto, IRequest<ApiResponse<int>>;

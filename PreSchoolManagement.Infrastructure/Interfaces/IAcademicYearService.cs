@@ -1,0 +1,15 @@
+using SchoolAdmission.Domain.Utils;
+using SchoolManagement.Domain.Entities;
+
+namespace SchoolAdmission.Infrastructure.Interfaces;
+
+public interface IAcademicYearMasterService
+{
+    Task<List<AcademicYearMaster>> GetAllAsync(CancellationToken cancellationToken);
+    Task<AcademicYearMaster?> GetByIdAsync(int id, CancellationToken cancellationToken);
+    Task AddAsync(AcademicYearMaster academicYear, CancellationToken cancellationToken);
+    Task UpdateAsync(AcademicYearMaster academicYear, CancellationToken cancellationToken);
+    Task DeleteAsync(AcademicYearMaster academicYear, CancellationToken cancellationToken);
+    Task<bool> IsExistsAsync(string academicYear, OperationType operation, int? academicYearId, 
+        CancellationToken cancellationToken);   
+}

@@ -8,25 +8,25 @@ using SchoolAdmission.Application.Features.Commands;
 
 namespace SchoolAdmission.Application.Features.Masters.Handlers;
 
-public class DeleteCasteMasterHandler(ICasteMasterService service) : IRequestHandler<DeleteCasteMasterCommand, ApiResponse<int>>
+public class DeleteAcademicYearMasterHandler(IAcademicYearMasterService service) : IRequestHandler<DeleteAcademicYearMasterCommand, ApiResponse<int>>
 {
-    public async Task<ApiResponse<int>> Handle(DeleteCasteMasterCommand request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<int>> Handle(DeleteAcademicYearMasterCommand request, CancellationToken cancellationToken)
     {
-        if (request.CasteId <= 0)
+        if (request.academicYearId <= 0)
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.InvalidId(EntityDescription.Caste.ToString()), 
+                MessageHelper.InvalidId(EntityDescription.AcademicYear.ToString()), 
                 (int)HttpStatusCode.BadRequest
             );
         }
 
-        var existing = await service.GetByIdAsync(request.CasteId, cancellationToken);
+        var existing = await service.GetByIdAsync(request.academicYearId, cancellationToken);
 
         if (existing is null)
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.Caste.ToString()), 
+                MessageHelper.NotFound(EntityDescription.AcademicYear.ToString()), 
                 (int)HttpStatusCode.NotFound
             );
 
@@ -34,8 +34,8 @@ public class DeleteCasteMasterHandler(ICasteMasterService service) : IRequestHan
 
         return ApiResponse<int>.SuccessResponse
         (
-            request.CasteId, 
-            MessageHelper.Deleted(EntityDescription.Caste.ToString()), 
+            request.academicYearId, 
+            MessageHelper.Deleted(EntityDescription.AcademicYear.ToString()), 
             (int)HttpStatusCode.OK
         );
     }

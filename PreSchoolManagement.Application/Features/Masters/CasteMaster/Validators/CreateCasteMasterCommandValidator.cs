@@ -1,7 +1,6 @@
 using FluentValidation;
 using SchoolAdmission.Application.Features.Commands;
 
-
 namespace SchoolAdmission.Application.Features.Masters.Validators;
 
 public class CreateCasteMasterCommandValidator : AbstractValidator<CreateCasteMasterCommand>
@@ -34,4 +33,3 @@ public class UpdateCasteMasterCommandValidator : AbstractValidator<UpdateCasteMa
             .WithMessage("CategoryId must be greater than 0 when provided.");
     }
 }
-

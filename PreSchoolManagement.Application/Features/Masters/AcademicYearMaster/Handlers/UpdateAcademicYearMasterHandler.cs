@@ -5,15 +5,14 @@ using FluentValidation;
 using PreSchoolManagement.Shared.Utils;
 using SchoolAdmission.Domain.ResponseModels;
 using SchoolAdmission.Infrastructure.Interfaces;
-
 using SchoolAdmission.Domain.Utils;
 using SchoolAdmission.Application.Features.Commands;
 
 namespace SchoolAdmission.Application.Features.Handlers;
 
-public class updateReligionMasterHandler(IReligionMasterService service, IValidator<UpdateReligionMasterCommand> validator, IMapper mapper) : IRequestHandler<UpdateReligionMasterCommand, ApiResponse<int>>
+public class UpdateAcademicYearMasterHandler(IAcademicYearMasterService service, IValidator<UpdateAcademicYearMasterCommand> validator, IMapper mapper) : IRequestHandler<UpdateAcademicYearMasterCommand, ApiResponse<int>>
 {
-    public async Task<ApiResponse<int>> Handle(UpdateReligionMasterCommand request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<int>> Handle(UpdateAcademicYearMasterCommand request, CancellationToken cancellationToken)
     {
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         
@@ -27,28 +26,28 @@ public class updateReligionMasterHandler(IReligionMasterService service, IValida
             );
         }
 
-        var existing = await service.GetByIdAsync(request.ReligionId, cancellationToken);
+        var existing = await service.GetByIdAsync(request.AcademicYearId, cancellationToken);
         if (existing is null)
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.Religion.ToString()), 
+                MessageHelper.NotFound(EntityDescription.AcademicYear.ToString()), 
                 (int)HttpStatusCode.NotFound
             );
         }
 
         var exists = await service.IsExistsAsync
         (
-            request.Religion ?? string.Empty, 
+            request.AcademicYearName ?? string.Empty, 
             OperationType.Update, 
-            request.ReligionId, cancellationToken
+            request.AcademicYearId, cancellationToken
         );
 
         if (exists)
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.AlreadyExists(EntityDescription.Religion.ToString()), 
+                MessageHelper.AlreadyExists(EntityDescription.AcademicYear.ToString()), 
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -58,10 +57,13 @@ public class updateReligionMasterHandler(IReligionMasterService service, IValida
         entity.ModifyBy = request.UserId;
 
         await service.UpdateAsync(entity, cancellationToken);
+
+
         return ApiResponse<int>.SuccessResponse
         (
-            entity.ReligionId, 
-            MessageHelper.Updated(EntityDescription.Religion.ToString())
+            entity.AcademicYearId, 
+            MessageHelper.Updated(EntityDescription.AcademicYear.ToString()), 
+            (int)HttpStatusCode.OK
         );
     }
 }

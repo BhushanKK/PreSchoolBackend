@@ -5,42 +5,42 @@ using SchoolAdmission.Domain.Dtos;
 
 namespace SchoolAdmission.Api.Endpoints;
 
-public static class CasteMasterApi
+public static class AcademicYearMasterApi
 {
-    public static IEndpointRouteBuilder MapCasteMasterEndpoints(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapAcademicYearMasterEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/castemaster")
-                       .WithTags("Caste Master");
+        var group = app.MapGroup("/api/AcademicYearmaster")
+                       .WithTags("AcademicYear Master");
 
         group.MapGet("/", GetAll)
-            .WithName("GetAllCastes")
-            .WithSummary("Get all caste masters")
-            .WithDescription("Returns all caste master records.")
+            .WithName("GetAllAcademicYears")
+            .WithSummary("Get all AcademicYear masters")
+            .WithDescription("Returns all AcademicYear master records.")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status500InternalServerError).RequireAuthorization();
 
         group.MapGet("/{id:int}", GetById)
-            .WithName("GetCasteById")
-            .WithSummary("Get caste by Id")
-            .WithDescription("Returns a caste master record by Id.")
+            .WithName("GetAcademicYearById")
+            .WithSummary("Get AcademicYear by Id")
+            .WithDescription("Returns a AcademicYear master record by Id.")
             .RequireAuthorization();
 
         group.MapPost("/", Create)
-            .WithName("CreateCaste")
-            .WithSummary("Create caste")
-            .WithDescription("Creates a new caste master record.")
+            .WithName("CreateAcademicYear")
+            .WithSummary("Create AcademicYear")
+            .WithDescription("Creates a new AcademicYear master record.")
             .RequireAuthorization();
 
         group.MapPut("/{id:int}", Update)
-            .WithName("UpdateCaste")
-            .WithSummary("Update caste")
-            .WithDescription("Updates an existing caste master record.")
+            .WithName("UpdateAcademicYear")
+            .WithSummary("Update AcademicYear")
+            .WithDescription("Updates an existing AcademicYear master record.")
             .RequireAuthorization();
 
         group.MapDelete("/{id:int}", Delete)
-            .WithName("DeleteCaste")
-            .WithSummary("Delete caste")
-            .WithDescription("Deletes a caste master record.")
+            .WithName("DeleteAcademicYear")
+            .WithSummary("Delete AcademicYear")
+            .WithDescription("Deletes a AcademicYear master record.")
             .RequireAuthorization();
 
         return app;
@@ -51,7 +51,7 @@ public static class CasteMasterApi
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllCasteMasterQuery(),
+            new GetAllAcademicYearMasterQuery(),
             cancellationToken);
 
         return TypedResults.Ok(result);
@@ -63,14 +63,14 @@ public static class CasteMasterApi
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetByIdCasteMasterQuery(id),
+            new GetByIdAcademicYearMasterQuery(id),
             cancellationToken);
 
         return TypedResults.Ok(result);
     }
 
     private static async Task<IResult> Create(
-        CreateCasteMasterCommand command,
+        CreateAcademicYearMasterCommand command,
         ISender sender,
         CancellationToken cancellationToken)
     {
@@ -83,15 +83,14 @@ public static class CasteMasterApi
 
     private static async Task<IResult> Update(
         int id,
-        CasteMasterDto request,
+        AcademicYearMasterDto request,
         ISender sender,
         CancellationToken cancellationToken)
     {
-        var command = new UpdateCasteMasterCommand
+        var command = new UpdateAcademicYearMasterCommand
         {
-            CasteId = id,
-            CategoryId = request.CategoryId,
-            Caste = request.Caste
+            AcademicYearId = id,
+            AcademicYearName = request.AcademicYearName
         };
 
         var result = await sender.Send(
@@ -107,7 +106,7 @@ public static class CasteMasterApi
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new DeleteCasteMasterCommand(id),
+            new DeleteAcademicYearMasterCommand(id),
             cancellationToken);
 
         return TypedResults.Ok(result);
