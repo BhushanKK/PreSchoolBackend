@@ -49,5 +49,5 @@ app.MapScalarApiReference(options =>
 
 // Endpoints
 app.MapCasteMasterEndpoints();
-
+app.MapReligionMasterEndpoints();
 app.Run();

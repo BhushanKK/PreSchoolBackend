@@ -1,4 +1,4 @@
-using SchoolAdmission.Application.Features.CasteMasters.Commands;
+using SchoolAdmission.Application.Features.Commands;
 
 namespace SchoolAdmission.Api.Extensions;
 
@@ -8,7 +8,8 @@ public static class MediatRExtensions
     {
         services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssembly(typeof(CreateCasteMasterCommand).Assembly));
-
+            services.AddMediatR(cfg =>
+            cfg.RegisterServicesFromAssembly(typeof(CreateReligionMasterCommand).Assembly));
         return services;
     }
 }

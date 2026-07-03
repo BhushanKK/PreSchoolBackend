@@ -9,23 +9,23 @@ using SchoolAdmission.Application.Features.Commands;
 
 namespace SchoolAdmission.Application.Features.Masters.Handlers;
 
-public class DeleteCasteMasterHandler(ICasteMasterService service) : IRequestHandler<DeleteCasteMasterCommand, ApiResponse<int>>
+public class DeleteReligionMasterHandler(IReligionMasterService service) : IRequestHandler<DeleteReligionMasterCommand, ApiResponse<int>>
 {
-    public async Task<ApiResponse<int>> Handle(DeleteCasteMasterCommand request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<int>> Handle(DeleteReligionMasterCommand request, CancellationToken cancellationToken)
     {
-        if (request.CasteId <= 0)
+        if (request.ReligionId <= 0)
             return ApiResponse<int>.FailureResponse
             (
-                "Invalid caste id.", 
+                "Invalid religion id.", 
                 (int)HttpStatusCode.BadRequest
             );
 
-        var existing = await service.GetByIdAsync(request.CasteId, cancellationToken);
+        var existing = await service.GetByIdAsync(request.ReligionId, cancellationToken);
 
         if (existing is null)
             return ApiResponse<int>.FailureResponse
             (
-                "Caste not found.", 
+                "Religion not found.", 
                 (int)HttpStatusCode.NotFound
             );
 
@@ -33,8 +33,8 @@ public class DeleteCasteMasterHandler(ICasteMasterService service) : IRequestHan
 
         return ApiResponse<int>.SuccessResponse
         (
-            request.CasteId, 
-            MessageHelper.Deleted(EntityDescription.Caste.ToString()), 
+            request.ReligionId, 
+            MessageHelper.Deleted(EntityDescription.Religion.ToString()), 
             (int)HttpStatusCode.OK
         );
     }

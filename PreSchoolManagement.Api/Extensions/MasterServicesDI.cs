@@ -8,6 +8,7 @@ public static class MasterServicesDI
     public static IServiceCollection AddMasterServices(this IServiceCollection services)
     {
         services.AddScoped<ICasteMasterService, CasteMasterService>();
+        services.AddScoped<IReligionMasterService, ReligionMasterService>();
         return services;
     }
 }

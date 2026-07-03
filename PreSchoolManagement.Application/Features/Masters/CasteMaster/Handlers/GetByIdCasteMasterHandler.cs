@@ -1,11 +1,12 @@
 using MediatR;
 using System.Net;
 using PreSchoolManagement.Shared.Utils;
-using SchoolAdmission.Application.Features.CasteMasters.Queries;
+
 using SchoolAdmission.Domain.ResponseModels;
 using SchoolAdmission.Domain.Utils;
 using SchoolAdmission.Infrastructure.Interfaces;
 using SchoolManagement.Domain.Entities;
+using SchoolAdmission.Application.Features.Queries;
 
 namespace SchoolAdmission.Application.Features.Handlers;
 

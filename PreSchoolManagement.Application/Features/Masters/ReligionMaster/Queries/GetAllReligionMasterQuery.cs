@@ -4,4 +4,4 @@ using SchoolManagement.Domain.Entities;
 
 namespace SchoolAdmission.Application.Features.Queries;
 
-public sealed record GetAllCasteMasterQuery : IRequest<ApiResponse<List<CasteMaster>>>;
+public sealed record GetAllReligionMasterQuery : IRequest<ApiResponse<List<ReligionMaster>>>;

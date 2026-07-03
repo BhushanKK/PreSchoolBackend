@@ -2,5 +2,4 @@ using MediatR;
 using SchoolAdmission.Domain.ResponseModels;
 
 namespace SchoolAdmission.Application.Features.Commands;
-
-public record DeleteCasteMasterCommand(int CasteId) : IRequest<ApiResponse<int>>;
+public record DeleteReligionMasterCommand(int ReligionId) : IRequest<ApiResponse<int>>;

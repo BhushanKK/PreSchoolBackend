@@ -11,9 +11,9 @@ using SchoolAdmission.Application.Features.Commands;
 
 namespace SchoolAdmission.Application.Features.Handlers;
 
-public class UpdateCasteMasterHandler(ICasteMasterService service, IValidator<UpdateCasteMasterCommand> validator, IMapper mapper) : IRequestHandler<UpdateCasteMasterCommand, ApiResponse<int>>
+public class updateReligionMasterHandler(IReligionMasterService service, IValidator<UpdateReligionMasterCommand> validator, IMapper mapper) : IRequestHandler<UpdateReligionMasterCommand, ApiResponse<int>>
 {
-    public async Task<ApiResponse<int>> Handle(UpdateCasteMasterCommand request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<int>> Handle(UpdateReligionMasterCommand request, CancellationToken cancellationToken)
     {
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         
@@ -27,28 +27,28 @@ public class UpdateCasteMasterHandler(ICasteMasterService service, IValidator<Up
             );
         }
 
-        var existing = await service.GetByIdAsync(request.CasteId, cancellationToken);
+        var existing = await service.GetByIdAsync(request.ReligionId, cancellationToken);
         if (existing is null)
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.Caste.ToString()), 
+                MessageHelper.NotFound(EntityDescription.Religion.ToString()), 
                 (int)HttpStatusCode.NotFound
             );
         }
 
         var exists = await service.IsExistsAsync
         (
-            request.Caste ?? string.Empty, 
+            request.Religion ?? string.Empty, 
             OperationType.Update, 
-            request.CasteId, cancellationToken
+            request.ReligionId, cancellationToken
         );
 
         if (exists)
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.AlreadyExists(EntityDescription.Caste.ToString()), 
+                MessageHelper.AlreadyExists(EntityDescription.Religion.ToString()), 
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -58,13 +58,10 @@ public class UpdateCasteMasterHandler(ICasteMasterService service, IValidator<Up
         entity.ModifyBy = 1; // Replace with actual user ID in a real application
 
         await service.UpdateAsync(entity, cancellationToken);
-
-
         return ApiResponse<int>.SuccessResponse
         (
-            entity.CasteID, 
-            MessageHelper.Updated(EntityDescription.Caste.ToString()), 
-            (int)HttpStatusCode.OK
+            entity.ReligionId, 
+            MessageHelper.Updated(EntityDescription.Religion.ToString())
         );
     }
 }

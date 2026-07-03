@@ -1,7 +1,8 @@
 using FluentValidation;
-using SchoolAdmission.Application.Features.CasteMasters.Commands;
+using SchoolAdmission.Application.Features.Commands;
 
-namespace SchoolAdmission.Application.Features.Masters.CasteMaster.Validators;
+
+namespace SchoolAdmission.Application.Features.Masters.Validators;
 
 public class CreateCasteMasterCommandValidator : AbstractValidator<CreateCasteMasterCommand>
 {
