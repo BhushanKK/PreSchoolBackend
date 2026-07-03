@@ -7,7 +7,7 @@ using Serilog;
 
 namespace SchoolAdmission.Infrastructure.Services;
 
-public class AcademicYearService(ApplicationDbContext context) : IAcademicYearMasterService
+public class AcademicYearMasterService(ApplicationDbContext context) : IAcademicYearMasterService
 {
     public Task<List<AcademicYearMaster>> GetAllAsync(CancellationToken cancellationToken)
         => context.AcademicYearMasters.ToListAsync(cancellationToken);

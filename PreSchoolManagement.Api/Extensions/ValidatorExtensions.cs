@@ -9,6 +9,8 @@ public static class ValidatorExtensions
     {
         services.AddValidatorsFromAssemblyContaining<CreateCasteMasterCommandValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateReligionMasterCommandValidator>();
+        services.AddValidatorsFromAssemblyContaining<CreateAcademicYearMasterCommandValidator>();
+        
         return services;
     }
 }

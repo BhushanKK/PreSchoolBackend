@@ -10,6 +10,9 @@ public static class MediatRExtensions
             cfg.RegisterServicesFromAssembly(typeof(CreateCasteMasterCommand).Assembly));
             services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssembly(typeof(CreateReligionMasterCommand).Assembly));
+            services.AddMediatR(cfg =>
+            cfg.RegisterServicesFromAssembly(typeof(CreateAcademicYearMasterCommand).Assembly));
+            
         return services;
     }
 }

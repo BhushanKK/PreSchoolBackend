@@ -10,6 +10,9 @@ public static class MasterServicesDI
         services.AddScoped<ICasteMasterService, CasteMasterService>();
         services.AddScoped<IReligionMasterService, ReligionMasterService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IAcademicYearMasterService, AcademicYearMasterService>();
+        services.AddScoped<IFinancialYearMasterService, FinancialYearMasterService>();
+        
         return services;
     }
 }
