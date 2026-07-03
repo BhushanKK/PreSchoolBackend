@@ -1,9 +1,9 @@
 using MediatR;
-using SchoolAdmission.Application.Features.Commands;
-using SchoolAdmission.Application.Features.Queries;
-using SchoolAdmission.Domain.Dtos;
+using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Dtos;
 
-namespace SchoolAdmission.Api.Endpoints;
+namespace PreSchoolManagement.Api.Endpoints;
 
 public static class AcademicYearMasterApi
 {

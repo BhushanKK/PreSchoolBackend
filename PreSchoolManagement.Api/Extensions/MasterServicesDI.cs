@@ -1,7 +1,8 @@
-using SchoolAdmission.Infrastructure.Interfaces;
-using SchoolAdmission.Infrastructure.Services;
+using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Infrastructure.Services;
+using PreSchoolManagement.Infrastructure.Services;
 
-namespace SchoolAdmission.Api.Extensions;
+namespace PreSchoolManagement.Api.Extensions;
 
 public static class MasterServicesDI
 {

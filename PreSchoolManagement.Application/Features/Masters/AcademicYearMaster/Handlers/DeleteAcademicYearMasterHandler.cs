@@ -1,12 +1,12 @@
 using MediatR;
 using System.Net;
 using PreSchoolManagement.Shared.Utils;
-using SchoolAdmission.Domain.ResponseModels;
-using SchoolAdmission.Infrastructure.Interfaces;
-using SchoolAdmission.Domain.Utils;
-using SchoolAdmission.Application.Features.Commands;
+using PreSchoolManagement.Domain.ResponseModels;
+using PreSchoolManagement.Domain.Utils;
+using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Infrastructure.Interfaces;
 
-namespace SchoolAdmission.Application.Features.Masters.Handlers;
+namespace PreSchoolManagement.Application.Features.Masters.Handlers;
 
 public class DeleteAcademicYearMasterHandler(IAcademicYearMasterService service) : IRequestHandler<DeleteAcademicYearMasterCommand, ApiResponse<int>>
 {

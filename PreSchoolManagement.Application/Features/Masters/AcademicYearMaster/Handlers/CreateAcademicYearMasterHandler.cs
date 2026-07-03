@@ -4,14 +4,16 @@ using System.Net;
 using FluentValidation;
 using PreSchoolManagement.Shared.Utils;
 using SchoolManagement.Domain.Entities;
-using SchoolAdmission.Domain.ResponseModels;
-using SchoolAdmission.Infrastructure.Interfaces;
-using SchoolAdmission.Domain.Utils;
-using SchoolAdmission.Application.Features.Commands;
+using PreSchoolManagement.Domain.ResponseModels;
+using PreSchoolManagement.Domain.Utils;
+using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Infrastructure.Interfaces;
 
-namespace SchoolAdmission.Application.Features.Handlers;
+namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class CreateAcademicYearMasterHandler(IAcademicYearMasterService service, IValidator<CreateAcademicYearMasterCommand> validator, IMapper mapper) : IRequestHandler<CreateAcademicYearMasterCommand, ApiResponse<int>>
+public class CreateAcademicYearMasterHandler(IAcademicYearMasterService service, 
+    IValidator<CreateAcademicYearMasterCommand> validator, IMapper mapper,ICurrentUserService currentUser) 
+    : IRequestHandler<CreateAcademicYearMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(CreateAcademicYearMasterCommand request, CancellationToken cancellationToken)
     {
@@ -28,7 +30,7 @@ public class CreateAcademicYearMasterHandler(IAcademicYearMasterService service,
 
         var entity = mapper.Map<AcademicYearMaster>(request);
         entity.EntryDate = DateTime.UtcNow;
-        entity.EntryBy = request.UserId;
+        entity.EntryBy = currentUser.UserId ?? null;
 
         await service.AddAsync(entity, cancellationToken);
 

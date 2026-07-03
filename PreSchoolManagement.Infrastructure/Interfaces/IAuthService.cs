@@ -1,7 +1,7 @@
-using SchoolAdmission.Domain.Dtos;
+using PreSchoolManagement.Domain.Dtos;
 using SchoolManagement.Domain.Entities;
 
-namespace SchoolAdmission.Infrastructure.Interfaces;
+namespace PreSchoolManagement.Infrastructure.Interfaces;
 
 public interface IAuthService
 {

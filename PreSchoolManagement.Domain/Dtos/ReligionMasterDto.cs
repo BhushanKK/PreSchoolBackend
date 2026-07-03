@@ -1,7 +1,7 @@
   
 using System.Text.Json.Serialization;
 
-namespace SchoolAdmission.Domain.Dtos;
+namespace PreSchoolManagement.Domain.Dtos;
 
 public class ReligionMasterDto
 {
@@ -9,7 +9,6 @@ public class ReligionMasterDto
     public int ReligionId { get; set; }
     public bool IsMinority { get; set; }
     public string? Religion { get; set; }
-    public Guid? UserId { get; set; }
 }
 
   

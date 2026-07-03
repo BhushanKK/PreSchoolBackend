@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace SchoolAdmission.Domain.Dtos;
+namespace PreSchoolManagement.Domain.Dtos;
 
 public class FinancialYearMasterDto
 {

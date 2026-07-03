@@ -1,6 +1,7 @@
 using MediatR;
-using SchoolAdmission.Domain.Dtos;
-using SchoolAdmission.Domain.ResponseModels;
+using PreSchoolManagement.Domain.Dtos;
+using PreSchoolManagement.Domain.ResponseModels;
 
-namespace SchoolAdmission.Application.Features.Commands;
-public class CreateReligionMasterCommand : ReligionMasterDto, IRequest<ApiResponse<int>>;
+namespace PreSchoolManagement.Application.Features.Commands;
+public class CreateReligionMasterCommand 
+    : ReligionMasterDto, IRequest<ApiResponse<int>>;

@@ -1,7 +1,7 @@
 using FluentValidation;
-using SchoolAdmission.Application.Features.Commands;
+using PreSchoolManagement.Application.Features.Commands;
 
-namespace SchoolAdmission.Application.Features.Masters.Validators;
+namespace PreSchoolManagement.Application.Features.Masters.Validators;
 
 public class CreateReligionMasterCommandValidator : AbstractValidator<CreateReligionMasterCommand>
 {

@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using SchoolAdmission.Domain.Utils;
-using SchoolAdmission.Infrastructure.Data;
-using SchoolAdmission.Infrastructure.Interfaces;
+using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Domain.Utils;
+using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using Serilog;
 
-namespace SchoolAdmission.Infrastructure.Services;
+namespace PreSchoolManagement.Infrastructure.Services;
 
 public class CasteMasterService(ApplicationDbContext context) : ICasteMasterService
 {

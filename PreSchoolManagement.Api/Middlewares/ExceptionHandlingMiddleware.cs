@@ -1,8 +1,8 @@
 using System.Net;
 using System.Text.Json;
-using SchoolAdmission.Domain.ResponseModels;
+using PreSchoolManagement.Domain.ResponseModels;
 
-namespace SchoolAdmission.Api.Middlewares;
+namespace PreSchoolManagement.Api.Middlewares;
 
 public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
 {

@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
-using SchoolAdmission.Api.Endpoints;
-using SchoolAdmission.Api.Extensions;
-using SchoolAdmission.Api.Middlewares;
-using SchoolAdmission.Infrastructure.Data;
+using PreSchoolManagement.Api.Endpoints;
+using PreSchoolManagement.Api.Extensions;
+using PreSchoolManagement.Api.Middlewares;
+using PreSchoolManagement.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,12 +64,11 @@ builder.Services.AddCors(options =>
 });
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-app.UseMiddleware<AuditMiddleware>();
 app.UseHttpsRedirection();
 app.UseCors("ReactPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseMiddleware<AuditMiddleware>();
 // OpenApi
 app.MapOpenApi();
 

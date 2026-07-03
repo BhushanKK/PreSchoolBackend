@@ -1,13 +1,13 @@
 using MediatR;
 using System.Net;
 using PreSchoolManagement.Shared.Utils;
-using SchoolAdmission.Domain.ResponseModels;
-using SchoolAdmission.Domain.Utils;
-using SchoolAdmission.Infrastructure.Interfaces;
+using PreSchoolManagement.Domain.ResponseModels;
+using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
-using SchoolAdmission.Application.Features.Queries;
+using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Infrastructure.Interfaces;
 
-namespace SchoolAdmission.Application.Features.Handlers;
+namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class GetByIdAcademicYearMasterHandler(IAcademicYearMasterService service) : IRequestHandler<GetByIdAcademicYearMasterQuery, ApiResponse<AcademicYearMaster?>>
 {

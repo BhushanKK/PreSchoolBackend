@@ -1,6 +1,6 @@
 using Serilog;
 
-namespace SchoolAdmission.Api.Extensions;
+namespace PreSchoolManagement.Api.Extensions;
 
 public static class LogFileCleanupExtensions
 {

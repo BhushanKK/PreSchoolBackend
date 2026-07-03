@@ -1,7 +1,7 @@
 using MediatR;
-using SchoolAdmission.Domain.Dtos;
-using SchoolAdmission.Domain.ResponseModels;
+using PreSchoolManagement.Domain.Dtos;
+using PreSchoolManagement.Domain.ResponseModels;
 
-namespace SchoolAdmission.Application.Features.Auth.Commands;
+namespace PreSchoolManagement.Application.Features.Auth.Commands;
 
 public sealed record RegisterUserCommand(string UserName, string Email, string Password, int RoleId,string MobileNumber) : IRequest<ApiResponse<AuthTokenResponse>>;

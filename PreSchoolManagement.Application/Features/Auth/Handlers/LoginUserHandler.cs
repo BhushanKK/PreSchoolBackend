@@ -1,12 +1,13 @@
 using MediatR;
-using SchoolAdmission.Application.Features.Auth.Commands;
-using SchoolAdmission.Domain.Dtos;
-using SchoolAdmission.Domain.ResponseModels;
-using SchoolAdmission.Infrastructure.Interfaces;
+using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Application.Features.Auth.Commands;
+using PreSchoolManagement.Domain.Dtos;
+using PreSchoolManagement.Domain.ResponseModels;
 
-namespace SchoolAdmission.Application.Features.Auth.Handlers;
+namespace PreSchoolManagement.Application.Features.Auth.Handlers;
 
-public class LoginUserHandler(IAuthService authService) : IRequestHandler<LoginUserCommand, ApiResponse<AuthTokenResponse>>
+public class LoginUserHandler(IAuthService authService) 
+    : IRequestHandler<LoginUserCommand, ApiResponse<AuthTokenResponse>>
 {
     public async Task<ApiResponse<AuthTokenResponse>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {

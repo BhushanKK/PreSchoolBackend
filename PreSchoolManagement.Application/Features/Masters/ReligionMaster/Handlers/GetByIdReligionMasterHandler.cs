@@ -1,15 +1,15 @@
 using MediatR;
 using System.Net;
 using PreSchoolManagement.Shared.Utils;
-
-using SchoolAdmission.Domain.ResponseModels;
-using SchoolAdmission.Domain.Utils;
-using SchoolAdmission.Infrastructure.Interfaces;
+using PreSchoolManagement.Domain.ResponseModels;
+using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
-using SchoolAdmission.Application.Features.Queries;
-namespace SchoolAdmission.Application.Features.Handlers;
+using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Infrastructure.Interfaces;
+namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetByIdReligionMasterHandler(IReligionMasterService service) : IRequestHandler<GetByIdReligionMasterQuery, ApiResponse<ReligionMaster?>>
+public class GetByIdReligionMasterHandler(IReligionMasterService service) 
+    : IRequestHandler<GetByIdReligionMasterQuery, ApiResponse<ReligionMaster?>>
 {
     public async Task<ApiResponse<ReligionMaster?>> Handle(GetByIdReligionMasterQuery request, CancellationToken cancellationToken)
     {

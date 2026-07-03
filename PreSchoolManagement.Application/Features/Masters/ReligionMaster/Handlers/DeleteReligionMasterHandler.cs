@@ -1,15 +1,15 @@
 using MediatR;
 using System.Net;
 using PreSchoolManagement.Shared.Utils;
-using SchoolAdmission.Domain.ResponseModels;
-using SchoolAdmission.Infrastructure.Interfaces;
+using PreSchoolManagement.Domain.ResponseModels;
+using PreSchoolManagement.Domain.Utils;
+using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Infrastructure.Interfaces;
 
-using SchoolAdmission.Domain.Utils;
-using SchoolAdmission.Application.Features.Commands;
+namespace PreSchoolManagement.Application.Features.Masters.Handlers;
 
-namespace SchoolAdmission.Application.Features.Masters.Handlers;
-
-public class DeleteReligionMasterHandler(IReligionMasterService service) : IRequestHandler<DeleteReligionMasterCommand, ApiResponse<int>>
+public class DeleteReligionMasterHandler(IReligionMasterService service) 
+    : IRequestHandler<DeleteReligionMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(DeleteReligionMasterCommand request, CancellationToken cancellationToken)
     {

@@ -1,6 +1,7 @@
 using MediatR;
-using SchoolAdmission.Domain.ResponseModels;
+using PreSchoolManagement.Domain.ResponseModels;
 
-namespace SchoolAdmission.Application.Features.Commands;
+namespace PreSchoolManagement.Application.Features.Commands;
 
-public record DeleteAcademicYearMasterCommand(int academicYearId) : IRequest<ApiResponse<int>>;
+public record DeleteAcademicYearMasterCommand(int academicYearId)  
+    : IRequest<ApiResponse<int>>;

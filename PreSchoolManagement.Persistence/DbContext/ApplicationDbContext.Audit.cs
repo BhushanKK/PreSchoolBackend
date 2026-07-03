@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SchoolManagement.Domain;
 using SchoolManagement.Domain.Entities;
 
-namespace SchoolAdmission.Infrastructure.Data;
+namespace PreSchoolManagement.Infrastructure.Data;
 
 public partial class ApplicationDbContext
 {

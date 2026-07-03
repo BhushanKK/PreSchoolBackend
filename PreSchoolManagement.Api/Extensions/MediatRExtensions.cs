@@ -1,6 +1,6 @@
-using SchoolAdmission.Application.Features.Commands;
+using PreSchoolManagement.Application.Features.Commands;
 
-namespace SchoolAdmission.Api.Extensions;
+namespace PreSchoolManagement.Api.Extensions;
 
 public static class MediatRExtensions
 {
@@ -12,6 +12,8 @@ public static class MediatRExtensions
             cfg.RegisterServicesFromAssembly(typeof(CreateReligionMasterCommand).Assembly));
             services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssembly(typeof(CreateAcademicYearMasterCommand).Assembly));
+            services.AddMediatR(cfg =>
+            cfg.RegisterServicesFromAssembly(typeof(CreateFinancialYearMasterCommand).Assembly));
             
         return services;
     }

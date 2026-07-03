@@ -1,7 +1,7 @@
-using SchoolAdmission.Domain.Utils;
+using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
 
-namespace SchoolAdmission.Infrastructure.Interfaces;
+namespace PreSchoolManagement.Infrastructure.Interfaces;
 
 public interface IFinancialYearMasterService
 {

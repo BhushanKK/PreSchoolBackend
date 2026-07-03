@@ -5,13 +5,13 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using SchoolAdmission.Domain.Dtos;
-using SchoolAdmission.Infrastructure.Data;
-using SchoolAdmission.Infrastructure.Interfaces;
+using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Domain.Dtos;
+using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using Serilog;
 
-namespace SchoolAdmission.Infrastructure.Services;
+namespace PreSchoolManagement.Infrastructure.Services;
 
 public class AuthService(ApplicationDbContext context, IConfiguration configuration) : IAuthService
 {

@@ -1,6 +1,6 @@
 using MediatR;
-using SchoolAdmission.Domain.ResponseModels;
+using PreSchoolManagement.Domain.ResponseModels;
 
-namespace SchoolAdmission.Application.Features.Commands;
+namespace PreSchoolManagement.Application.Features.Commands;
 
 public record DeleteRoleMasterCommand(int RoleId) : IRequest<ApiResponse<int>>;

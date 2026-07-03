@@ -3,15 +3,17 @@ using System.Net;
 using AutoMapper;
 using FluentValidation;
 using PreSchoolManagement.Shared.Utils;
-using SchoolAdmission.Domain.ResponseModels;
-using SchoolAdmission.Infrastructure.Interfaces;
+using PreSchoolManagement.Domain.ResponseModels;
+using PreSchoolManagement.Domain.Utils;
+using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Infrastructure.Interfaces;
 
-using SchoolAdmission.Domain.Utils;
-using SchoolAdmission.Application.Features.Commands;
+namespace PreSchoolManagement.Application.Features.Handlers;
 
-namespace SchoolAdmission.Application.Features.Handlers;
-
-public class UpdateCasteMasterHandler(ICasteMasterService service, IValidator<UpdateCasteMasterCommand> validator, IMapper mapper) : IRequestHandler<UpdateCasteMasterCommand, ApiResponse<int>>
+public class UpdateCasteMasterHandler(ICasteMasterService service, 
+    IValidator<UpdateCasteMasterCommand> validator, IMapper mapper,
+    ICurrentUserService currentUser) 
+    : IRequestHandler<UpdateCasteMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(UpdateCasteMasterCommand request, CancellationToken cancellationToken)
     {
@@ -55,7 +57,7 @@ public class UpdateCasteMasterHandler(ICasteMasterService service, IValidator<Up
 
         var entity = mapper.Map(request, existing);
         entity.ModifyDate = DateTime.UtcNow;
-        entity.ModifyBy = request.UserId;
+        entity.ModifyBy = currentUser.UserId ?? null;
 
         await service.UpdateAsync(entity, cancellationToken);
 

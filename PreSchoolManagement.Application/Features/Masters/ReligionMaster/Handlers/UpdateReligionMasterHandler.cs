@@ -3,15 +3,17 @@ using System.Net;
 using AutoMapper;
 using FluentValidation;
 using PreSchoolManagement.Shared.Utils;
-using SchoolAdmission.Domain.ResponseModels;
-using SchoolAdmission.Infrastructure.Interfaces;
+using PreSchoolManagement.Domain.ResponseModels;
+using PreSchoolManagement.Domain.Utils;
+using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Infrastructure.Interfaces;
 
-using SchoolAdmission.Domain.Utils;
-using SchoolAdmission.Application.Features.Commands;
+namespace PreSchoolManagement.Application.Features.Handlers;
 
-namespace SchoolAdmission.Application.Features.Handlers;
-
-public class updateReligionMasterHandler(IReligionMasterService service, IValidator<UpdateReligionMasterCommand> validator, IMapper mapper) : IRequestHandler<UpdateReligionMasterCommand, ApiResponse<int>>
+public class updateReligionMasterHandler(IReligionMasterService service, 
+    IValidator<UpdateReligionMasterCommand> validator, IMapper mapper,
+    ICurrentUserService currentUser) 
+    : IRequestHandler<UpdateReligionMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(UpdateReligionMasterCommand request, CancellationToken cancellationToken)
     {
@@ -55,7 +57,7 @@ public class updateReligionMasterHandler(IReligionMasterService service, IValida
 
         var entity = mapper.Map(request, existing);
         entity.ModifyDate = DateTime.UtcNow;
-        entity.ModifyBy = request.UserId;
+        entity.ModifyBy = currentUser.UserId ?? null;
 
         await service.UpdateAsync(entity, cancellationToken);
         return ApiResponse<int>.SuccessResponse

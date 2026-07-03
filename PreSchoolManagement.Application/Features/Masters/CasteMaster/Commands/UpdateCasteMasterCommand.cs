@@ -1,7 +1,8 @@
 using MediatR;
-using SchoolAdmission.Domain.Dtos;
-using SchoolAdmission.Domain.ResponseModels;
+using PreSchoolManagement.Domain.Dtos;
+using PreSchoolManagement.Domain.ResponseModels;
 
-namespace SchoolAdmission.Application.Features.Commands;
+namespace PreSchoolManagement.Application.Features.Commands;
 
-public class UpdateCasteMasterCommand : CasteMasterDto, IRequest<ApiResponse<int>>;
+public class UpdateCasteMasterCommand 
+    : CasteMasterDto, IRequest<ApiResponse<int>>;

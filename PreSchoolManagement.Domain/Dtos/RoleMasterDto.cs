@@ -1,7 +1,7 @@
   
 using System.Text.Json.Serialization;
 
-namespace SchoolAdmission.Domain.Dtos;
+namespace PreSchoolManagement.Domain.Dtos;
 
 public class RoleMasterDto
 {
@@ -9,8 +9,6 @@ public class RoleMasterDto
     public int RoleId { get; set; }   
     public string RoleName { get; set; } = string.Empty;
     public string? RoleDescription { get; set; }
-    [JsonIgnore]
-    public Guid? UserId { get; set; }
 }
 
   

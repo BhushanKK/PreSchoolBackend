@@ -1,4 +1,4 @@
-namespace SchoolAdmission.Domain.Dtos;
+namespace PreSchoolManagement.Domain.Dtos;
 
 public class LoginRequest
 {
@@ -22,9 +22,7 @@ public class RegisterRequest
 public class AuthTokenResponse
 {
     public string AccessToken { get; set; } = string.Empty;
-
     public string RefreshToken { get; set; } = string.Empty;
-
     public DateTime ExpiresAt { get; set; }
 }
 

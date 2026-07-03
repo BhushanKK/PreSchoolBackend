@@ -1,6 +1,6 @@
-using SchoolAdmission.Application.Features.Mappings;
+using PreSchoolManagement.Application.Features.Mappings;
 
-namespace SchoolAdmission.Api.Extensions;
+namespace PreSchoolManagement.Api.Extensions;
 
 public static class MapperExtensions
 {
@@ -9,6 +9,7 @@ public static class MapperExtensions
         services.AddAutoMapper(typeof(CasteMasterProfile));
         services.AddAutoMapper(typeof(ReligionMasterProfile));
         services.AddAutoMapper(typeof(AcademicYearMasterProfile));
+        services.AddAutoMapper(typeof(FinancialYearMasterProfile));
 
         return services;
     }

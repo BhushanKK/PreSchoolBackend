@@ -1,4 +1,4 @@
-namespace SchoolAdmission.Domain.ResponseModels;
+namespace PreSchoolManagement.Domain.ResponseModels;
 public class ApiErrorResponse
 {
     public string? Message { get; set; }

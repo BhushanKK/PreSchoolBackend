@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolManagement.Domain.Entities;
 
-namespace SchoolAdmission.Infrastructure.Data;
+namespace PreSchoolManagement.Infrastructure.Data;
 
 public partial class ApplicationDbContext : DbContext
 {

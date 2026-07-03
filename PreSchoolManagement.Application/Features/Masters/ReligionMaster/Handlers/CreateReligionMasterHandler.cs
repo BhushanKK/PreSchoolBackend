@@ -4,14 +4,17 @@ using System.Net;
 using FluentValidation;
 using PreSchoolManagement.Shared.Utils;
 using SchoolManagement.Domain.Entities;
-using SchoolAdmission.Domain.ResponseModels;
-using SchoolAdmission.Infrastructure.Interfaces;
-using SchoolAdmission.Domain.Utils;
-using SchoolAdmission.Application.Features.Commands;
+using PreSchoolManagement.Domain.ResponseModels;
+using PreSchoolManagement.Domain.Utils;
+using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Infrastructure.Interfaces;
 
-namespace SchoolAdmission.Application.Features.Handlers;
+namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class CreateReligionMasterHandler(IReligionMasterService service, IValidator<CreateReligionMasterCommand> validator, IMapper mapper) : IRequestHandler<CreateReligionMasterCommand, ApiResponse<int>>
+public class CreateReligionMasterHandler(IReligionMasterService service, 
+    IValidator<CreateReligionMasterCommand> validator, IMapper mapper,
+    ICurrentUserService currentUser) 
+    : IRequestHandler<CreateReligionMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(CreateReligionMasterCommand request, CancellationToken cancellationToken)
     {
@@ -30,7 +33,7 @@ public class CreateReligionMasterHandler(IReligionMasterService service, IValida
 
         var entity = mapper.Map<ReligionMaster>(request);
         entity.EntryDate = DateTime.UtcNow;
-        entity.EntryBy = request.UserId;
+        entity.EntryBy = currentUser.UserId ?? null;
 
         await service.AddAsync(entity, cancellationToken);
 

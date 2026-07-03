@@ -1,4 +1,4 @@
-namespace SchoolAdmission.Domain.Utils;
+namespace PreSchoolManagement.Domain.Utils;
 
 public enum OperationType
 {

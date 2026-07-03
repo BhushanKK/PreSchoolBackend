@@ -1,7 +1,7 @@
 using FluentValidation;
-using SchoolAdmission.Application.Features.Masters.Validators;
+using PreSchoolManagement.Application.Features.Masters.Validators;
 
-namespace SchoolAdmission.Api.Extensions;
+namespace PreSchoolManagement.Api.Extensions;
 
 public static class ValidatorExtensions
 {
@@ -10,6 +10,7 @@ public static class ValidatorExtensions
         services.AddValidatorsFromAssemblyContaining<CreateCasteMasterCommandValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateReligionMasterCommandValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateAcademicYearMasterCommandValidator>();
+        services.AddValidatorsFromAssemblyContaining<CreateFinancialYearMasterCommandValidator>();
         
         return services;
     }

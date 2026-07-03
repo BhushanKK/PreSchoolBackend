@@ -1,8 +1,8 @@
 using AutoMapper;
-using SchoolAdmission.Domain.Dtos;
+using PreSchoolManagement.Domain.Dtos;
 using SchoolManagement.Domain.Entities;
 
-namespace SchoolAdmission.Application.Features.Mappings;
+namespace PreSchoolManagement.Application.Features.Mappings;
 
 public class AcademicYearMasterProfile : Profile
 {

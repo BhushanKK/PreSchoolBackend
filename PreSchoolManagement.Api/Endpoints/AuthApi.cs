@@ -1,8 +1,8 @@
 using MediatR;
-using SchoolAdmission.Application.Features.Auth.Commands;
-using SchoolAdmission.Domain.Dtos;
+using PreSchoolManagement.Application.Features.Auth.Commands;
+using PreSchoolManagement.Domain.Dtos;
 
-namespace SchoolAdmission.Api.Endpoints;
+namespace PreSchoolManagement.Api.Endpoints;
 
 public static class AuthApi
 {
