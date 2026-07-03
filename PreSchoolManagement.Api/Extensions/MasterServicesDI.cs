@@ -9,6 +9,7 @@ public static class MasterServicesDI
     {
         services.AddScoped<ICasteMasterService, CasteMasterService>();
         services.AddScoped<IReligionMasterService, ReligionMasterService>();
+        services.AddScoped<IAuthService, AuthService>();
         return services;
     }
 }

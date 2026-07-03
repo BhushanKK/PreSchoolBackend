@@ -17,27 +17,31 @@ public static class CasteMasterApi
             .WithSummary("Get all caste masters")
             .WithDescription("Returns all caste master records.")
             .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError).RequireAuthorization();
 
         group.MapGet("/{id:int}", GetById)
             .WithName("GetCasteById")
             .WithSummary("Get caste by Id")
-            .WithDescription("Returns a caste master record by Id.");
+            .WithDescription("Returns a caste master record by Id.")
+            .RequireAuthorization();
 
         group.MapPost("/", Create)
             .WithName("CreateCaste")
             .WithSummary("Create caste")
-            .WithDescription("Creates a new caste master record.");
+            .WithDescription("Creates a new caste master record.")
+            .RequireAuthorization();
 
         group.MapPut("/{id:int}", Update)
             .WithName("UpdateCaste")
             .WithSummary("Update caste")
-            .WithDescription("Updates an existing caste master record.");
+            .WithDescription("Updates an existing caste master record.")
+            .RequireAuthorization();
 
         group.MapDelete("/{id:int}", Delete)
             .WithName("DeleteCaste")
             .WithSummary("Delete caste")
-            .WithDescription("Deletes a caste master record.");
+            .WithDescription("Deletes a caste master record.")
+            .RequireAuthorization();
 
         return app;
     }

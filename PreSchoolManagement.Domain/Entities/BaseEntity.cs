@@ -5,13 +5,13 @@ namespace SchoolManagement.Domain;
 public abstract class BaseEntity
 {
     [JsonIgnore]
-    public int? EntryBy { get; set; }
+    public Guid? EntryBy { get; set; }
 
     [JsonIgnore]
     public DateTime? EntryDate { get; set; }
 
     [JsonIgnore]
-    public int? ModifyBy { get; set; }
+    public Guid? ModifyBy { get; set; }
 
     [JsonIgnore]
     public DateTime? ModifyDate { get; set; }

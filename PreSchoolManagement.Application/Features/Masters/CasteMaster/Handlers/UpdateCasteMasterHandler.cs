@@ -55,7 +55,7 @@ public class UpdateCasteMasterHandler(ICasteMasterService service, IValidator<Up
 
         var entity = mapper.Map(request, existing);
         entity.ModifyDate = DateTime.UtcNow;
-        entity.ModifyBy = 1; // Replace with actual user ID in a real application
+        entity.ModifyBy = Guid.NewGuid(); // Replace with actual user ID in a real application
 
         await service.UpdateAsync(entity, cancellationToken);
 
