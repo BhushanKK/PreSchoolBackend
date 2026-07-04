@@ -18,6 +18,7 @@ public class CreateAcademicYearMasterHandler(IAcademicYearMasterService service,
     public async Task<ApiResponse<int>> Handle(CreateAcademicYearMasterCommand request, CancellationToken cancellationToken)
     {
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        
         if (!validationResult.IsValid)
         {
             var message = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
@@ -25,6 +26,7 @@ public class CreateAcademicYearMasterHandler(IAcademicYearMasterService service,
         }
 
         var exists = await service.IsExistsAsync(request.AcademicYearName ?? string.Empty, OperationType.Add, null, cancellationToken);
+        
         if (exists)
             return ApiResponse<int>.FailureResponse(MessageHelper.AlreadyExists(EntityDescription.AcademicYear.ToString()), (int)HttpStatusCode.Conflict);
 

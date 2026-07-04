@@ -10,6 +10,16 @@ public class CreateAcademicYearMasterCommandValidator : AbstractValidator<Create
         RuleFor(x => x.AcademicYearName)
             .NotEmpty().WithMessage("Academic Year name is required.")
             .MaximumLength(100).WithMessage("Academic Year name must not exceed 100 characters.");
+
+        RuleFor(x => x.FromDate)
+            .NotEmpty()
+            .WithMessage("From Date is required.");
+
+        RuleFor(x => x.ToDate)
+            .NotEmpty()
+            .WithMessage("To Date is required.")
+            .GreaterThan(x => x.FromDate)
+            .WithMessage("To Date must be later than From Date.");
     }
 }
 
@@ -23,5 +33,15 @@ public class UpdateAcademicYearMasterCommandValidator : AbstractValidator<Update
         RuleFor(x => x.AcademicYearName)
             .NotEmpty().WithMessage("AcademicYearName is required.")
             .MaximumLength(100).WithMessage("AcademicYearName must not exceed 100 characters.");
+
+        RuleFor(x => x.FromDate)
+            .NotEmpty()
+            .WithMessage("From Date is required.");
+
+        RuleFor(x => x.ToDate)
+            .NotEmpty()
+            .WithMessage("To Date is required.")
+            .GreaterThan(x => x.FromDate)
+            .WithMessage("To Date must be later than From Date.");
     }
 }
