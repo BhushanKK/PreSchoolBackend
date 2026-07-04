@@ -78,19 +78,13 @@ public static class ReligionMasterApi
 
     private static async Task<IResult> Update(
         int id,
-        ReligionMasterDto request,
+        UpdateReligionMasterCommand request,
         ISender sender,
         CancellationToken cancellationToken)
     {
-        var command = new UpdateReligionMasterCommand
-        {
-            ReligionId = id,
-            IsMinority = request.IsMinority,
-            Religion = request.Religion
-        };
-
+        request.ReligionId = id;
         var result = await sender.Send(
-            command,
+            request,
             cancellationToken);
 
         return TypedResults.Ok(result);

@@ -83,18 +83,13 @@ public static class AcademicYearMasterApi
 
     private static async Task<IResult> Update(
         int id,
-        AcademicYearMasterDto request,
+        UpdateAcademicYearMasterCommand request,
         ISender sender,
         CancellationToken cancellationToken)
-    {
-        var command = new UpdateAcademicYearMasterCommand
-        {
-            AcademicYearId = id,
-            AcademicYearName = request.AcademicYearName
-        };
-
+    {   
+        request.AcademicYearId = id;
         var result = await sender.Send(
-            command,
+            request,
             cancellationToken);
 
         return TypedResults.Ok(result);

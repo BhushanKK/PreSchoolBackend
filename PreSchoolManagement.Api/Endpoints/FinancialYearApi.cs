@@ -83,18 +83,13 @@ public static class FinancialYearMasterApi
 
     private static async Task<IResult> Update(
         int id,
-        FinancialYearMasterDto request,
+        UpdateFinancialYearMasterCommand request,
         ISender sender,
         CancellationToken cancellationToken)
     {
-        var command = new UpdateFinancialYearMasterCommand
-        {
-            FinancialYearId = id,
-            FinancialYearName = request.FinancialYearName
-        };
-
+        request.FinancialYearId = id;
         var result = await sender.Send(
-            command,
+            request,
             cancellationToken);
 
         return TypedResults.Ok(result);

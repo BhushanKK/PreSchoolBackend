@@ -83,19 +83,13 @@ public static class CasteMasterApi
 
     private static async Task<IResult> Update(
         int id,
-        CasteMasterDto request,
+        UpdateCasteMasterCommand request,
         ISender sender,
         CancellationToken cancellationToken)
     {
-        var command = new UpdateCasteMasterCommand
-        {
-            CasteId = id,
-            CategoryId = request.CategoryId,
-            Caste = request.Caste
-        };
-
+        request.CasteId = id;
         var result = await sender.Send(
-            command,
+            request,
             cancellationToken);
 
         return TypedResults.Ok(result);
