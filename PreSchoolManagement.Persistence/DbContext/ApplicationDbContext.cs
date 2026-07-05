@@ -12,7 +12,7 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<SchoolDetailsMaster> SchoolDetailsMasters => Set<SchoolDetailsMaster>();
     public DbSet<StandardMaster> StandardMasters => Set<StandardMaster>();
     public DbSet<DivisionMaster> DivisionMasters => Set<DivisionMaster>();
-    public DbSet<RoleMaster> Roles => Set<RoleMaster>();
+    public DbSet<RoleMaster> RoleMasters => Set<RoleMaster>();
     public DbSet<HolidayMaster> HolidayMasters => Set<HolidayMaster>();
     public DbSet<AcademicYearMaster> AcademicYearMasters => Set<AcademicYearMaster>();
    public DbSet<FinancialYearMaster> FinancialYearMasters => Set<FinancialYearMaster>(); 

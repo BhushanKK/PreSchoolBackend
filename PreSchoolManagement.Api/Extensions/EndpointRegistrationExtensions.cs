@@ -10,7 +10,8 @@ public static class EndpointRegistrationExtensions
         app.MapCasteMasterEndpoints();
         app.MapReligionMasterEndpoints();
         app.MapAcademicYearMasterEndpoints();
-        app.MapFinancialYearMasterEndpoints();      
+        app.MapFinancialYearMasterEndpoints();
+        app.MapRoleMasterEndpoints();      
 
         return app;
     }

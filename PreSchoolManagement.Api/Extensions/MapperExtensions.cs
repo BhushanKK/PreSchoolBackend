@@ -11,6 +11,7 @@ public static class MapperExtensions
         services.AddAutoMapper(typeof(ReligionMasterProfile));
         services.AddAutoMapper(typeof(AcademicYearMasterProfile));
         services.AddAutoMapper(typeof(FinancialYearMasterProfile));
+        services.AddAutoMapper(typeof(RoleMasterProfile));
 
         return services;
     }

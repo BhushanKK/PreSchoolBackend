@@ -13,6 +13,7 @@ public static class MasterServicesDI
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IAcademicYearMasterService, AcademicYearMasterService>();
         services.AddScoped<IFinancialYearMasterService, FinancialYearMasterService>();
+        services.AddScoped<IRoleMasterService, RoleMasterService>();
         
         return services;
     }

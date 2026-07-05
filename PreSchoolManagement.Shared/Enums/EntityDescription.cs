@@ -8,5 +8,6 @@ public enum EntityDescription
     State,
     District,
     AcademicYear,
-    FinancialYear
+    FinancialYear,
+    Role
 }

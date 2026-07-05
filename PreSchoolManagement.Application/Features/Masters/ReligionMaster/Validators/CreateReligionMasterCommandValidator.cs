@@ -10,7 +10,6 @@ public class CreateReligionMasterCommandValidator : AbstractValidator<CreateReli
         RuleFor(x => x.Religion)
             .NotEmpty().WithMessage("Religion name is required.")
             .MaximumLength(100).WithMessage("Religion name must not exceed 100 characters.");    
-              
     }
 }
 
@@ -24,7 +23,6 @@ public class UpdateReligionMasterCommandValidator : AbstractValidator<UpdateReli
         RuleFor(x => x.Religion)
             .NotEmpty().WithMessage("Religion name is required.")
             .MaximumLength(100).WithMessage("Religion name must not exceed 100 characters.");
-       
     }
 }
 
