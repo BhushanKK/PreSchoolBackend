@@ -2,11 +2,10 @@ using System.Text.Json.Serialization;
 
 namespace PreSchoolManagement.Domain.Dtos;
 
-public class CasteMasterDto
+public class CategoryMasterDto
 {
     [JsonIgnore]
-    public int CasteId { get; set; }
-    public int? CategoryId { get; set; }
-    public string? Caste { get; set; }
+    public int CategoryId { get; set; }
+    public string? CategoryName { get; set; }
     public bool IsActive { get; set; } = false;
 }

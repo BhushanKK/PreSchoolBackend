@@ -6,10 +6,11 @@ public static class EndpointRegistrationExtensions
         this IEndpointRouteBuilder app)
     {
         app.MapAuthEndpoints();
+        app.MapCategoryMasterEndpoints();
         app.MapCasteMasterEndpoints();
         app.MapReligionMasterEndpoints();
         app.MapAcademicYearMasterEndpoints();
-        app.MapFinancialYearMasterEndpoints();
+        app.MapFinancialYearMasterEndpoints();      
 
         return app;
     }
