@@ -1,7 +1,6 @@
 using MediatR;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Application.Features.Queries;
-using PreSchoolManagement.Domain.Dtos;
 namespace PreSchoolManagement.Api.Endpoints;
 
 public static class ReligionMasterApi

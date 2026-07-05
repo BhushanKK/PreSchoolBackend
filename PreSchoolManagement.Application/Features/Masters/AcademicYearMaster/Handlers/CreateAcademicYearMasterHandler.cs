@@ -19,7 +19,7 @@ public class CreateAcademicYearMasterHandler(IAcademicYearMasterService service,
     {
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         
-        if (!validationResult.IsValid)
+        if (!validationResult.IsValid)  
         {
             var message = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
             return ApiResponse<int>.FailureResponse(message, (int)HttpStatusCode.BadRequest);
