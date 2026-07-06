@@ -25,9 +25,9 @@ BEGIN
         AffiliationNo       NVARCHAR(100) NULL,
         Status              BIT NOT NULL DEFAULT (1),
 
-        EntryBy             INT NULL,
+        EntryBy             UNIQUEIDENTIFIER NULL,
         EntryDate           DATETIME NULL,
-        ModifyBy            INT NULL,
+        ModifyBy            UNIQUEIDENTIFIER NULL,
         ModifyDate          DATETIME NULL,
 
         CONSTRAINT FK_SchoolDetailsMaster_CommitteeMaster

@@ -10,9 +10,9 @@ BEGIN
         RoleName        NVARCHAR(100) NOT NULL,
         RoleDescription NVARCHAR(250) NULL,
         IsActive        BIT NOT NULL DEFAULT(1),
-        EntryBy         INT NULL,
+        EntryBy         UNIQUEIDENTIFIER NULL,
         EntryDate       DATETIME NULL,
-        ModifyBy        INT NULL,
+        ModifyBy        UNIQUEIDENTIFIER NULL,
         ModifyDate      DATETIME NULL
     );
 END

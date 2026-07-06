@@ -9,9 +9,9 @@ BEGIN
         ReligionId     INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
         Religion        NVARCHAR(100) NOT NULL,
         IsMinority      BIT NOT NULL DEFAULT(0),
-        EntryBy         INT NULL,
+        EntryBy         UNIQUEIDENTIFIER NULL,
         EntryDate       DATETIME NULL,
-        ModifyBy        INT NULL,
+        ModifyBy        UNIQUEIDENTIFIER NULL,
         ModifyDate      DATETIME NULL
     );
 END

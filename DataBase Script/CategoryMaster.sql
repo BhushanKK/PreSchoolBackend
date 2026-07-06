@@ -8,9 +8,9 @@ BEGIN
     (
         CategoryId     INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
         CategoryName   NVARCHAR(50) NOT NULL,
-        EntryBy        INT NULL,
+        EntryBy        UNIQUEIDENTIFIER NULL,
         EntryDate      DATETIME NULL,
-        ModifyBy       INT NULL,
+        ModifyBy       UNIQUEIDENTIFIER NULL,
         ModifyDate     DATETIME NULL
     );
 END
