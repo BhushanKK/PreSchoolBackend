@@ -16,8 +16,6 @@ public class UserDetailsMaster : BaseEntity
 
     public int RoleId { get; set; }
 
-    public bool IsActive { get; set; }
-
     public bool IsDeleted { get; set; }
 
     public int FailedLoginAttempts { get; set; }

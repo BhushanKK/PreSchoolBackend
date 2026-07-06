@@ -43,6 +43,4 @@ public class StaffMaster : BaseEntity
     public string? PANNumber { get; set; }
 
     public bool? IsTeachingStaff { get; set; }
-
-    public bool? IsActive { get; set; }
 }
