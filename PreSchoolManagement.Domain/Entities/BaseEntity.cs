@@ -7,7 +7,7 @@ public abstract class BaseEntity
     [JsonIgnore]
     public Guid? EntryBy { get; set; }
 
-    [JsonIgnore]
+    [JsonIgnore]    
     public DateTime? EntryDate { get; set; }
 
     [JsonIgnore]
