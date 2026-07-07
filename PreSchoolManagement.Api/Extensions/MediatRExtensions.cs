@@ -12,7 +12,7 @@ public static class MediatRExtensions
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateAcademicYearMasterCommand).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateFinancialYearMasterCommand).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateRoleMasterCommand).Assembly));
-            
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateSectionMasterCommand).Assembly));
         return services;
     }
 }
