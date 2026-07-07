@@ -1,16 +1,32 @@
+using Serilog;
 using Microsoft.EntityFrameworkCore;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
-using Serilog;
+using PreSchoolManagement.Domain.Dtos;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
 public class CasteMasterService(ApplicationDbContext context) : ICasteMasterService
 {
-    public Task<List<CasteMaster>> GetAllAsync(CancellationToken cancellationToken)
-        => context.CasteMasters.ToListAsync(cancellationToken);
+    public async Task<List<CasteMasterQueryDto>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        return await (
+            from caste in context.CasteMasters.AsNoTracking()
+            join category in context.CategoryMasters.AsNoTracking()
+            on caste.CategoryID equals category.CategoryId
+            orderby category.CategoryId
+            select new CasteMasterQueryDto
+            {
+                CasteId = caste.CasteID,
+                CategoryId = category.CategoryId,
+                CategoryName = category.CategoryName,
+                Caste = caste.CasteName,
+                IsActive=caste.IsActive
+            }).ToListAsync(cancellationToken);
+    }
+
 
     public async Task<CasteMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
         => await context.CasteMasters.FindAsync([id], cancellationToken);
