@@ -14,7 +14,7 @@ public static class MasterServicesDI
         services.AddScoped<IAcademicYearMasterService, AcademicYearMasterService>();
         services.AddScoped<IFinancialYearMasterService, FinancialYearMasterService>();
         services.AddScoped<IRoleMasterService, RoleMasterService>();
-        
+        services.AddScoped<IMenuMasterService, MenuMasterService>();
         return services;
     }
 }

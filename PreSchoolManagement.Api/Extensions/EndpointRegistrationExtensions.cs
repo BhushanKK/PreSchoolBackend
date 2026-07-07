@@ -11,7 +11,8 @@ public static class EndpointRegistrationExtensions
         app.MapReligionMasterEndpoints();
         app.MapAcademicYearMasterEndpoints();
         app.MapFinancialYearMasterEndpoints();
-        app.MapRoleMasterEndpoints();      
+        app.MapRoleMasterEndpoints();
+        app.MapMenuMasterEndpoints();
 
         return app;
     }

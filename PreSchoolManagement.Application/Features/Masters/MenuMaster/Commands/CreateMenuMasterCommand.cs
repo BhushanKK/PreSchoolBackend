@@ -1,0 +1,7 @@
+using MediatR;
+using PreSchoolManagement.Domain.ResponseModels;
+
+namespace PreSchoolManagement.Application.Features.Commands;
+
+public class CreateMenuMasterCommand 
+    : MenuMasterDto, IRequest<ApiResponse<int>>;
