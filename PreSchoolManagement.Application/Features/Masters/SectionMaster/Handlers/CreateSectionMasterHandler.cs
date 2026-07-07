@@ -11,15 +11,15 @@ using PreSchoolManagement.Infrastructure.Interfaces;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class CreateRoleMasterHandler(
-    IRoleMasterService service,
-    IValidator<CreateRoleMasterCommand> validator,
+public class CreateSectionMasterHandler(
+    ISectionMasterService service,
+    IValidator<CreateSectionMasterCommand> validator,
     IMapper mapper,
     ICurrentUserService currentUser)
-    : IRequestHandler<CreateRoleMasterCommand, ApiResponse<int>>
+    : IRequestHandler<CreateSectionMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
-        CreateRoleMasterCommand request,
+        CreateSectionMasterCommand request,
         CancellationToken cancellationToken)
     {
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
@@ -34,7 +34,7 @@ public class CreateRoleMasterHandler(
         }
 
         var exists = await service.IsExistsAsync(
-            request.RoleName ?? string.Empty,
+            request.SectionName ?? string.Empty,
             OperationType.Add,
             null,
             cancellationToken);
@@ -42,11 +42,11 @@ public class CreateRoleMasterHandler(
         if (exists)
         {
             return ApiResponse<int>.FailureResponse(
-                MessageHelper.AlreadyExists(EntityDescription.Role.ToString()),
+                MessageHelper.AlreadyExists(EntityDescription.Section.ToString()),
                 (int)HttpStatusCode.Conflict);
         }
 
-        var entity = mapper.Map<RoleMaster>(request);
+        var entity = mapper.Map<SectionMaster>(request);
 
         entity.EntryDate = DateTime.UtcNow;
         entity.EntryBy = currentUser.UserId;
@@ -54,8 +54,8 @@ public class CreateRoleMasterHandler(
         await service.AddAsync(entity, cancellationToken);
 
         return ApiResponse<int>.SuccessResponse(
-            entity.RoleId,
-            MessageHelper.Added(EntityDescription.Role.ToString()),
+            entity.SectionId,
+            MessageHelper.Added(EntityDescription.Section.ToString()),
             (int)HttpStatusCode.Created);
     }
 }
