@@ -10,3 +10,8 @@ public class CasteMasterDto
     public string? Caste { get; set; }
     public bool IsActive { get; set; } = false;
 }
+
+public class CasteMasterQueryDto : CasteMasterDto
+{
+    public string CategoryName { get; set; } = string.Empty;
+}

@@ -5,20 +5,20 @@ using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
-using SchoolManagement.Domain.Entities;
+using PreSchoolManagement.Domain.Dtos;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class GetAllCasteMasterHandler(ICasteMasterService service) 
-    : IRequestHandler<GetAllCasteMasterQuery, ApiResponse<List<CasteMaster>>>
+    : IRequestHandler<GetAllCasteMasterQuery, ApiResponse<List<CasteMasterQueryDto>>>
 {
-    public async Task<ApiResponse<List<CasteMaster>>> Handle(GetAllCasteMasterQuery request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<List<CasteMasterQueryDto>>> Handle(GetAllCasteMasterQuery request, CancellationToken cancellationToken)
     {
         var data = await service.GetAllAsync(cancellationToken);
         
         if(data!=null)
         {
-            return ApiResponse<List<CasteMaster>>.SuccessResponse
+            return ApiResponse<List<CasteMasterQueryDto>>.SuccessResponse
             (
                 data, 
                 MessageHelper.Retrieved(EntityDescription.Caste.ToString()),
@@ -27,7 +27,7 @@ public class GetAllCasteMasterHandler(ICasteMasterService service)
         }
         else
         {
-            return ApiResponse<List<CasteMaster>>.FailureResponse
+            return ApiResponse<List<CasteMasterQueryDto>>.FailureResponse
             (
                 MessageHelper.NotFound(EntityDescription.Caste.ToString()),
                 (int)HttpStatusCode.OK
