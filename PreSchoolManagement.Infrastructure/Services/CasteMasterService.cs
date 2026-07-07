@@ -16,14 +16,14 @@ public class CasteMasterService(ApplicationDbContext context) : ICasteMasterServ
             from caste in context.CasteMasters.AsNoTracking()
             join category in context.CategoryMasters.AsNoTracking()
             on caste.CategoryID equals category.CategoryId
-            where caste.IsActive
             orderby category.CategoryId
             select new CasteMasterQueryDto
             {
                 CasteId = caste.CasteID,
                 CategoryId = category.CategoryId,
                 CategoryName = category.CategoryName,
-                Caste = caste.CasteName
+                Caste = caste.CasteName,
+                IsActive=caste.IsActive
             }).ToListAsync(cancellationToken);
     }
 
