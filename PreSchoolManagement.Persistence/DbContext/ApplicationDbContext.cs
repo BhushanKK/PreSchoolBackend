@@ -17,7 +17,11 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<AcademicYearMaster> AcademicYearMasters => Set<AcademicYearMaster>();
     public DbSet<FinancialYearMaster> FinancialYearMasters => Set<FinancialYearMaster>(); 
     public DbSet<UserDetailsMaster> UserDetailsMasters => Set<UserDetailsMaster>();
+<<<<<<< HEAD
     public DbSet<MenuMaster> MenuMasters=>Set<MenuMaster>();
+=======
+    public DbSet<SectionMaster> SectionMasters => Set<SectionMaster>();
+>>>>>>> d22bc090a7cc203cdca844c8825eb0f498f4f8d6
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -92,12 +96,18 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("UserDetailsMaster");
             entity.HasKey(e => e.UserId);
         });
+          modelBuilder.Entity<SectionMaster>(entity =>
+        {
+            entity.ToTable("SectionMaster");
+            entity.HasKey(e => e.SectionId);
+        });
 
         modelBuilder.Entity<AuditLog>(entity =>
         {
             entity.ToTable("AuditLog");
             entity.HasKey(e => e.Id);
         });
+        
 
         modelBuilder.Entity<MenuMaster>(entity =>
         {

@@ -13,6 +13,7 @@ public static class MapperExtensions
         services.AddAutoMapper(typeof(FinancialYearMasterProfile));
         services.AddAutoMapper(typeof(RoleMasterProfile));
         services.AddAutoMapper(typeof(MenuMasterProfile));
+        services.AddAutoMapper(typeof(SectionMasterProfile));
 
         return services;
     }
