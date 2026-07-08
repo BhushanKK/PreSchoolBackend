@@ -16,7 +16,7 @@ public class GetAllMenuMasterQueryHandler(
         GetAllMenuMasterQuery request,
         CancellationToken cancellationToken)
     {
-        var data = await menuMasterService.GetAllAsync(cancellationToken);
+        var data = await menuMasterService.GetAllAsync(request.filter,cancellationToken);
 
         return ApiResponse<List<MenuMasterQueryDto>>.SuccessResponse(
             data,

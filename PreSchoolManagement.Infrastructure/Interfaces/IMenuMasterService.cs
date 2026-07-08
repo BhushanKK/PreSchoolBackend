@@ -5,7 +5,7 @@ namespace PreSchoolManagement.Infrastructure.Interfaces;
 
 public interface IMenuMasterService
 {
-    Task<List<MenuMasterQueryDto>> GetAllAsync(CancellationToken cancellationToken);
+    Task<List<MenuMasterQueryDto>> GetAllAsync(bool applyRoleFilter,CancellationToken cancellationToken);
     Task<MenuMaster?> GetByIdAsync(int menuId, CancellationToken cancellationToken);
     Task<MenuMaster> CreateAsync(MenuMaster menuMaster, CancellationToken cancellationToken);
     Task<MenuMaster?> UpdateAsync(MenuMaster menuMaster, CancellationToken cancellationToken);

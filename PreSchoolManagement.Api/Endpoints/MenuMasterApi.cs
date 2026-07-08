@@ -11,7 +11,7 @@ public static class MenuMasterApi
         var group = app.MapGroup("/api/MenuMaster")
                        .WithTags("Menu Master");
 
-        group.MapGet("/", GetAll)
+        group.MapGet("/{filter:bool}", GetAll)
             .WithName("GetAllMenus")
             .WithSummary("Get all Menu masters")
             .WithDescription("Returns all Menu master records.")
@@ -62,12 +62,12 @@ public static class MenuMasterApi
         return app;
     }
 
-    private static async Task<IResult> GetAll(
+    private static async Task<IResult> GetAll(bool filter,
         ISender sender,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllMenuMasterQuery(),
+            new GetAllMenuMasterQuery(filter),
             cancellationToken);
 
         return TypedResults.Ok(result);

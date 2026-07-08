@@ -6,53 +6,52 @@ using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
-public class MenuMasterService(ApplicationDbContext context,ICurrentUserService currentUser)
+public class MenuMasterService(ApplicationDbContext context, ICurrentUserService currentUser)
     : IMenuMasterService
 {
     public async Task<List<MenuMasterQueryDto>> GetAllAsync(
+    bool applyRoleFilter,
     CancellationToken cancellationToken)
-{
-    var roleId = currentUser.RoleId.ToString();
+    {
+        var roleId = currentUser.RoleId.ToString();
 
-    var menus = await
-    (
-        from menu in context.MenuMasters.AsNoTracking()
+        var menus = await
+        (
+            from menu in context.MenuMasters.AsNoTracking()
+            join parent in context.MenuMasters.AsNoTracking()
+                on menu.ParentMenuId equals parent.MenuId
+                into parentMenus
+            from parent in parentMenus.DefaultIfEmpty()
+            orderby menu.DisplayOrder
+            select new MenuMasterQueryDto
+            {
+                MenuId = menu.MenuId,
+                MenuName = menu.MenuName,
+                ParentMenuId = menu.ParentMenuId,
+                ParentMenuName = parent != null
+                    ? parent.MenuName
+                    : null,
+                MenuUrl = menu.MenuUrl,
+                Icon = menu.Icon,
+                DisplayOrder = menu.DisplayOrder,
+                IsPublic = menu.IsPublic,
+                IsActive = menu.IsActive,
+                RoleIds = menu.RoleIds
+            }
+        ).ToListAsync(cancellationToken);
 
-        join parent in context.MenuMasters.AsNoTracking()
-            on menu.ParentMenuId equals parent.MenuId
-            into parentMenus
+        if (!applyRoleFilter)
+            return menus;
 
-        from parent in parentMenus.DefaultIfEmpty()
-
-        orderby menu.DisplayOrder
-
-        select new MenuMasterQueryDto
-        {
-            MenuId = menu.MenuId,
-            MenuName = menu.MenuName,
-            ParentMenuId = menu.ParentMenuId,
-            ParentMenuName = parent != null
-                ? parent.MenuName
-                : null,
-            MenuUrl = menu.MenuUrl,
-            Icon = menu.Icon,
-            DisplayOrder = menu.DisplayOrder,
-            IsPublic = menu.IsPublic,
-            IsActive = menu.IsActive,
-            RoleIds = menu.RoleIds
-        }
-
-    ).ToListAsync(cancellationToken);
-
-    return menus
-        .Where(x =>
-            x.IsPublic ||
-            (!string.IsNullOrWhiteSpace(x.RoleIds) &&
-             x.RoleIds
-                .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                .Contains(roleId)))
-        .ToList();
-}
+        return menus
+            .Where(x =>
+                x.IsPublic ||
+                (!string.IsNullOrWhiteSpace(x.RoleIds) &&
+                 x.RoleIds
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Contains(roleId)) && x.IsActive==true)
+            .ToList();
+    }
 
     public Task<MenuMaster?> GetByIdAsync(
         int menuId,
