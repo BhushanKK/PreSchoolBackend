@@ -11,7 +11,7 @@ public static class CategoryMasterApi
         var group = app.MapGroup("/api/categorymaster")
                        .WithTags("Category Master");
 
-        group.MapGet("/", GetAll)
+        group.MapGet("/{filter:bool}", GetAll)
             .WithName("GetAllCategories")
             .WithSummary("Get all category masters")
             .WithDescription("Returns all category master records.")
@@ -46,12 +46,12 @@ public static class CategoryMasterApi
         return app;
     }
 
-    private static async Task<IResult> GetAll(
+    private static async Task<IResult> GetAll(bool filter,
         ISender sender,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllCategoryMasterQuery(),
+            new GetAllCategoryMasterQuery(filter),
             cancellationToken);
 
         return TypedResults.Ok(result);
