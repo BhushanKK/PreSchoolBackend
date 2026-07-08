@@ -16,7 +16,7 @@ public static class MasterServicesDI
         services.AddScoped<IRoleMasterService, RoleMasterService>();
         services.AddScoped<IMenuMasterService, MenuMasterService>();
         services.AddScoped<ISectionMasterService, SectionMasterService>();
-        
+        services.AddScoped<IRoleMenuPermissionService, RoleMenuPermissionService>();
         return services;
     }
 }

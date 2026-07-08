@@ -14,6 +14,7 @@ public static class EndpointRegistrationExtensions
         app.MapRoleMasterEndpoints();
         app.MapSectionMasterEndpoints();  
         app.MapMenuMasterEndpoints();
+        app.MapRoleMenuPermissionEndpoints();
         return app;
     }
 }

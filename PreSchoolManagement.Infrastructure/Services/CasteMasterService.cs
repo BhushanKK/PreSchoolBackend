@@ -17,6 +17,7 @@ public class CasteMasterService(ApplicationDbContext context) : ICasteMasterServ
             join category in context.CategoryMasters.AsNoTracking()
             on caste.CategoryID equals category.CategoryId
             orderby category.CategoryId
+            where category.IsActive
             select new CasteMasterQueryDto
             {
                 CasteId = caste.CasteID,

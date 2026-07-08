@@ -19,6 +19,7 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<UserDetailsMaster> UserDetailsMasters => Set<UserDetailsMaster>();
     public DbSet<MenuMaster> MenuMasters=>Set<MenuMaster>();
     public DbSet<SectionMaster> SectionMasters => Set<SectionMaster>();
+    public DbSet<RoleMenuPermission> RoleMenuPermissions => Set<RoleMenuPermission>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -110,6 +111,12 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.ToTable("MenuMaster");
             entity.HasKey(e => e.MenuId);
+        });
+
+        modelBuilder.Entity<RoleMenuPermission>(entity =>
+        {
+            entity.ToTable("RoleMenuPermission");
+            entity.HasKey(e => e.RoleMenuPermissionId);
         });
 
         base.OnModelCreating(modelBuilder);
