@@ -44,7 +44,7 @@ public class MenuMasterService(ApplicationDbContext context, ICurrentUserService
             return menus;
 
         return menus
-    .Where(x =>
+        .Where(x =>
         x.IsActive &&
         (
             x.IsPublic ||
