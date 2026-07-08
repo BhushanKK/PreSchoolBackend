@@ -13,6 +13,8 @@ public static class EndpointRegistrationExtensions
         app.MapFinancialYearMasterEndpoints();
         app.MapRoleMasterEndpoints();      
         app.MapSectionMasterEndpoints();  
+        app.MapDivisionMasterEndpoints();  
+        app.MapStandardMasterEndpoints();  
 
         return app;
     }

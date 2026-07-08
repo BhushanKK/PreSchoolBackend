@@ -8,27 +8,27 @@ using PreSchoolManagement.Infrastructure.Interfaces;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class DeleteSectionMasterHandler(ISectionMasterService service)
-    : IRequestHandler<DeleteSectionMasterCommand, ApiResponse<int>>
+public class DeleteDivisionMasterHandler(IDivisionMasterService service)
+    : IRequestHandler<DeleteDivisionMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
-        DeleteSectionMasterCommand request,
+        DeleteDivisionMasterCommand request,
         CancellationToken cancellationToken)
     {
-        var entity = await service.GetByIdAsync(request.SectionId, cancellationToken);
+        var entity = await service.GetByIdAsync(request.DivisionId, cancellationToken);
 
         if (entity is null)
         {
             return ApiResponse<int>.FailureResponse(
-                MessageHelper.NotFound(EntityDescription.Section.ToString()),
+                MessageHelper.NotFound(EntityDescription.Division.ToString()),
                 (int)HttpStatusCode.NotFound);
         }
 
         await service.DeleteAsync(entity, cancellationToken);
 
         return ApiResponse<int>.SuccessResponse(
-            entity.SectionId,
-            MessageHelper.Deleted(EntityDescription.Section.ToString()),
+            entity.DivisionId,
+            MessageHelper.Deleted(EntityDescription.Division.ToString()),
             (int)HttpStatusCode.OK);
     }
 }

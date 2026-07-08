@@ -9,18 +9,18 @@ using PreSchoolManagement.Domain.Utils;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetAllRoleMasterHandler(IRoleMasterService service)
-    : IRequestHandler<GetAllRoleMasterQuery, ApiResponse<List<RoleMaster>>>
+public class GetAllSectionMasterHandler(ISectionMasterService service)
+    : IRequestHandler<GetAllSectionMasterQuery, ApiResponse<List<SectionMaster>>>
 {
-    public async Task<ApiResponse<List<RoleMaster>>> Handle(
-        GetAllRoleMasterQuery request,
+    public async Task<ApiResponse<List<SectionMaster>>> Handle(
+        GetAllSectionMasterQuery request,
         CancellationToken cancellationToken)
     {
-        var roles = await service.GetAllAsync(cancellationToken);
+        var Sections = await service.GetAllAsync(cancellationToken);
 
-        return ApiResponse<List<RoleMaster>>.SuccessResponse(
-            roles,
-            MessageHelper.Retrieved(EntityDescription.Role.ToString()),
+        return ApiResponse<List<SectionMaster>>.SuccessResponse(
+            Sections,
+            MessageHelper.Retrieved(EntityDescription.Section.ToString()),
             (int)HttpStatusCode.OK);
     }
 }

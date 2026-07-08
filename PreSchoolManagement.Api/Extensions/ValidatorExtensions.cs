@@ -13,6 +13,8 @@ public static class ValidatorExtensions
         services.AddValidatorsFromAssemblyContaining<CreateAcademicYearMasterCommandValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateFinancialYearMasterCommandValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateSectionMasterCommandValidator>();
+        services.AddValidatorsFromAssemblyContaining<CreateDivisionMasterCommandValidator>();
+        services.AddValidatorsFromAssemblyContaining<CreateStandardMasterCommandValidator>();
         return services;
     }
 }
