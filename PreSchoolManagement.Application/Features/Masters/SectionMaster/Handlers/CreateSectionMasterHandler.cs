@@ -17,8 +17,11 @@ public class CreateSectionMasterHandler(
     IMapper mapper,
     ICurrentUserService currentUser)
     : IRequestHandler<CreateSectionMasterCommand, ApiResponse<int>>
-{
-    public async Task<ApiResponse<int>> Handle(CreateSectionMasterCommand request,CancellationToken cancellationToken)
+{  
+    public async Task<ApiResponse<int>> Handle(
+        CreateSectionMasterCommand request,
+        CancellationToken cancellationToken)
+
     {
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 

@@ -9,8 +9,15 @@ namespace PreSchoolManagement.Infrastructure.Services;
 
 public class CategoryMasterService(ApplicationDbContext context) : ICategoryMasterService
 {
-    public Task<List<CategoryMaster>> GetAllAsync(CancellationToken cancellationToken)
-        => context.CategoryMasters.ToListAsync(cancellationToken);
+    public Task<List<CategoryMaster>> GetAllAsync(bool applyFilter, CancellationToken cancellationToken)
+    {
+        var query = context.CategoryMasters.AsNoTracking();
+        if (!applyFilter)
+            return query.ToListAsync(cancellationToken);
+        else
+            return query.Where(x=>x.IsActive==true).ToListAsync();
+    }
+        
 
     public async Task<CategoryMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
         => await context.CategoryMasters.FindAsync([id], cancellationToken);

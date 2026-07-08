@@ -5,7 +5,7 @@ namespace PreSchoolManagement.Infrastructure.Interfaces;
 
 public interface ICategoryMasterService
 {
-    Task<List<CategoryMaster>> GetAllAsync(CancellationToken cancellationToken);
+    Task<List<CategoryMaster>> GetAllAsync(bool applyFilter,CancellationToken cancellationToken);
     Task<CategoryMaster?> GetByIdAsync(int id, CancellationToken cancellationToken);
     Task AddAsync(CategoryMaster category, CancellationToken cancellationToken);
     Task UpdateAsync(CategoryMaster category, CancellationToken cancellationToken);

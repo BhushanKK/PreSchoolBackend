@@ -15,8 +15,9 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<RoleMaster> RoleMasters => Set<RoleMaster>();
     public DbSet<HolidayMaster> HolidayMasters => Set<HolidayMaster>();
     public DbSet<AcademicYearMaster> AcademicYearMasters => Set<AcademicYearMaster>();
-   public DbSet<FinancialYearMaster> FinancialYearMasters => Set<FinancialYearMaster>(); 
+    public DbSet<FinancialYearMaster> FinancialYearMasters => Set<FinancialYearMaster>(); 
     public DbSet<UserDetailsMaster> UserDetailsMasters => Set<UserDetailsMaster>();
+    public DbSet<MenuMaster> MenuMasters=>Set<MenuMaster>();
     public DbSet<SectionMaster> SectionMasters => Set<SectionMaster>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -104,6 +105,12 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
         });
         
+
+        modelBuilder.Entity<MenuMaster>(entity =>
+        {
+            entity.ToTable("MenuMaster");
+            entity.HasKey(e => e.MenuId);
+        });
 
         base.OnModelCreating(modelBuilder);
     }

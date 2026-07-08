@@ -1,3 +1,4 @@
+using PreSchoolManagement.Api.Extensions;
 using PreSchoolManagement.Infrastructure.Interfaces;
 
 public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
@@ -17,4 +18,11 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
 
     public string? UserName =>
         httpContextAccessor.HttpContext?.User.FindFirst("userName")?.Value;
+
+    public int RoleId =>
+    int.TryParse(
+        httpContextAccessor.HttpContext?.User.FindFirst("roleId")?.Value,
+        out var roleId)
+            ? roleId
+            : 0;
 }

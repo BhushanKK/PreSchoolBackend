@@ -11,11 +11,11 @@ public static class EndpointRegistrationExtensions
         app.MapReligionMasterEndpoints();
         app.MapAcademicYearMasterEndpoints();
         app.MapFinancialYearMasterEndpoints();
-        app.MapRoleMasterEndpoints();      
+        app.MapRoleMasterEndpoints();
         app.MapSectionMasterEndpoints();  
-        app.MapDivisionMasterEndpoints();  
-        app.MapStandardMasterEndpoints();  
-
+        app.MapDivisionMasterEndpoints(); 
+        app.MapStandardMasterEndpoints(); 
+        app.MapMenuMasterEndpoints();
         return app;
     }
 }

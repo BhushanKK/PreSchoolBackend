@@ -12,5 +12,8 @@ public enum EntityDescription
     Role,
     Section,
     Standard,
-    Division
+    Division,
+    Menu
+   
+
 }

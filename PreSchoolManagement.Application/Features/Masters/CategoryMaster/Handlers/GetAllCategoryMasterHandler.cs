@@ -16,7 +16,7 @@ public class GetAllCategoryMasterHandler(ICategoryMasterService service)
         GetAllCategoryMasterQuery request,
         CancellationToken cancellationToken)
     {
-        var data = await service.GetAllAsync(cancellationToken);
+        var data = await service.GetAllAsync(request.filter,cancellationToken);
 
         if (data != null)
         {
