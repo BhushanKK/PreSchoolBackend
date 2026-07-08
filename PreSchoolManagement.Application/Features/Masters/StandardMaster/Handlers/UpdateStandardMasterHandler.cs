@@ -3,7 +3,6 @@ using AutoMapper;
 using System.Net;
 using FluentValidation;
 using PreSchoolManagement.Shared.Utils;
-using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Application.Features.Commands;
@@ -11,17 +10,15 @@ using PreSchoolManagement.Infrastructure.Interfaces;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class CreateSectionMasterHandler(
-    ISectionMasterService service,
-    IValidator<CreateSectionMasterCommand> validator,
-    IMapper mapper,
-    ICurrentUserService currentUser)
-    : IRequestHandler<CreateSectionMasterCommand, ApiResponse<int>>
-{  
+public class UpdateStandardMasterHandler(
+    IStandardMasterService service,
+    IValidator<UpdateStandardMasterCommand> validator,
+    IMapper mapper)
+    : IRequestHandler<UpdateStandardMasterCommand, ApiResponse<int>>
+{
     public async Task<ApiResponse<int>> Handle(
-        CreateSectionMasterCommand request,
+        UpdateStandardMasterCommand request,
         CancellationToken cancellationToken)
-
     {
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
@@ -34,29 +31,35 @@ public class CreateSectionMasterHandler(
                 (int)HttpStatusCode.BadRequest);
         }
 
+        var entity = await service.GetByIdAsync(request.StandardId, cancellationToken);
+
+        if (entity is null)
+        {
+            return ApiResponse<int>.FailureResponse(
+                MessageHelper.NotFound(EntityDescription.Standard.ToString()),
+                (int)HttpStatusCode.NotFound);
+        }
+
         var exists = await service.IsExistsAsync(
-            request.SectionName ?? string.Empty,
-            OperationType.Add,
-            null,
+            request.StandardName ?? string.Empty,
+            OperationType.Update,
+            request.StandardId,
             cancellationToken);
 
         if (exists)
         {
             return ApiResponse<int>.FailureResponse(
-                MessageHelper.AlreadyExists(EntityDescription.Section.ToString()),
+                MessageHelper.AlreadyExists(EntityDescription.Standard.ToString()),
                 (int)HttpStatusCode.Conflict);
         }
 
-        var entity = mapper.Map<SectionMaster>(request);
+        mapper.Map(request, entity);
 
-        entity.EntryDate = DateTime.UtcNow;
-        entity.EntryBy = currentUser.UserId;
-
-        await service.AddAsync(entity, cancellationToken);
+        await service.UpdateAsync(entity, cancellationToken);
 
         return ApiResponse<int>.SuccessResponse(
-            entity.SectionId,
-            MessageHelper.Added(EntityDescription.Section.ToString()),
-            (int)HttpStatusCode.Created);
+            entity.StandardId,
+            MessageHelper.Updated(EntityDescription.Standard.ToString()),
+            (int)HttpStatusCode.OK);
     }
 }

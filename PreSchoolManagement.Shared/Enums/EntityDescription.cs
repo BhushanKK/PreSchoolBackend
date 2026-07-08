@@ -10,6 +10,10 @@ public enum EntityDescription
     AcademicYear,
     FinancialYear,
     Role,
-    Menu,
-    Section
+    Section,
+    Standard,
+    Division,
+    Menu
+   
+
 }

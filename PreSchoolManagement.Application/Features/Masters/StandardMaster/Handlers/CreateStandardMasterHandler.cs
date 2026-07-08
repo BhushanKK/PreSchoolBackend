@@ -11,17 +11,16 @@ using PreSchoolManagement.Infrastructure.Interfaces;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class CreateSectionMasterHandler(
-    ISectionMasterService service,
-    IValidator<CreateSectionMasterCommand> validator,
+public class CreateStandardMasterHandler(
+    IStandardMasterService service,
+    IValidator<CreateStandardMasterCommand> validator,
     IMapper mapper,
     ICurrentUserService currentUser)
-    : IRequestHandler<CreateSectionMasterCommand, ApiResponse<int>>
-{  
+    : IRequestHandler<CreateStandardMasterCommand, ApiResponse<int>>
+{
     public async Task<ApiResponse<int>> Handle(
-        CreateSectionMasterCommand request,
+        CreateStandardMasterCommand request,
         CancellationToken cancellationToken)
-
     {
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
@@ -35,7 +34,7 @@ public class CreateSectionMasterHandler(
         }
 
         var exists = await service.IsExistsAsync(
-            request.SectionName ?? string.Empty,
+            request.StandardName ?? string.Empty,
             OperationType.Add,
             null,
             cancellationToken);
@@ -43,11 +42,11 @@ public class CreateSectionMasterHandler(
         if (exists)
         {
             return ApiResponse<int>.FailureResponse(
-                MessageHelper.AlreadyExists(EntityDescription.Section.ToString()),
+                MessageHelper.AlreadyExists(EntityDescription.Standard.ToString()),
                 (int)HttpStatusCode.Conflict);
         }
 
-        var entity = mapper.Map<SectionMaster>(request);
+        var entity = mapper.Map<StandardMaster>(request);
 
         entity.EntryDate = DateTime.UtcNow;
         entity.EntryBy = currentUser.UserId;
@@ -55,8 +54,8 @@ public class CreateSectionMasterHandler(
         await service.AddAsync(entity, cancellationToken);
 
         return ApiResponse<int>.SuccessResponse(
-            entity.SectionId,
-            MessageHelper.Added(EntityDescription.Section.ToString()),
+            entity.StandardId,
+            MessageHelper.Added(EntityDescription.Standard.ToString()),
             (int)HttpStatusCode.Created);
     }
 }
