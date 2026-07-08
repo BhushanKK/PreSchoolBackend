@@ -44,13 +44,18 @@ public class MenuMasterService(ApplicationDbContext context, ICurrentUserService
             return menus;
 
         return menus
-            .Where(x =>
-                x.IsPublic ||
-                (!string.IsNullOrWhiteSpace(x.RoleIds) &&
-                 x.RoleIds
+    .Where(x =>
+        x.IsActive &&
+        (
+            x.IsPublic ||
+            (
+                !string.IsNullOrWhiteSpace(x.RoleIds) &&
+                x.RoleIds
                     .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Contains(roleId)) && x.IsActive==true)
-            .ToList();
+                    .Contains(roleId)
+            )
+        ))
+    .ToList();
     }
 
     public Task<MenuMaster?> GetByIdAsync(
