@@ -19,7 +19,7 @@ public static class MasterServicesDI
         services.AddScoped<IDivisionMasterService, DivisionMasterService>();
         services.AddScoped<IStandardMasterService, StandardMasterService>();
         services.AddScoped<IRoleMenuPermissionService, RoleMenuPermissionService>();
-
+        services.AddScoped<IPermissionService, PermissionService>();
         return services;
     }
 }

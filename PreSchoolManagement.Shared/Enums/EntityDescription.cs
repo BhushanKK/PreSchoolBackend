@@ -13,7 +13,6 @@ public enum EntityDescription
     Section,
     Standard,
     Division,
-    Menu
-   
-
+    Menu,
+    RolePermission
 }

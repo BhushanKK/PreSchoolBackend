@@ -14,7 +14,15 @@ public static class RoleMenuPermissionApi
 
         group.MapGet("/{roleId:int}", GetByRole)
             .WithName("GetRoleMenuPermission")
-            .WithSummary("Get Role Menu Permission")
+            .WithSummary("Get Role Menu Basic Info")
+            .WithDescription("Returns all menu permissions for the selected role.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization();
+
+        group.MapGet("/GetPermissionByRole/{roleId:int}", GetPermissionByRole)
+            .WithName("GetPermissionByRole")
+            .WithSummary("Get Role Menu Permission Details")
             .WithDescription("Returns all menu permissions for the selected role.")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status500InternalServerError)
@@ -38,6 +46,18 @@ public static class RoleMenuPermissionApi
     {
         var result = await sender.Send(
             new GetRoleMenuPermissionQuery(roleId),
+            cancellationToken);
+
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<IResult> GetPermissionByRole(
+        int roleId,
+        ISender sender,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new GetRolePermissionDetailsQuery(roleId),
             cancellationToken);
 
         return TypedResults.Ok(result);
