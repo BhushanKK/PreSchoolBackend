@@ -11,7 +11,7 @@ public static class DivisionMasterApi
         var group = app.MapGroup("/api/DivisionMaster")
                        .WithTags("Division Master");
 
-        group.MapGet("/", GetAll)
+        group.MapGet("/{filter:bool}", GetAll)
             .WithName("GetAllDivisions")
             .WithSummary("Get all Division masters")
             .WithDescription("Returns all Division master records.")
@@ -46,12 +46,12 @@ public static class DivisionMasterApi
         return app;
     }
 
-    private static async Task<IResult> GetAll(
+    private static async Task<IResult> GetAll(bool filter,
         ISender sender,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllDivisionMasterQuery(),
+            new GetAllDivisionMasterQuery(filter),
             cancellationToken);
 
         return TypedResults.Ok(result);

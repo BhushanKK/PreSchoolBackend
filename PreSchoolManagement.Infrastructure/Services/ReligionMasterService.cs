@@ -9,11 +9,16 @@ namespace PreSchoolManagement.Infrastructure.Services;
 
 public class ReligionMasterService(ApplicationDbContext context) : IReligionMasterService
 {
-    public Task<List<ReligionMaster>> GetAllAsync(CancellationToken cancellationToken)
-        => context.ReligionMasters.ToListAsync(cancellationToken);
+    public Task<List<ReligionMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken = default)
+        => context.ReligionMasters
+        .Where(x => !filter || x.IsActive)
+        .AsNoTracking()
+        .ToListAsync(cancellationToken);
 
     public async Task<ReligionMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => await context.ReligionMasters.FindAsync([id], cancellationToken);
+        => await context.ReligionMasters
+        .AsNoTracking()
+        .FirstOrDefaultAsync(x => x.ReligionId == id, cancellationToken);
 
     public async Task AddAsync(ReligionMaster religion, CancellationToken cancellationToken)
     {
@@ -68,6 +73,6 @@ public class ReligionMasterService(ApplicationDbContext context) : IReligionMast
             throw;
         }
     }
-        public Task<bool> IsExistsAsync(string religion, OperationType operation, int? religionId, CancellationToken cancellationToken)
-        => context.ReligionMasters.AnyAsync(x => x.Religion == religion && (religionId == null || x.ReligionId != religionId), cancellationToken);
+    public Task<bool> IsExistsAsync(string religion, OperationType operation, int? religionId, CancellationToken cancellationToken)
+    => context.ReligionMasters.AnyAsync(x => x.Religion == religion && (religionId == null || x.ReligionId != religionId), cancellationToken);
 }

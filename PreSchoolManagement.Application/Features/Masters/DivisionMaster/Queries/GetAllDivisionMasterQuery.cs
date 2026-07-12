@@ -4,4 +4,5 @@ using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Queries;
 
-public sealed record GetAllDivisionMasterQuery : IRequest<ApiResponse<List<DivisionMaster>>>;
+public sealed record GetAllDivisionMasterQuery(bool filter = false)
+: IRequest<ApiResponse<List<DivisionMaster>>>;

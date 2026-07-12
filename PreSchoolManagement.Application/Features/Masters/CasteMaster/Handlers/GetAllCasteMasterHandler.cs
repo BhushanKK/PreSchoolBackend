@@ -14,7 +14,7 @@ public class GetAllCasteMasterHandler(ICasteMasterService service)
 {
     public async Task<ApiResponse<List<CasteMasterQueryDto>>> Handle(GetAllCasteMasterQuery request, CancellationToken cancellationToken)
     {
-        var data = await service.GetAllAsync(cancellationToken);
+        var data = await service.GetAllAsync(request.filter, cancellationToken);
         
         if(data!=null)
         {

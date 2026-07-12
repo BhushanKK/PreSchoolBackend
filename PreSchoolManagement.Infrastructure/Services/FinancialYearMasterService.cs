@@ -9,11 +9,17 @@ namespace PreSchoolManagement.Infrastructure.Services;
 
 public class FinancialYearMasterService(ApplicationDbContext context) : IFinancialYearMasterService
 {
-    public Task<List<FinancialYearMaster>> GetAllAsync(CancellationToken cancellationToken)
-        => context.FinancialYearMasters.ToListAsync(cancellationToken);
+    public async Task<List<FinancialYearMaster>> GetAllAsync(bool filter = false,
+    CancellationToken cancellationToken = default)
+        => await context.FinancialYearMasters
+        .AsNoTracking()
+        .Where(x => !filter || x.IsActive)
+        .ToListAsync();
 
     public async Task<FinancialYearMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => await context.FinancialYearMasters.FindAsync([id], cancellationToken);
+        => await context.FinancialYearMasters
+        .AsNoTracking()
+        .FirstOrDefaultAsync(x => x.FinancialYearId == id, cancellationToken);
 
     public async Task AddAsync(FinancialYearMaster financialYear, CancellationToken cancellationToken)
     {

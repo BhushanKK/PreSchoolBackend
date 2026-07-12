@@ -6,7 +6,7 @@ namespace PreSchoolManagement.Infrastructure.Interfaces;
 
 public interface ICasteMasterService
 {
-    Task<List<CasteMasterQueryDto>> GetAllAsync(CancellationToken cancellationToken);
+    Task<List<CasteMasterQueryDto>> GetAllAsync(bool applyFilter = false, CancellationToken cancellationToken = default);
     Task<CasteMaster?> GetByIdAsync(int id, CancellationToken cancellationToken);
     Task AddAsync(CasteMaster caste, CancellationToken cancellationToken);
     Task UpdateAsync(CasteMaster caste, CancellationToken cancellationToken);

@@ -5,7 +5,7 @@ namespace PreSchoolManagement.Infrastructure.Interfaces;
 
 public interface IStandardMasterService
 {
-    Task<List<StandardMaster>> GetAllAsync(CancellationToken cancellationToken);
+    Task<List<StandardMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken = default);
 
     Task<StandardMaster?> GetByIdAsync(int id, CancellationToken cancellationToken);
 

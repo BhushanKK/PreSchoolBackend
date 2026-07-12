@@ -21,14 +21,12 @@ public class GetRolePermissionDetailsHandler(
                 request.roleId,
                 cancellationToken);
 
-
         if (permissions is null || !permissions.Any())
         {
             return ApiResponse<List<UserPermissionDto>>.FailureResponse(
                 MessageHelper.NotFound(EntityDescription.RolePermission.ToString()),
                 (int)HttpStatusCode.NotFound);
         }
-
 
         return ApiResponse<List<UserPermissionDto>>.SuccessResponse(
             permissions,

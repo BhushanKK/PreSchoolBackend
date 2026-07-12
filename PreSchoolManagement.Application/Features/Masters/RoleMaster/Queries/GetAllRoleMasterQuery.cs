@@ -4,4 +4,5 @@ using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Queries;
 
-public sealed record GetAllRoleMasterQuery : IRequest<ApiResponse<List<RoleMaster>>>;
+public sealed record GetAllRoleMasterQuery
+: IRequest<ApiResponse<List<RoleMaster>>>;

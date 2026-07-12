@@ -10,27 +10,38 @@ namespace PreSchoolManagement.Infrastructure.Services;
 
 public class CasteMasterService(ApplicationDbContext context) : ICasteMasterService
 {
-    public async Task<List<CasteMasterQueryDto>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<List<CasteMasterQueryDto>> GetAllAsync(
+    bool applyFilter = false,
+    CancellationToken cancellationToken = default)
     {
-        return await (
-            from caste in context.CasteMasters.AsNoTracking()
-            join category in context.CategoryMasters.AsNoTracking()
-            on caste.CategoryID equals category.CategoryId
-            orderby category.CategoryId
-            where category.IsActive
-            select new CasteMasterQueryDto
-            {
-                CasteId = caste.CasteID,
-                CategoryId = category.CategoryId,
-                CategoryName = category.CategoryName,
-                Caste = caste.CasteName,
-                IsActive=caste.IsActive
-            }).ToListAsync(cancellationToken);
+        var query = context.CasteMasters
+            .AsNoTracking()
+            .Join(
+                context.CategoryMasters.AsNoTracking(),
+                caste => caste.CategoryID,
+                category => category.CategoryId,
+                (caste, category) => new CasteMasterQueryDto
+                {
+                    CasteId = caste.CasteID,
+                    CategoryId = category.CategoryId,
+                    CategoryName = category.CategoryName,
+                    Caste = caste.CasteName,
+                    IsActive = caste.IsActive
+                });
+
+        if (applyFilter == true)
+            query = query.Where(x => x.IsActive);
+
+        return await query
+            .OrderBy(x => x.CategoryId)
+            .ToListAsync(cancellationToken);
     }
 
-
     public async Task<CasteMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => await context.CasteMasters.FindAsync([id], cancellationToken);
+    => await context.CasteMasters
+        .AsNoTracking()
+        .FirstOrDefaultAsync(
+        x => x.CasteID == id, cancellationToken);
 
     public async Task AddAsync(CasteMaster caste, CancellationToken cancellationToken)
     {

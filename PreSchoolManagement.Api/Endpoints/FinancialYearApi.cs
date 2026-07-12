@@ -11,7 +11,7 @@ public static class FinancialYearMasterApi
         var group = app.MapGroup("/api/FinancialYearmaster")
                        .WithTags("FinancialYear Master");
 
-        group.MapGet("/", GetAll)
+        group.MapGet("/{filter:bool}", GetAll)
             .WithName("GetAllFinancialYears")
             .WithSummary("Get all FinancialYear masters")
             .WithDescription("Returns all FinancialYear master records.")
@@ -45,12 +45,12 @@ public static class FinancialYearMasterApi
         return app;
     }
 
-    private static async Task<IResult> GetAll(
+    private static async Task<IResult> GetAll(bool filter,
         ISender sender,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllFinancialYearMasterQuery(),
+            new GetAllFinancialYearMasterQuery(filter),
             cancellationToken);
 
         return TypedResults.Ok(result);

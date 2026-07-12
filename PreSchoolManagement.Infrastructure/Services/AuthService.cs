@@ -1,3 +1,4 @@
+using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -9,7 +10,6 @@ using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Domain.Dtos;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
-using Serilog;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 

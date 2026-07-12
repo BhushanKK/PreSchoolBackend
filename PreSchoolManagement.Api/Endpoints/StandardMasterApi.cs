@@ -11,7 +11,7 @@ public static class StandardMasterApi
         var group = app.MapGroup("/api/StandardMaster")
                        .WithTags("Standard Master");
 
-        group.MapGet("/", GetAll)
+        group.MapGet("/{filter:bool}", GetAll)
             .WithName("GetAllStandards")
             .WithSummary("Get all Standard masters")
             .WithDescription("Returns all Standard master records.")
@@ -46,7 +46,7 @@ public static class StandardMasterApi
         return app;
     }
 
-    private static async Task<IResult> GetAll(
+    private static async Task<IResult> GetAll(bool filter,
         ISender sender,
         CancellationToken cancellationToken)
     {

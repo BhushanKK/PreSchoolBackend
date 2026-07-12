@@ -4,5 +4,5 @@ using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Queries;
 
-public sealed record GetAllFinancialYearMasterQuery 
+public sealed record GetAllFinancialYearMasterQuery(bool filter=false)
     : IRequest<ApiResponse<List<FinancialYearMaster>>>;

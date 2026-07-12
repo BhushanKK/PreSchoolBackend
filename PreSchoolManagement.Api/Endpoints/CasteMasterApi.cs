@@ -11,7 +11,7 @@ public static class CasteMasterApi
         var group = app.MapGroup("/api/castemaster")
                        .WithTags("Caste Master");
 
-        group.MapGet("/", GetAll)
+        group.MapGet("/{filter:bool}", GetAll)
             .WithName("GetAllCastes")
             .WithSummary("Get all caste masters")
             .WithDescription("Returns all caste master records.")
@@ -45,12 +45,12 @@ public static class CasteMasterApi
         return app;
     }
 
-    private static async Task<IResult> GetAll(
+    private static async Task<IResult> GetAll(bool filter,
         ISender sender,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllCasteMasterQuery(),
+            new GetAllCasteMasterQuery(filter),
             cancellationToken);
 
         return TypedResults.Ok(result);
