@@ -21,6 +21,7 @@ public static class MasterServicesDI
         services.AddScoped<IRoleMenuPermissionService, RoleMenuPermissionService>();
         services.AddScoped<IPermissionService, PermissionService>();
         services.AddScoped<IDistrictMasterService, DistrictMasterServices>();
+
         return services;
     }
 }

@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+<<<<<<< HEAD
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+=======
+>>>>>>> 67fcd92d36bb19d23b3b8b1968859eed159b7d21
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Infrastructure.Data;
@@ -21,8 +24,11 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<MenuMaster> MenuMasters=>Set<MenuMaster>();
     public DbSet<SectionMaster> SectionMasters => Set<SectionMaster>();
     public DbSet<RoleMenuPermission> RoleMenuPermissions => Set<RoleMenuPermission>();
+<<<<<<< HEAD
     public DbSet<DistrictMaster> DistrictMasters => Set<DistrictMaster>();
     public DbSet<StateMaster> StateMasters => Set<StateMaster>();
+=======
+>>>>>>> 67fcd92d36bb19d23b3b8b1968859eed159b7d21
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -121,6 +127,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("RoleMenuPermission");
             entity.HasKey(e => e.RoleMenuPermissionId);
         });
+<<<<<<< HEAD
         
         modelBuilder.Entity<DistrictMaster>(entity =>
         {
@@ -133,6 +140,9 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("StateMaster");
             entity.HasKey(e => e.StateId);
         });
+=======
+
+>>>>>>> 67fcd92d36bb19d23b3b8b1968859eed159b7d21
         base.OnModelCreating(modelBuilder);
     }
 }
