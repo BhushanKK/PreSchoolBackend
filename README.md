@@ -17,12 +17,12 @@ A modern PreSchool Management System built with:
 
 ## Architecture
 
-- Domain
-- Application
-- Infrastructure
-- Persistence
-- API
-- Shared
+- Domain - Entities and DTOs
+- Application - CQRS
+- Infrastructure - Business Layer
+- Persistence - Application DB Context and DB related objects
+- API - Actual API
+- Shared - Common methods,static variables
 
 ## Status
 
