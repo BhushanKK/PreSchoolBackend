@@ -13,6 +13,7 @@ A modern PreSchool Management System built with:
 - JWT Authentication
 - Serilog
 - React + TypeScript
+- Scalar
 
 ## Architecture
 
