@@ -1,0 +1,33 @@
+CREATE TABLE dbo.UserDetailsMaster
+(
+    UserId UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWID(),
+
+    UserName NVARCHAR(100) NOT NULL UNIQUE,
+    Email NVARCHAR(200) NOT NULL UNIQUE,
+    MobileNumber NVARCHAR(15),
+
+    PasswordHash NVARCHAR(MAX) NOT NULL,
+    PasswordSalt NVARCHAR(MAX) NULL,
+
+    RoleId INT NOT NULL,
+
+    IsActive BIT NOT NULL DEFAULT(1),
+
+    IsDeleted BIT NOT NULL DEFAULT(0),
+
+    FailedLoginAttempts INT NOT NULL DEFAULT(0),
+    
+	LockoutEnd DATETIME NULL,
+
+    RefreshToken NVARCHAR(MAX) NULL,
+    RefreshTokenExpiry DATETIME NULL,
+
+    LastLoginDate DATETIME NULL,
+
+    JwtTokenVersion INT NOT NULL DEFAULT(1),
+
+    EntryBy UNIQUEIDENTIFIER NULL,
+    EntryDate DATETIME NOT NULL DEFAULT(GETDATE()),
+    ModifyBy UNIQUEIDENTIFIER NULL,
+    ModifyDate DATETIME NULL
+);
