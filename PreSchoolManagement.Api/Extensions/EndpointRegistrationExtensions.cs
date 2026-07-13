@@ -16,9 +16,11 @@ public static class EndpointRegistrationExtensions
         app.MapDivisionMasterEndpoints(); 
         app.MapStandardMasterEndpoints(); 
         app.MapMenuMasterEndpoints();
+        app.MapHolidayMasterEndpoints();
         app.MapRoleMenuPermissionEndpoints();
         app.MapDistrictMasterEndpoints();
         app.MapStateMasterEndpoints();
+
 
         return app;
     }

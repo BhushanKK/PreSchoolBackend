@@ -3,5 +3,4 @@ using PreSchoolManagement.Domain.ResponseModels;
 
 namespace PreSchoolManagement.Application.Features.Commands;
 
-public class UpdateDistrictMasterCommand
-    : DistrictMasterDto, IRequest<ApiResponse<int>>;
+public record DeleteHolidayMasterCommand(int HolidayId) : IRequest<ApiResponse<int>>;

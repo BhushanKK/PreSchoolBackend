@@ -18,10 +18,12 @@ public static class MasterServicesDI
         services.AddScoped<ISectionMasterService, SectionMasterService>();        
         services.AddScoped<IDivisionMasterService, DivisionMasterService>();
         services.AddScoped<IStandardMasterService, StandardMasterService>();
+        services.AddScoped<IHolidayMasterService, HolidayMasterService>();
         services.AddScoped<IRoleMenuPermissionService, RoleMenuPermissionService>();
         services.AddScoped<IPermissionService, PermissionService>();
         services.AddScoped<IDistrictMasterService, DistrictMasterServices>();
         services.AddScoped<IStateMasterService, StateMasterService>();
+
 
         return services;
     }

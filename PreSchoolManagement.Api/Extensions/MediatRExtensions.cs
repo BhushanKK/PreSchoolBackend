@@ -17,6 +17,7 @@ public static class MediatRExtensions
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateSectionMasterCommand).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateDivisionMasterCommand).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateStandardMasterCommand).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateHolidayMasterCommand).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateDistrictMasterCommand).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateStateMasterCommand).Assembly));
         

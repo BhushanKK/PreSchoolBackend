@@ -1,7 +1,7 @@
 using MediatR;
+using PreSchoolManagement.Domain.Dtos;
 using PreSchoolManagement.Domain.ResponseModels;
 
 namespace PreSchoolManagement.Application.Features.Commands;
 
-public class UpdateDistrictMasterCommand
-    : DistrictMasterDto, IRequest<ApiResponse<int>>;
+public class UpdateHolidayMasterCommand : HolidayMasterDto, IRequest<ApiResponse<int>>;

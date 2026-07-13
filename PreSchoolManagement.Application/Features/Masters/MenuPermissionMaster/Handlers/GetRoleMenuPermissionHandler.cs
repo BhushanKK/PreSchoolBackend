@@ -1,7 +1,6 @@
 using System.Net;
 using MediatR;
 using PreSchoolManagement.Application.Features.Queries;
-using PreSchoolManagement.Domain.Dtos;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Infrastructure.Interfaces;
 
