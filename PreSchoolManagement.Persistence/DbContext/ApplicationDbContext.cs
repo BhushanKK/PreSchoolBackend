@@ -20,7 +20,6 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<MenuMaster> MenuMasters=>Set<MenuMaster>();
     public DbSet<SectionMaster> SectionMasters => Set<SectionMaster>();
     public DbSet<RoleMenuPermission> RoleMenuPermissions => Set<RoleMenuPermission>();
-
     public DbSet<DistrictMaster> DistrictMasters => Set<DistrictMaster>();
     public DbSet<StateMaster> StateMasters => Set<StateMaster>();
 

@@ -14,5 +14,6 @@ public enum EntityDescription
     Standard,
     Division,
     Menu,
-    RolePermission
+    RolePermission,
+    
 }
