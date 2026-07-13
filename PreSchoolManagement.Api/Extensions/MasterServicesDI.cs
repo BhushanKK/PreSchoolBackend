@@ -18,6 +18,7 @@ public static class MasterServicesDI
         services.AddScoped<ISectionMasterService, SectionMasterService>();
         services.AddScoped<IDivisionMasterService, DivisionMasterService>();
         services.AddScoped<IStandardMasterService, StandardMasterService>();
+        services.AddScoped<IHolidayMasterService, HolidayMasterService>();
 
         return services;
     }
