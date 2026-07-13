@@ -9,11 +9,16 @@ namespace PreSchoolManagement.Infrastructure.Services;
 
 public class AcademicYearMasterService(ApplicationDbContext context) : IAcademicYearMasterService
 {
-    public Task<List<AcademicYearMaster>> GetAllAsync(CancellationToken cancellationToken)
-        => context.AcademicYearMasters.ToListAsync(cancellationToken);
+    public async Task<List<AcademicYearMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken = default)
+    => await context.AcademicYearMasters
+        .AsNoTracking()
+        .Where(x => !filter || x.IsActive)
+        .ToListAsync(cancellationToken);
 
     public async Task<AcademicYearMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => await context.AcademicYearMasters.FindAsync([id], cancellationToken);
+        => await context.AcademicYearMasters
+        .AsNoTracking()
+        .FirstOrDefaultAsync(x => x.AcademicYearId==id, cancellationToken);
 
     public async Task AddAsync(AcademicYearMaster academicYear, CancellationToken cancellationToken)
     {

@@ -13,7 +13,7 @@ public class GetAllFinancialYearMasterHandler(IFinancialYearMasterService servic
 {
     public async Task<ApiResponse<List<FinancialYearMaster>>> Handle(GetAllFinancialYearMasterQuery request, CancellationToken cancellationToken)
     {
-        var data = await service.GetAllAsync(cancellationToken);
+        var data = await service.GetAllAsync(request.filter, cancellationToken);
         if(data!=null)
         {
             return ApiResponse<List<FinancialYearMaster>>.SuccessResponse

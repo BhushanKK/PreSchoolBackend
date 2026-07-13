@@ -11,7 +11,7 @@ public static class AcademicYearMasterApi
         var group = app.MapGroup("/api/AcademicYearmaster")
                        .WithTags("AcademicYear Master");
 
-        group.MapGet("/", GetAll)
+        group.MapGet("/{filter:bool}", GetAll)
             .WithName("GetAllAcademicYears")
             .WithSummary("Get all AcademicYear masters")
             .WithDescription("Returns all AcademicYear master records.")
@@ -45,12 +45,12 @@ public static class AcademicYearMasterApi
         return app;
     }
 
-    private static async Task<IResult> GetAll(
+    private static async Task<IResult> GetAll(bool filter,
         ISender sender,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllAcademicYearMasterQuery(),
+            new GetAllAcademicYearMasterQuery(filter),
             cancellationToken);
 
         return TypedResults.Ok(result);

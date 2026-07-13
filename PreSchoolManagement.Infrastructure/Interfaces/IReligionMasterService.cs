@@ -5,7 +5,7 @@ namespace PreSchoolManagement.Infrastructure.Interfaces;
 
 public interface IReligionMasterService
 {
-    Task<List<ReligionMaster>> GetAllAsync(CancellationToken cancellationToken);
+    Task<List<ReligionMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken = default);
 
     Task<ReligionMaster?> GetByIdAsync(int id, CancellationToken cancellationToken);
 

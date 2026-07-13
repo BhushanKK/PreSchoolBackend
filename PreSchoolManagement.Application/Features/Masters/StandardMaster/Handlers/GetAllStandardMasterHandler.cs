@@ -16,7 +16,7 @@ public class GetAllStandardMasterHandler(IStandardMasterService service)
         GetAllStandardMasterQuery request,
         CancellationToken cancellationToken)
     {
-        var Standards = await service.GetAllAsync(cancellationToken);
+        var Standards = await service.GetAllAsync(request.filter,cancellationToken);
 
         return ApiResponse<List<StandardMaster>>.SuccessResponse(
             Standards,

@@ -1,19 +1,24 @@
+using Serilog;
 using Microsoft.EntityFrameworkCore;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
-using Serilog;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
 public class SectionMasterService(ApplicationDbContext context) : ISectionMasterService
 {
-    public Task<List<SectionMaster>> GetAllAsync(CancellationToken cancellationToken)
-        => context.SectionMasters.ToListAsync(cancellationToken);
+    public Task<List<SectionMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken = default)
+        => context.SectionMasters
+        .AsNoTracking()
+        .Where(x => !filter || x.IsActive)
+        .ToListAsync(cancellationToken);
 
     public async Task<SectionMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => await context.SectionMasters.FindAsync([id], cancellationToken);
+        => await context.SectionMasters
+        .AsNoTracking()
+        .FirstOrDefaultAsync(x => x.SectionId == id, cancellationToken);
 
     public async Task AddAsync(SectionMaster Section, CancellationToken cancellationToken)
     {

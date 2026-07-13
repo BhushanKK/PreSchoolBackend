@@ -12,7 +12,7 @@ public class GetAllRelligionMasterHandler(IReligionMasterService service)
 {
     public async Task<ApiResponse<List<ReligionMaster>>> Handle(GetAllReligionMasterQuery request, CancellationToken cancellationToken)
     {
-        var data = await service.GetAllAsync(cancellationToken);
+        var data = await service.GetAllAsync(request.filter,cancellationToken);
         if(data!=null)
         {
             return ApiResponse<List<ReligionMaster>>.SuccessResponse

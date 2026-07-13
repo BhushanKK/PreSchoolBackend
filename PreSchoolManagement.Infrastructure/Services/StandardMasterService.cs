@@ -9,11 +9,16 @@ namespace PreSchoolManagement.Infrastructure.Services;
 
 public class StandardMasterService(ApplicationDbContext context) : IStandardMasterService
 {
-    public Task<List<StandardMaster>> GetAllAsync(CancellationToken cancellationToken)
-        => context.StandardMasters.ToListAsync(cancellationToken);
+    public Task<List<StandardMaster>> GetAllAsync(bool filter, CancellationToken cancellationToken = default)
+        => context.StandardMasters
+        .AsNoTracking()
+        .Where(x => !filter || x.IsActive)
+        .ToListAsync(cancellationToken);
 
     public async Task<StandardMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => await context.StandardMasters.FindAsync([id], cancellationToken);
+        => await context.StandardMasters
+        .AsNoTracking()
+        .FirstOrDefaultAsync(x => x.StandardId == id, cancellationToken);
 
     public async Task AddAsync(StandardMaster Standard, CancellationToken cancellationToken)
     {

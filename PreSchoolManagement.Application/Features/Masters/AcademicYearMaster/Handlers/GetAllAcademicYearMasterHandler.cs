@@ -9,11 +9,13 @@ using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetAllAcademicYearMasterHandler(IAcademicYearMasterService service) : IRequestHandler<GetAllAcademicYearMasterQuery, ApiResponse<List<AcademicYearMaster>>>
+public class GetAllAcademicYearMasterHandler(IAcademicYearMasterService service) 
+: IRequestHandler<GetAllAcademicYearMasterQuery, ApiResponse<List<AcademicYearMaster>>>
 {
     public async Task<ApiResponse<List<AcademicYearMaster>>> Handle(GetAllAcademicYearMasterQuery request, CancellationToken cancellationToken)
     {
-        var data = await service.GetAllAsync(cancellationToken);
+        var data = await service.GetAllAsync(request.filter,cancellationToken);
+
         if(data!=null)
         {
             return ApiResponse<List<AcademicYearMaster>>.SuccessResponse

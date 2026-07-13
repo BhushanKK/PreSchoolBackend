@@ -17,6 +17,7 @@ public static class MapperExtensions
         services.AddAutoMapper(typeof(DivisionMasterProfile));
         services.AddAutoMapper(typeof(StandardMasterProfile));
         services.AddAutoMapper(typeof(HolidayMasterProfile));
+        services.AddAutoMapper(typeof(DistrictMasterProfile));
         return services;
     }
 }

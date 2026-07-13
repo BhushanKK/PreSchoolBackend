@@ -4,5 +4,5 @@ using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Queries;
 
-public sealed record GetAllCategoryMasterQuery(bool filter)
+public sealed record GetAllCategoryMasterQuery(bool filter = false)
     : IRequest<ApiResponse<List<CategoryMaster>>>;

@@ -10,7 +10,7 @@ public static class ReligionMasterApi
         var group = app.MapGroup("/api/Religionmaster")
                        .WithTags("Religion Master");
 
-        group.MapGet("/", GetAll)
+        group.MapGet("/{filter:bool}", GetAll)
             .WithName("GetAllReligions")
             .WithSummary("Get all Religion masters")
             .WithDescription("Returns all Religion master records.")
@@ -40,12 +40,12 @@ public static class ReligionMasterApi
         return app;
     }
 
-    private static async Task<IResult> GetAll(
+    private static async Task<IResult> GetAll(bool filter,
         ISender sender,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllReligionMasterQuery(),
+            new GetAllReligionMasterQuery(filter),
             cancellationToken);
 
         return TypedResults.Ok(result);

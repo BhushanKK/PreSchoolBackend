@@ -14,7 +14,8 @@ public enum EntityDescription
     Standard,
     Division,
     Menu,
-    Holiday
-   
+    Holiday,  
+
+    RolePermission
 
 }

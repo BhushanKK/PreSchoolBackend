@@ -16,7 +16,7 @@ public class GetAllDivisionMasterHandler(IDivisionMasterService service)
         GetAllDivisionMasterQuery request,
         CancellationToken cancellationToken)
     {
-        var Divisions = await service.GetAllAsync(cancellationToken);
+        var Divisions = await service.GetAllAsync(request.filter, cancellationToken);
 
         return ApiResponse<List<DivisionMaster>>.SuccessResponse(
             Divisions,

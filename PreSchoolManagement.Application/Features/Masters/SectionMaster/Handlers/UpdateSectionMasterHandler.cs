@@ -3,7 +3,6 @@ using AutoMapper;
 using System.Net;
 using FluentValidation;
 using PreSchoolManagement.Shared.Utils;
-using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Application.Features.Commands;

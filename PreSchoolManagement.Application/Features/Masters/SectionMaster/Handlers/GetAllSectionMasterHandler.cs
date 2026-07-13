@@ -16,7 +16,7 @@ public class GetAllSectionMasterHandler(ISectionMasterService service)
         GetAllSectionMasterQuery request,
         CancellationToken cancellationToken)
     {
-        var Sections = await service.GetAllAsync(cancellationToken);
+        var Sections = await service.GetAllAsync(request.filter,cancellationToken);
 
         return ApiResponse<List<SectionMaster>>.SuccessResponse(
             Sections,

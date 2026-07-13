@@ -18,6 +18,8 @@ public static class ValidatorExtensions
         services.AddValidatorsFromAssemblyContaining<CreateDivisionMasterCommandValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateStandardMasterCommandValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateHolidayMasterCommandValidator>();
+        services.AddValidatorsFromAssemblyContaining<CreateDistrictMasterCommandValidator>();
+
 
         return services;
     }

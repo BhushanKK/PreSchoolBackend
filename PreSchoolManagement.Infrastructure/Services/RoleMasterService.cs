@@ -10,7 +10,7 @@ namespace PreSchoolManagement.Infrastructure.Services;
 public class RoleMasterService(ApplicationDbContext context) : IRoleMasterService
 {
     public Task<List<RoleMaster>> GetAllAsync(CancellationToken cancellationToken)
-        => context.RoleMasters.ToListAsync(cancellationToken);
+        => context.RoleMasters.AsNoTracking().ToListAsync(cancellationToken);
 
     public async Task<RoleMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
         => await context.RoleMasters.FindAsync([id], cancellationToken);

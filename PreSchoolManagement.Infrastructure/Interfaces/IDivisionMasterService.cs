@@ -5,7 +5,7 @@ namespace PreSchoolManagement.Infrastructure.Interfaces;
 
 public interface IDivisionMasterService
 {
-    Task<List<DivisionMaster>> GetAllAsync(CancellationToken cancellationToken);
+    Task<List<DivisionMaster>> GetAllAsync(bool isFilter = false, CancellationToken cancellationToken = default);
 
     Task<DivisionMaster?> GetByIdAsync(int id, CancellationToken cancellationToken);
 

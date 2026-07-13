@@ -6,16 +6,11 @@ using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Infrastructure.Data;
 
-public partial class ApplicationDbContext
+public partial class ApplicationDbContext(
+    DbContextOptions<ApplicationDbContext> options, 
+    AuditContext auditContext)
+    : DbContext(options)
 {
-    private readonly AuditContext _auditContext;
-
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, AuditContext auditContext)
-        : base(options)
-    {
-        _auditContext = auditContext;
-    }
-
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -89,10 +84,10 @@ public partial class ApplicationDbContext
             OldValues = oldValues,
             NewValues = newValues,
             ChangedColumns = changedColumns,
-            UserId = _auditContext.Current?.UserId,
-            UserName = _auditContext.Current?.UserName,
-            RequestMethod = _auditContext.Current?.RequestMethod,
-            RequestPath = _auditContext.Current?.RequestPath
+            UserId = auditContext.Current?.UserId,
+            UserName = auditContext.Current?.UserName,
+            RequestMethod = auditContext.Current?.RequestMethod,
+            RequestPath = auditContext.Current?.RequestPath
         };
     }
 

@@ -9,11 +9,17 @@ namespace PreSchoolManagement.Infrastructure.Services;
 
 public class DivisionMasterService(ApplicationDbContext context) : IDivisionMasterService
 {
-    public Task<List<DivisionMaster>> GetAllAsync(CancellationToken cancellationToken)
-        => context.DivisionMasters.ToListAsync(cancellationToken);
+    public async Task<List<DivisionMaster>> GetAllAsync(bool isFilter = false, CancellationToken cancellationToken = default)
+    => await context.DivisionMasters
+        .AsNoTracking()
+        .Where(x => !isFilter || x.IsActive)
+        .ToListAsync(cancellationToken);
 
-    public async Task<DivisionMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => await context.DivisionMasters.FindAsync([id], cancellationToken);
+    public Task<DivisionMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
+        => context.DivisionMasters
+        .AsNoTracking()
+        .FirstOrDefaultAsync
+        (x => x.DivisionId == id, cancellationToken);
 
     public async Task AddAsync(DivisionMaster Division, CancellationToken cancellationToken)
     {
