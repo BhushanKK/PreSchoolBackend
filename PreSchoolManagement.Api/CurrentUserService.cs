@@ -1,4 +1,3 @@
-using PreSchoolManagement.Api.Extensions;
 using PreSchoolManagement.Infrastructure.Interfaces;
 
 public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
