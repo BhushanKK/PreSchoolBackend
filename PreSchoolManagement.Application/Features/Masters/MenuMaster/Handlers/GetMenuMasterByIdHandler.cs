@@ -12,9 +12,9 @@ namespace PreSchoolManagement.Application.Features.Handlers;
 public class GetMenuMasterByIdHandler(
     IMenuMasterService menuMasterService,
     IMapper mapper)
-    : IRequestHandler<GetMenuMasterByIdQuery, ApiResponse<MenuMasterDto>>
+    : IRequestHandler<GetMenuMasterByIdQuery, ApiResponse<MenuMasterDto?>>
 {
-    public async Task<ApiResponse<MenuMasterDto>> Handle(
+    public async Task<ApiResponse<MenuMasterDto?>> Handle(
         GetMenuMasterByIdQuery request,
         CancellationToken cancellationToken)
     {
@@ -24,14 +24,14 @@ public class GetMenuMasterByIdHandler(
 
         if (entity is null)
         {
-            return ApiResponse<MenuMasterDto>.FailureResponse(
+            return ApiResponse<MenuMasterDto?>.FailureResponse(
                 MessageHelper.NotFound(EntityDescription.Menu.ToString()),
                 (int)HttpStatusCode.NotFound);
         }
 
-        var dto = mapper.Map<MenuMasterDto>(entity);
+        var dto = mapper.Map<MenuMasterDto?>(entity);
 
-        return ApiResponse<MenuMasterDto>.SuccessResponse(
+        return ApiResponse<MenuMasterDto?>.SuccessResponse(
             dto,
             MessageHelper.Retrieved(EntityDescription.Menu.ToString()),
             (int)HttpStatusCode.OK);
