@@ -21,6 +21,7 @@ public static class EndpointRegistrationExtensions
         app.MapDistrictMasterEndpoints();
         app.MapStateMasterEndpoints();
         app.MapEmployeeTypeMasterEndpoints();
+        app.MapDesignationMasterEndpoints();
 
         return app;
     }

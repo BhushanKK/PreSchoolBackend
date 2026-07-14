@@ -20,7 +20,8 @@ public static class MapperExtensions
         services.AddAutoMapper(typeof(DistrictMasterProfile));
         services.AddAutoMapper(typeof(StateMasterProfile));
         services.AddAutoMapper(typeof(EmployeeTypeMasterProfile));
-
+        services.AddAutoMapper(typeof(DesignationMasterProfile));
+        
         return services;
     }
 }
