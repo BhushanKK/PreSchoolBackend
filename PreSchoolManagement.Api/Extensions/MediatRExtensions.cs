@@ -20,7 +20,8 @@ public static class MediatRExtensions
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateHolidayMasterCommand).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateDistrictMasterCommand).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateStateMasterCommand).Assembly));
-        
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateEmployeeTypeMasterCommand).Assembly));
+
         return services;
     }
 }

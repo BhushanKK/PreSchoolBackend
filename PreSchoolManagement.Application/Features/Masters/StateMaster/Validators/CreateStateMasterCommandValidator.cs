@@ -9,7 +9,7 @@ public class CreateStateMasterCommandValidator : AbstractValidator<CreateStateMa
     {
         RuleFor(x => x.StateName)
             .NotEmpty().WithMessage("State name is required.")
-            .WithMessage("State name must not exceed 50 characters");
+            .MaximumLength(50).WithMessage("State name must not exceed 50 characters");
     }
 }
 

@@ -14,7 +14,7 @@ public static class StateMasterApi
         group.MapGet("/{filter:bool}", GetAll)
               .WithName("GetAllState")
               .WithSummary("Get all state masters")
-              .WithDescription("Return all state maste records.")
+              .WithDescription("Return all state master records.")
               .Produces(StatusCodes.Status200OK)
               .Produces(StatusCodes.Status500InternalServerError)
               .RequireAuthorization();

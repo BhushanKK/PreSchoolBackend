@@ -8,70 +8,67 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Utils;
 
-
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class UpdateStateMasterHandler(
-    IStateMasterService service,
-IValidator<UpdateStateMasterCommand> validator,
-IMapper mapper,
-ICurrentUserService currentUser)
-    : IRequestHandler<UpdateStateMasterCommand, ApiResponse<int>>
+public class UpdateEmployeeTypeMasterHandler(
+    IEmployeeTypeMasterService service,
+    IValidator<UpdateEmployeeTypeMasterCommand> validator,
+    IMapper mapper,ICurrentUserService currentUser)
+    :IRequestHandler<UpdateEmployeeTypeMasterCommand,ApiResponse<int>>
 {
-    public async Task<ApiResponse<int>> Handle(UpdateStateMasterCommand request,CancellationToken cancellationToken)
+    public async Task<ApiResponse<int>> Handle(UpdateEmployeeTypeMasterCommand request,CancellationToken cancellationToken)
     {
-        var validationResult= await validator.ValidateAsync(request, cancellationToken);
-
+        var validationResult = await validator.ValidateAsync(request,cancellationToken);
         if(!validationResult.IsValid)
         {
             var message = string.Join("|",validationResult.Errors.Select(e => e.ErrorMessage));
-
             return ApiResponse<int>.FailureResponse
             (
                 message,
                 (int)HttpStatusCode.BadRequest
             );
         }
-
-        var existing = await service.GetByIdAsync(request.StateId,cancellationToken);
+        var existing = await service.GetByIdAsync(request.EmployeeTypeId,cancellationToken);
 
         if(existing is null)
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.State.ToString()),
+                MessageHelper.NotFound(EntityDescription.EmployeeType.ToString()),
                 (int)HttpStatusCode.NotFound
-            );      
+            );
+
         }
 
         var exists = await service.IsExistsAsync
         (
-            request.StateName ?? string.Empty,
+            request.EmployeeTypeName ?? string.Empty,
             OperationType.Update,
-            request.StateId,
+            request.EmployeeTypeId,
             cancellationToken
         );
 
-        if (exists)
+        if(exists)
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.AlreadyExists(EntityDescription.State.ToString()),
+                MessageHelper.AlreadyExists(EntityDescription.EmployeeType.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
 
-        var entity = mapper.Map(request, existing);
+        var entity = mapper.Map(request,existing);
         entity.ModifyDate = DateTime.UtcNow;
         entity.ModifyBy = currentUser.UserId;
 
-        await service.UpdateAsync(entity, cancellationToken);
+        await service.UpdateAsync(entity,cancellationToken);
 
         return ApiResponse<int>.SuccessResponse
         (
-            entity.StateId,
-            MessageHelper.Updated(EntityDescription.State.ToString()),
+            entity.EmployeeTypeId,
+            MessageHelper.Updated(EntityDescription.EmployeeType.ToString()),
             (int)HttpStatusCode.OK
         );
-    }   
+    }
+
 }
