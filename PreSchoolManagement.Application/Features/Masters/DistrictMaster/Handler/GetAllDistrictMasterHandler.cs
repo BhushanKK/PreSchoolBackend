@@ -5,7 +5,6 @@ using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Domain.Utils;
-using PreSchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 

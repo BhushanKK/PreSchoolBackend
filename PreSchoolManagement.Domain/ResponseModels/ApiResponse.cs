@@ -15,11 +15,12 @@ public class ApiResponse<T>
             StatusCode = statusCode
         };
 
-    public static ApiResponse<T> FailureResponse(string message, int statusCode = 500)
-        => new ApiResponse<T>
-        {
-            Success = false,
-            Message = message,
-            StatusCode = statusCode
-        };
+    public static ApiResponse<T> FailureResponse(string message, int statusCode = 500,T? data = default)
+    => new ApiResponse<T>
+    {
+        Success = false,
+        Message = message,
+        StatusCode = statusCode,
+        Data = data
+    };
 }

@@ -4,4 +4,5 @@ using PreSchoolManagement.Domain.ResponseModels;
 
 namespace PreSchoolManagement.Application.Features.Commands;
 
-public class UpdateStandardMasterCommand : StandardMasterDto, IRequest<ApiResponse<int>>;
+public class UpdateStandardMasterCommand 
+: StandardMasterDto, IRequest<ApiResponse<int>>;

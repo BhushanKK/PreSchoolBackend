@@ -20,9 +20,11 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<MenuMaster> MenuMasters=>Set<MenuMaster>();
     public DbSet<SectionMaster> SectionMasters => Set<SectionMaster>();
     public DbSet<RoleMenuPermission> RoleMenuPermissions => Set<RoleMenuPermission>();
-
     public DbSet<DistrictMaster> DistrictMasters => Set<DistrictMaster>();
     public DbSet<StateMaster> StateMasters => Set<StateMaster>();
+    public DbSet<EmployeeTypeMaster> EmployeeTypeMasters => Set<EmployeeTypeMaster>();
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<DesignationMaster> DesignationMasters => Set<DesignationMaster>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -97,7 +99,14 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("UserDetailsMaster");
             entity.HasKey(e => e.UserId);
         });
-          modelBuilder.Entity<SectionMaster>(entity =>
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.ToTable("RefreshToken");
+            entity.HasKey(e => e.RefreshTokenId);
+        });
+        
+        modelBuilder.Entity<SectionMaster>(entity =>
         {
             entity.ToTable("SectionMaster");
             entity.HasKey(e => e.SectionId);
@@ -133,6 +142,17 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.StateId);
         });
 
+        modelBuilder.Entity<EmployeeTypeMaster>(entity =>
+        {
+            entity.ToTable("EmployeeTypeMaster");
+            entity.HasKey(e => e.EmployeeTypeId);
+        });
+
+        modelBuilder.Entity<DesignationMaster>(entity =>
+        {
+            entity.ToTable("DesignationMaster");
+            entity.HasKey(e => e.DesignationId);
+        });
         base.OnModelCreating(modelBuilder);
     }
 }

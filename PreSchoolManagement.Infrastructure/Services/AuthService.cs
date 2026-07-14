@@ -10,17 +10,19 @@ using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Domain.Dtos;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
+using PreSchoolManagement.Shared.Utils;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
-public class AuthService(ApplicationDbContext context, IConfiguration configuration) : IAuthService
+public class AuthService(ApplicationDbContext context,
+IConfiguration configuration, IAccountLockoutService accountLockoutService) : IAuthService
 {
     public async Task<UserDetailsMaster?> GetUserByUserNameAsync(string userName, CancellationToken cancellationToken)
-        => await context.Set<UserDetailsMaster>()
-            .FirstOrDefaultAsync(x => x.UserName == userName, cancellationToken);
+        => await context.UserDetailsMasters
+        .FirstOrDefaultAsync(x => x.UserName == userName, cancellationToken);
 
     public async Task<UserDetailsMaster?> GetUserByEmailAsync(string email, CancellationToken cancellationToken)
-        => await context.Set<UserDetailsMaster>()
+        => await context.UserDetailsMasters
             .FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
 
     public async Task<bool> CreateUserAsync(UserDetailsMaster user, string password, CancellationToken cancellationToken)
@@ -34,7 +36,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
             user.IsActive = true;
             user.IsDeleted = false;
             user.FailedLoginAttempts = 0;
-            user.JwtTokenVersion = 1;
+            user.JwtTokenVersion = AuthConstants.JwtVersion;
             user.EntryDate = DateTime.UtcNow;
 
             await context.Set<UserDetailsMaster>().AddAsync(user, cancellationToken);
@@ -53,40 +55,100 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
     {
         var user = await GetUserByUserNameAsync(userName, cancellationToken);
 
-        if (user is null || !user.IsActive || user.IsDeleted)
-            return null;
+        if (user == null || !user.IsActive || user.IsDeleted)
+        {
+            return new AuthTokenResponse
+            {
+                Success = false,
+                Message = AuthConstants.InvalidCredentials
+            };
+        }
 
+        // Already locked?
+        if (accountLockoutService.IsLocked(user))
+        {
+            return new AuthTokenResponse
+            {
+                Success = false,
+                IsLockedOut = true,
+                LockoutEnd = user.LockoutEnd,
+                Message = $"Account is locked until {user.LockoutEnd!.Value.ToIndianDateTime()}"
+            };
+        }
+
+        // Lock expired?
+        if (accountLockoutService.IsLockExpired(user))
+            accountLockoutService.Reset(user);
+
+        // Invalid password
         if (!VerifyPassword(password, user.PasswordHash, user.PasswordSalt))
-            return null;
+        {
+            accountLockoutService.RegisterFailedAttempt(user);
 
-        var response = GenerateTokenResponse(user);
+            await context.SaveChangesAsync(cancellationToken);
 
-        user.RefreshToken = response.RefreshToken;
-        user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+            return new AuthTokenResponse
+            {
+                Success = false,
+                IsLockedOut = accountLockoutService.IsLocked(user),
+                LockoutEnd = accountLockoutService.GetLockoutEnd(user),
+                Message = accountLockoutService.GetRemainingAttemptsMessage(user)
+            };
+        }
+
+        // Success
+        accountLockoutService.Reset(user);
         user.LastLoginDate = DateTime.UtcNow;
-
+        var response = GenerateTokenResponse(user);
+        user.AccessToken = response.AccessToken;
         await context.SaveChangesAsync(cancellationToken);
-
+        response.Success = true;
+        response.Message = AuthConstants.LoginSuccessful;
         return response;
     }
 
-    public async Task<AuthTokenResponse?> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
+    public async Task<AuthTokenResponse?> RefreshTokenAsync(
+    string refreshToken,
+    CancellationToken cancellationToken)
     {
-        var user = await context.Set<UserDetailsMaster>()
+        var token = await context.RefreshTokens
+            .Include(x => x.User)
             .FirstOrDefaultAsync(x =>
-                x.RefreshToken == refreshToken &&
-                x.RefreshTokenExpiry > DateTime.UtcNow,
+                x.Token == refreshToken &&
+                !x.IsRevoked &&
+                x.ExpiryDate > DateTime.UtcNow,
                 cancellationToken);
 
-        if (user is null)
-            return null;
+        if (token?.User == null ||
+            !token.User.IsActive ||
+            token.User.IsDeleted)
+        {
+            return new AuthTokenResponse
+            {
+                Success = false,
+                Message = AuthConstants.InvalidCredentials
+            };
+        }
 
-        var response = GenerateTokenResponse(user);
+        var response = GenerateTokenResponse(token.User);
 
-        user.RefreshToken = response.RefreshToken;
-        user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+        // Revoke old refresh token
+        token.IsRevoked = true;
+        token.RevokedDate = DateTime.UtcNow;
+
+        // Save new refresh token
+        context.RefreshTokens.Add(new RefreshToken
+        {
+            UserId = token.UserId,
+            Token = response.RefreshToken,
+            ExpiryDate = DateTime.UtcNow.AddDays(AuthConstants.RefreshTokenExpiryDays),
+            CreatedDate = DateTime.UtcNow
+        });
 
         await context.SaveChangesAsync(cancellationToken);
+
+        response.Success = true;
+        response.Message = "Token refreshed successfully.";
 
         return response;
     }
@@ -100,7 +162,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken,
-            ExpiresAt = DateTime.UtcNow.AddMinutes(60)
+            ExpiresAt = DateTime.UtcNow.AddMinutes(AuthConstants.TokenDuration)
         };
     }
 
@@ -124,7 +186,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
             issuer: configuration["Jwt:Issuer"],
             audience: configuration["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(60),
+            expires: DateTime.UtcNow.AddMinutes(AuthConstants.TokenDuration),
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
@@ -160,5 +222,77 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
 
         return Convert.ToBase64String(hash) == storedHash;
     }
-}
 
+    public async Task<AuthTokenResponse> ChangePasswordAsync(
+    Guid userId,
+    string currentPassword,
+    string newPassword,
+    CancellationToken cancellationToken)
+    {
+        var user = await context.UserDetailsMasters
+            .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+
+        if (user == null || !user.IsActive || user.IsDeleted)
+        {
+            return new AuthTokenResponse
+            {
+                Success = false,
+                Message = "User not found."
+            };
+        }
+
+        // Verify current password
+        if (!VerifyPassword(currentPassword, user.PasswordHash, user.PasswordSalt))
+        {
+            return new AuthTokenResponse
+            {
+                Success = false,
+                Message = "Current password is incorrect."
+            };
+        }
+
+        // Prevent using the same password
+        if (VerifyPassword(newPassword, user.PasswordHash, user.PasswordSalt))
+        {
+            return new AuthTokenResponse
+            {
+                Success = false,
+                Message = "New password cannot be the same as the current password."
+            };
+        }
+
+        // Generate new hash & salt
+        var hash = HashPassword(newPassword, out var salt);
+
+        user.PasswordHash = hash;
+        user.PasswordSalt = Convert.ToBase64String(salt);
+
+        // Invalidate existing sessions
+        user.JwtTokenVersion++;
+       
+        var tokens = await context.RefreshTokens
+        .Where(x =>
+        x.UserId == userId &&
+        !x.IsRevoked &&
+        x.ExpiryDate > DateTime.UtcNow)
+        .ToListAsync(cancellationToken);
+
+        foreach (var token in tokens)
+        {
+            token.IsRevoked = true;
+            token.RevokedDate = DateTime.UtcNow;
+        }
+        user.AccessToken = null;
+
+        user.ModifyBy = userId;
+        user.ModifyDate = DateTime.UtcNow;
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        return new AuthTokenResponse
+        {
+            Success = true,
+            Message = "Password changed successfully."
+        };
+    }
+}

@@ -22,8 +22,11 @@ public static class MasterServicesDI
         services.AddScoped<IRoleMenuPermissionService, RoleMenuPermissionService>();
         services.AddScoped<IPermissionService, PermissionService>();
         services.AddScoped<IDistrictMasterService, DistrictMasterServices>();
-
-
+        services.AddScoped<IAccountLockoutService, AccountLockoutService>();
+        services.AddScoped<IStateMasterService, StateMasterService>();
+        services.AddScoped<IEmployeeTypeMasterService, EmployeeTypeMasterService>();
+        services.AddScoped<IDesignationMasterService, DesignationMasterService>();
+        
         return services;
     }
 }

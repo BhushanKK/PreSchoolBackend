@@ -90,19 +90,38 @@ public class MenuMasterService(ApplicationDbContext context, ICurrentUserService
     }
 
     public async Task<bool> DeleteAsync(
-        int menuId,
-        CancellationToken cancellationToken)
-    {
-        var menu = await context.MenuMasters
-            .FindAsync(menuId, cancellationToken);
+    int menuId,
+    CancellationToken cancellationToken)
+{
+    var menu = await context.MenuMasters
+        .FirstOrDefaultAsync(x => x.MenuId == menuId, cancellationToken);
 
-        if (menu == null)
-            return false;
+    if (menu == null)
+        return false;
 
-        context.MenuMasters.Remove(menu);
-        await context.SaveChangesAsync(cancellationToken);
-        return true;
-    }
+    // Check for child menus
+    var hasChildren = await context.MenuMasters
+        .AnyAsync(x => x.ParentMenuId == menuId, cancellationToken);
+
+    if (hasChildren)
+        throw new InvalidOperationException(
+            "Cannot delete this menu because it has child menus.");
+
+    // Delete permissions
+    var permissions = await context.RoleMenuPermissions
+        .Where(x => x.MenuId == menuId)
+        .ToListAsync(cancellationToken);
+
+    if (permissions.Any())
+        context.RoleMenuPermissions.RemoveRange(permissions);
+
+    // Delete menu
+    context.MenuMasters.Remove(menu);
+
+    await context.SaveChangesAsync(cancellationToken);
+
+    return true;
+}
 
     public async Task<bool> IsExistsAsync(
     string menuName,

@@ -4,7 +4,6 @@ using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
-using PreSchoolManagement.Domain.Dtos;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
