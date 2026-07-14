@@ -6,15 +6,36 @@ using PreSchoolManagement.Domain.ResponseModels;
 
 namespace PreSchoolManagement.Application.Features.Auth.Handlers;
 
-public class LoginUserHandler(IAuthService authService) 
+public class LoginUserHandler(IAuthService authService)
     : IRequestHandler<LoginUserCommand, ApiResponse<AuthTokenResponse>>
 {
-    public async Task<ApiResponse<AuthTokenResponse>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<AuthTokenResponse>> Handle(
+        LoginUserCommand request,
+        CancellationToken cancellationToken)
     {
-        var result = await authService.LoginAsync(request.UserName, request.Password, cancellationToken);
+        var result = await authService.LoginAsync(
+            request.UserName,
+            request.Password,
+            cancellationToken);
 
-        return result is null
-            ? ApiResponse<AuthTokenResponse>.FailureResponse("Invalid username or password", 401)
-            : ApiResponse<AuthTokenResponse>.SuccessResponse(result, "Login successful", 200);
+        if (result is null)
+        {
+            return ApiResponse<AuthTokenResponse>.FailureResponse(
+                "Login failed.",
+                500);
+        }
+
+        if (!result.Success)
+        {
+            return ApiResponse<AuthTokenResponse>.FailureResponse(
+                result.Message,
+                result.IsLockedOut ? 423 : 401,
+                result);
+        }
+
+        return ApiResponse<AuthTokenResponse>.SuccessResponse(
+            result,
+            result.Message,
+            200);
     }
 }
