@@ -1,4 +1,6 @@
 using FluentValidation;
+using PreSchoolManagement.Application.Features.Auth.Commands;
+using PreSchoolManagement.Application.Features.Auth.Validators;
 using PreSchoolManagement.Application.Features.Masters.Validators;
 
 namespace PreSchoolManagement.Api.Extensions;
@@ -21,6 +23,7 @@ public static class ValidatorExtensions
         services.AddValidatorsFromAssemblyContaining<CreateDistrictMasterCommandValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateStateMasterCommandValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateEmployeeTypeMasterCommandValidator>();
+        services.AddValidatorsFromAssemblyContaining<ChangePasswordCommandValidator>();
 
         return services;
     }

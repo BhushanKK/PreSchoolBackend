@@ -23,6 +23,7 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<DistrictMaster> DistrictMasters => Set<DistrictMaster>();
     public DbSet<StateMaster> StateMasters => Set<StateMaster>();
     public DbSet<EmployeeTypeMaster> EmployeeTypeMasters => Set<EmployeeTypeMaster>();
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -97,7 +98,14 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("UserDetailsMaster");
             entity.HasKey(e => e.UserId);
         });
-          modelBuilder.Entity<SectionMaster>(entity =>
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.ToTable("RefreshToken");
+            entity.HasKey(e => e.RefreshTokenId);
+        });
+        
+        modelBuilder.Entity<SectionMaster>(entity =>
         {
             entity.ToTable("SectionMaster");
             entity.HasKey(e => e.SectionId);

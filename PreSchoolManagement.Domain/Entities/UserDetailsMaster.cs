@@ -13,8 +13,6 @@ public class UserDetailsMaster : BaseEntity
     public bool IsDeleted { get; set; }
     public int FailedLoginAttempts { get; set; }
     public DateTime? LockoutEnd { get; set; }
-    public string? RefreshToken { get; set; }
-    public DateTime? RefreshTokenExpiry { get; set; }
     public DateTime? LastLoginDate { get; set; }
     public int JwtTokenVersion { get; set; }
     public DateTime? LastFailedLoginDate {get;set;}

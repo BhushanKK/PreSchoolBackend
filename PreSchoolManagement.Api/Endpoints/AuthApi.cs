@@ -25,6 +25,12 @@ public static class AuthApi
             .WithName("RefreshToken")
             .WithSummary("Refresh access token")
             .WithDescription("Refreshes the JWT token pair using a valid refresh token.");
+ 
+        group.MapPost("/change-password", ChangePassword)
+        .RequireAuthorization()
+        .WithName("ChangePassword")
+        .WithSummary("Change user password")
+        .WithDescription("Changes the password of the authenticated user.");
 
         return app;
     }
@@ -45,5 +51,29 @@ public static class AuthApi
     {
         var result = await sender.Send(new RefreshTokenCommand(request.RefreshToken), cancellationToken);
         return result.Success ? TypedResults.Ok(result) : Results.Json(result, statusCode: result.StatusCode);
+    }
+
+    private static async Task<IResult> ChangePassword(
+    ChangePasswordRequest request,
+    HttpContext httpContext,
+    ISender sender,
+    CancellationToken cancellationToken)
+    {
+        var userIdClaim = httpContext.User.FindFirst("userId")?.Value;
+
+        if (!Guid.TryParse(userIdClaim, out var userId))
+            return TypedResults.Unauthorized();
+
+        var result = await sender.Send(
+            new ChangePasswordCommand(
+                userId,
+                request.CurrentPassword,
+                request.NewPassword,
+                request.ConfirmPassword),
+            cancellationToken);
+
+        return result.Success
+            ? TypedResults.Ok(result)
+            : Results.Json(result, statusCode: result.StatusCode);
     }
 }
