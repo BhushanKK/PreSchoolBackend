@@ -3,6 +3,7 @@ using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Application.Features.Auth.Commands;
 using PreSchoolManagement.Domain.Dtos;
 using PreSchoolManagement.Domain.ResponseModels;
+using System.Net;
 
 namespace PreSchoolManagement.Application.Features.Auth.Handlers;
 
@@ -22,20 +23,20 @@ public class LoginUserHandler(IAuthService authService)
         {
             return ApiResponse<AuthTokenResponse>.FailureResponse(
                 "Login failed.",
-                500);
+                (int)HttpStatusCode.InternalServerError);
         }
 
         if (!result.Success)
         {
             return ApiResponse<AuthTokenResponse>.FailureResponse(
                 result.Message,
-                result.IsLockedOut ? 423 : 401,
+                result.IsLockedOut ? (int)HttpStatusCode.Locked : (int)HttpStatusCode.Unauthorized,
                 result);
         }
 
         return ApiResponse<AuthTokenResponse>.SuccessResponse(
             result,
             result.Message,
-            200);
+            (int)HttpStatusCode.OK);
     }
 }
