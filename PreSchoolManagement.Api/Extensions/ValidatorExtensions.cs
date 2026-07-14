@@ -24,6 +24,7 @@ public static class ValidatorExtensions
         services.AddValidatorsFromAssemblyContaining<CreateStateMasterCommandValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateEmployeeTypeMasterCommandValidator>();
         services.AddValidatorsFromAssemblyContaining<ChangePasswordCommandValidator>();
+        services.AddValidatorsFromAssemblyContaining<CreateDesignationMasterCommandValidator>();
 
         return services;
     }

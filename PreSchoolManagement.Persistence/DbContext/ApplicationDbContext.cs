@@ -24,6 +24,7 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<StateMaster> StateMasters => Set<StateMaster>();
     public DbSet<EmployeeTypeMaster> EmployeeTypeMasters => Set<EmployeeTypeMaster>();
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<DesignationMaster> DesignationMasters => Set<DesignationMaster>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -145,6 +146,12 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.ToTable("EmployeeTypeMaster");
             entity.HasKey(e => e.EmployeeTypeId);
+        });
+
+        modelBuilder.Entity<DesignationMaster>(entity =>
+        {
+            entity.ToTable("DesignationMaster");
+            entity.HasKey(e => e.DesignationId);
         });
         base.OnModelCreating(modelBuilder);
     }

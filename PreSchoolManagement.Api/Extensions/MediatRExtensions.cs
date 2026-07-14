@@ -21,7 +21,7 @@ public static class MediatRExtensions
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateDistrictMasterCommand).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateStateMasterCommand).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateEmployeeTypeMasterCommand).Assembly));
-
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateDesignationMasterCommand).Assembly));
         return services;
     }
 }
