@@ -8,8 +8,7 @@ public class ReligionMasterDto
     [JsonIgnore]
     public int ReligionId { get; set; }
     public bool IsMinority { get; set; }
-    public string? Religion { get; set; }
-    public bool IsActive { get; set; } = false;
+    public string? Religion { get; set; }   
 }
 
   
