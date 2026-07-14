@@ -20,9 +20,9 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<MenuMaster> MenuMasters=>Set<MenuMaster>();
     public DbSet<SectionMaster> SectionMasters => Set<SectionMaster>();
     public DbSet<RoleMenuPermission> RoleMenuPermissions => Set<RoleMenuPermission>();
-
     public DbSet<DistrictMaster> DistrictMasters => Set<DistrictMaster>();
     public DbSet<StateMaster> StateMasters => Set<StateMaster>();
+    public DbSet<EmployeeTypeMaster> EmployeeTypeMasters => Set<EmployeeTypeMaster>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -133,6 +133,11 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.StateId);
         });
 
+        modelBuilder.Entity<EmployeeTypeMaster>(entity =>
+        {
+            entity.ToTable("EmployeeTypeMaster");
+            entity.HasKey(e => e.EmployeeTypeId);
+        });
         base.OnModelCreating(modelBuilder);
     }
 }

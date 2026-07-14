@@ -23,7 +23,8 @@ public static class MasterServicesDI
         services.AddScoped<IPermissionService, PermissionService>();
         services.AddScoped<IDistrictMasterService, DistrictMasterServices>();
         services.AddScoped<IAccountLockoutService, AccountLockoutService>();
-
+        services.AddScoped<IStateMasterService, StateMasterService>();
+        services.AddScoped<IEmployeeTypeMasterService, EmployeeTypeMasterService>();
         return services;
     }
 }
