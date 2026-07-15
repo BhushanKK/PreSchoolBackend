@@ -1,12 +1,12 @@
 namespace SchoolManagement.Domain.Entities;
 
-public class CommiteeMaster : BaseEntity
+public class CommitteeMaster : BaseEntity
 {
     public int CommitteeId { get; set; }
 
     public string CommitteeName { get; set; } = string.Empty;
 
-    public bool Status { get; set; }
+    public bool Status { get; set; }=true;
 
     public string? Slogan { get; set; }
 
