@@ -221,7 +221,7 @@ IConfiguration configuration, IAccountLockoutService accountLockoutService) : IA
             100_000,
             HashAlgorithmName.SHA256,
             32);
-
+string str= Convert.ToBase64String(hash) ;
         return Convert.ToBase64String(hash) == storedHash;
     }
 
@@ -304,6 +304,22 @@ IConfiguration configuration, IAccountLockoutService accountLockoutService) : IA
     {
         context.UserDetailsMasters.Update(user);
 
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task ResetPasswordAsync(
+    UserDetailsMaster user,
+    string newPassword,
+    CancellationToken cancellationToken)
+    {
+        // Generate new PBKDF2 hash and salt
+        var hash = HashPassword(newPassword, out var salt);
+        user.PasswordHash = hash;
+        user.PasswordSalt = Convert.ToBase64String(salt);
+        // Invalidate existing sessions
+        user.JwtTokenVersion++;
+        user.AccessToken = null;
+        user.ModifyDate = DateTime.UtcNow;
         await context.SaveChangesAsync(cancellationToken);
     }
 }

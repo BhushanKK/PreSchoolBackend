@@ -30,8 +30,8 @@ public class ResetPasswordHandler(
             throw new Exception("User not found.");
 
         // Hash password
-        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-
+        await authService.ResetPasswordAsync(user,request.Password,cancellationToken);
+        
         // Update user password
         await authService.UpdateUserAsync(user, cancellationToken);
 

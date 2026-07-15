@@ -18,4 +18,8 @@ public interface IAuthService
     Task UpdateUserAsync(
     UserDetailsMaster user,
     CancellationToken cancellationToken);
+    Task ResetPasswordAsync(
+    UserDetailsMaster user,
+    string newPassword,
+    CancellationToken cancellationToken);
 }
