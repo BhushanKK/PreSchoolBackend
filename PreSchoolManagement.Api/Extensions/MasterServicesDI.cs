@@ -1,11 +1,12 @@
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Infrastructure.Services;
+using SchoolManagement.Shared.Constants;
 
 namespace PreSchoolManagement.Api.Extensions;
 
 public static class MasterServicesDI
 {
-    public static IServiceCollection AddMasterServices(this IServiceCollection services)
+    public static IServiceCollection AddMasterServices(this IServiceCollection services,IConfiguration configuration)
     {
         services.AddScoped<ICasteMasterService, CasteMasterService>();
         services.AddScoped<ICategoryMasterService, CategoryMasterService>();
@@ -26,6 +27,12 @@ public static class MasterServicesDI
         services.AddScoped<IStateMasterService, StateMasterService>();
         services.AddScoped<IEmployeeTypeMasterService, EmployeeTypeMasterService>();
         services.AddScoped<IDesignationMasterService, DesignationMasterService>();
+        services.AddScoped<IPasswordResetService, PasswordResetService>();
+        services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IEmailTemplateService, EmailTemplateService>();
+
+        services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+        services.Configure<FrontendSettings>(configuration.GetSection("FrontendSettings"));
         
         return services;
     }

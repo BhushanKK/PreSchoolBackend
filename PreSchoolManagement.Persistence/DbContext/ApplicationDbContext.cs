@@ -15,9 +15,9 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<RoleMaster> RoleMasters => Set<RoleMaster>();
     public DbSet<HolidayMaster> HolidayMasters => Set<HolidayMaster>();
     public DbSet<AcademicYearMaster> AcademicYearMasters => Set<AcademicYearMaster>();
-    public DbSet<FinancialYearMaster> FinancialYearMasters => Set<FinancialYearMaster>(); 
+    public DbSet<FinancialYearMaster> FinancialYearMasters => Set<FinancialYearMaster>();
     public DbSet<UserDetailsMaster> UserDetailsMasters => Set<UserDetailsMaster>();
-    public DbSet<MenuMaster> MenuMasters=>Set<MenuMaster>();
+    public DbSet<MenuMaster> MenuMasters => Set<MenuMaster>();
     public DbSet<SectionMaster> SectionMasters => Set<SectionMaster>();
     public DbSet<RoleMenuPermission> RoleMenuPermissions => Set<RoleMenuPermission>();
     public DbSet<DistrictMaster> DistrictMasters => Set<DistrictMaster>();
@@ -25,7 +25,7 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<EmployeeTypeMaster> EmployeeTypeMasters => Set<EmployeeTypeMaster>();
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<DesignationMaster> DesignationMasters => Set<DesignationMaster>();
-
+    public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ReligionMaster>(entity =>
@@ -51,31 +51,31 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("CommiteeMaster");
             entity.HasKey(e => e.CommitteeId);
         });
-        
+
         modelBuilder.Entity<SchoolDetailsMaster>(entity =>
         {
             entity.ToTable("SchoolDetailsMaster");
             entity.HasKey(e => e.SchoolId);
         });
-        
+
         modelBuilder.Entity<StandardMaster>(entity =>
         {
             entity.ToTable("StandardMaster");
             entity.HasKey(e => e.StandardId);
         });
-        
+
         modelBuilder.Entity<DivisionMaster>(entity =>
         {
             entity.ToTable("DivisionMaster");
             entity.HasKey(e => e.DivisionId);
         });
-        
+
         modelBuilder.Entity<RoleMaster>(entity =>
         {
             entity.ToTable("RoleMaster");
             entity.HasKey(e => e.RoleId);
         });
-        
+
         modelBuilder.Entity<HolidayMaster>(entity =>
         {
             entity.ToTable("HolidayMaster");
@@ -105,7 +105,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("RefreshToken");
             entity.HasKey(e => e.RefreshTokenId);
         });
-        
+
         modelBuilder.Entity<SectionMaster>(entity =>
         {
             entity.ToTable("SectionMaster");
@@ -117,7 +117,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("AuditLog");
             entity.HasKey(e => e.Id);
         });
-        
+
         modelBuilder.Entity<MenuMaster>(entity =>
         {
             entity.ToTable("MenuMaster");
@@ -129,7 +129,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("RoleMenuPermission");
             entity.HasKey(e => e.RoleMenuPermissionId);
         });
-        
+
         modelBuilder.Entity<DistrictMaster>(entity =>
         {
             entity.ToTable("DistrictMaster");
@@ -154,5 +154,18 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.DesignationId);
         });
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<PasswordResetToken>(entity =>
+{
+    entity.ToTable("PasswordResetToken");
+
+    entity.HasKey(x => x.PasswordResetTokenId);
+
+    entity.HasOne(x => x.User)
+        .WithMany(x => x.PasswordResetTokens)
+        .HasForeignKey(x => x.UserId)
+        .HasPrincipalKey(x => x.UserId)
+        .OnDelete(DeleteBehavior.Cascade);
+});
     }
 }

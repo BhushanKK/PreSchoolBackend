@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PreSchoolManagement.Infrastructure.Data;
 using PreSchoolManagement.Infrastructure.Interfaces;
+
 namespace PreSchoolManagement.Infrastructure.Services;
 
 public class PermissionService(ApplicationDbContext context) : IPermissionService

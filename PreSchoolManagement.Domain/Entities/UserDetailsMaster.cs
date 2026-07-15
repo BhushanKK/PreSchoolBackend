@@ -16,4 +16,6 @@ public class UserDetailsMaster : BaseEntity
     public DateTime? LastLoginDate { get; set; }
     public int JwtTokenVersion { get; set; }
     public DateTime? LastFailedLoginDate {get;set;}
+    public virtual ICollection<PasswordResetToken> PasswordResetTokens
+        { get; set; } = new List<PasswordResetToken>();
 }

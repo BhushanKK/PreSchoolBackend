@@ -8,7 +8,6 @@ using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using System.ComponentModel.DataAnnotations;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 

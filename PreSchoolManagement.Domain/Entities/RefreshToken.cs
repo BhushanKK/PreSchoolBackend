@@ -12,5 +12,5 @@ public class RefreshToken
     public string? DeviceName { get; set; }
     public string? IPAddress { get; set; }
     public string? UserAgent { get; set; }
-    public virtual UserDetailsMaster User { get; set; } = null!;
+    public virtual UserDetailsMaster UserDetailsMasters { get; set; } = null!;
 }

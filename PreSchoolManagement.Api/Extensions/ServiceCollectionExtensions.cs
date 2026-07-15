@@ -10,6 +10,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<AuditContext>();
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        
         return services;
     }
 }

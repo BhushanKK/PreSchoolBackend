@@ -15,4 +15,7 @@ public interface IAuthService
     string currentPassword,
     string newPassword,
     CancellationToken cancellationToken);
+    Task UpdateUserAsync(
+    UserDetailsMaster user,
+    CancellationToken cancellationToken);
 }

@@ -8,6 +8,7 @@ using PreSchoolManagement.Api.Endpoints;
 using PreSchoolManagement.Api.Extensions;
 using PreSchoolManagement.Api.Middlewares;
 using PreSchoolManagement.Infrastructure.Data;
+using SchoolManagement.Shared.Constants;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,7 +53,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 // Application Services
-builder.Services.AddMasterServices();
+builder.Services.AddMasterServices(builder.Configuration);
 builder.Services.AddMediatRServices();
 builder.Services.AddValidatorServices();
 builder.Services.AddMapperServices();
