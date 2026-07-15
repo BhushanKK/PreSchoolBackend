@@ -30,9 +30,9 @@ public static class MasterServicesDI
         services.AddScoped<IPasswordResetService, PasswordResetService>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IEmailTemplateService, EmailTemplateService>();
-
         services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
         services.Configure<FrontendSettings>(configuration.GetSection("FrontendSettings"));
+        services.AddScoped<ICommitteeMasterService, CommitteeMasterService>();
         
         return services;
     }

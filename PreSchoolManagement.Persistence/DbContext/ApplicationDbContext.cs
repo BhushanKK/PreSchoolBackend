@@ -8,7 +8,6 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<ReligionMaster> ReligionMasters => Set<ReligionMaster>();
     public DbSet<CategoryMaster> CategoryMasters => Set<CategoryMaster>();
     public DbSet<CasteMaster> CasteMasters => Set<CasteMaster>();
-    public DbSet<CommiteeMaster> CommiteeMasters => Set<CommiteeMaster>();
     public DbSet<SchoolDetailsMaster> SchoolDetailsMasters => Set<SchoolDetailsMaster>();
     public DbSet<StandardMaster> StandardMasters => Set<StandardMaster>();
     public DbSet<DivisionMaster> DivisionMasters => Set<DivisionMaster>();
@@ -25,6 +24,7 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<EmployeeTypeMaster> EmployeeTypeMasters => Set<EmployeeTypeMaster>();
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<DesignationMaster> DesignationMasters => Set<DesignationMaster>();
+    public DbSet<CommitteeMaster> CommitteeMasters => Set<CommitteeMaster>();
     public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -44,12 +44,6 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.ToTable("CategoryMaster");
             entity.HasKey(e => e.CategoryId);
-        });
-
-        modelBuilder.Entity<CommiteeMaster>(entity =>
-        {
-            entity.ToTable("CommiteeMaster");
-            entity.HasKey(e => e.CommitteeId);
         });
 
         modelBuilder.Entity<SchoolDetailsMaster>(entity =>
@@ -152,6 +146,12 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.ToTable("DesignationMaster");
             entity.HasKey(e => e.DesignationId);
+        });
+
+        modelBuilder.Entity<CommitteeMaster>(entity =>
+        {
+            entity.ToTable("CommitteeMaster");
+            entity.HasKey(e => e.CommitteeId);
         });
         base.OnModelCreating(modelBuilder);
 
