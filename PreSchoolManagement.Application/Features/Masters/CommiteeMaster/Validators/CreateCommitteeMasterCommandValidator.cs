@@ -27,7 +27,8 @@ public class UpdateCommitteeMasterCommandValidator : AbstractValidator<UpdateCom
     public UpdateCommitteeMasterCommandValidator()
     {
         RuleFor(x => x.CommitteeId)
-            .GreaterThan(0).WithMessage("Committee Id is required.");
+            .NotEmpty()
+            .WithMessage("Committee Id is required.");
 
         RuleFor(x => x.CommitteeName)
             .NotEmpty().WithMessage("Committee Name is required.")

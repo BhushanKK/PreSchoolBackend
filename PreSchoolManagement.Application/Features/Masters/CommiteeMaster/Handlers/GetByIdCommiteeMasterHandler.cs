@@ -12,32 +12,29 @@ namespace PreSchoolManagement.Application.Features.Handlers;
 public class GetByIdCommitteeMasterHandler(ICommitteeMasterService service)
     : IRequestHandler<GetByIdCommitteeMasterQuery, ApiResponse<CommitteeMaster>>
 {
-    public async Task<ApiResponse<CommitteeMaster?>> Handle(GetByIdCommitteeMasterQuery request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<CommitteeMaster>> Handle(
+        GetByIdCommitteeMasterQuery request,
+        CancellationToken cancellationToken)
     {
-        if (request.CommiteeId <=0)
+        if (request.CommitteeId == Guid.Empty)
         {
-            return ApiResponse<CommitteeMaster?>.FailureResponse
-            (
+            return ApiResponse<CommitteeMaster>.FailureResponse(
                 MessageHelper.InvalidId(EntityDescription.committee.ToString()),
-                (int)HttpStatusCode.BadRequest
-            );
-
+                (int)HttpStatusCode.BadRequest);
         }
-        var data = await service.GetByIdAsync(request.CommiteeId,cancellationToken);
+
+        var data = await service.GetByIdAsync(request.CommitteeId, cancellationToken);
+
         if (data is null)
         {
-            return ApiResponse<CommitteeMaster?>.FailureResponse
-            (
+            return ApiResponse<CommitteeMaster>.FailureResponse(
                 MessageHelper.NotFound(EntityDescription.committee.ToString()),
-                (int)HttpStatusCode.NotFound
-            );
+                (int)HttpStatusCode.NotFound);
         }
 
-        return ApiResponse<CommitteeMaster?>.SuccessResponse
-        (
+        return ApiResponse<CommitteeMaster>.SuccessResponse(
             data,
             MessageHelper.Retrieved(EntityDescription.committee.ToString()),
-            (int)HttpStatusCode.OK
-        );
+            (int)HttpStatusCode.OK);
     }
 }

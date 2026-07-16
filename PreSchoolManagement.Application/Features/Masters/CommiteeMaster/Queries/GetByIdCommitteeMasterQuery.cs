@@ -4,5 +4,5 @@ using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Queries;
 
-public sealed record GetByIdCommitteeMasterQuery(int CommiteeId)
-: IRequest<ApiResponse<CommitteeMaster?>>;
+public sealed record GetByIdCommitteeMasterQuery(Guid CommitteeId)
+: IRequest<ApiResponse<CommitteeMaster>>;
