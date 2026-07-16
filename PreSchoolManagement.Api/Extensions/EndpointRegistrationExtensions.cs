@@ -23,6 +23,7 @@ public static class EndpointRegistrationExtensions
         app.MapEmployeeTypeMasterEndpoints();
         app.MapDesignationMasterEndpoints();
         app.MapCommitteeMasterEndpoints();
+        app.MapBoardMasterEndpoints();
 
         return app;
     }

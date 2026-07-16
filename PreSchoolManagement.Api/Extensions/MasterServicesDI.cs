@@ -33,6 +33,7 @@ public static class MasterServicesDI
         services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
         services.Configure<FrontendSettings>(configuration.GetSection("FrontendSettings"));
         services.AddScoped<ICommitteeMasterService, CommitteeMasterService>();
+        services.AddScoped<IBoardMasterService, BoardMasterService>();
         
         return services;
     }
