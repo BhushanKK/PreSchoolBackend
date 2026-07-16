@@ -171,20 +171,10 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.MediumId);
         });
 
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
         base.OnModelCreating(modelBuilder);
-        
-
-        modelBuilder.Entity<PasswordResetToken>(entity =>
-        {
-            entity.ToTable("PasswordResetToken");
-
-            entity.HasKey(x => x.PasswordResetTokenId);
-
-            entity.HasOne(x => x.User)
-                .WithMany(x => x.PasswordResetTokens)
-                .HasForeignKey(x => x.UserId)
-                .HasPrincipalKey(x => x.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 }
