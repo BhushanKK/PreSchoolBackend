@@ -22,7 +22,7 @@ public static class BoardMasterApi
         group.MapGet("/{id:int}", GetById)
             .WithName("GetBoardById")
             .WithSummary("Get Board by Id")
-            .WithDescription("Returns a Baord master record by Id.")
+            .WithDescription("Returns a Board master record by Id.")
             .RequireAuthorization();
 
         group.MapPost("/", Create)

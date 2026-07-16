@@ -19,6 +19,6 @@ public enum EntityDescription
     EmployeeType,
     designation,
     committee,
-    Board
-
+    Board,
+    Medium
 }

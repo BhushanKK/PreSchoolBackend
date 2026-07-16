@@ -1,5 +1,6 @@
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Infrastructure.Services;
+using SchoolManagement.Domain.Entities;
 using SchoolManagement.Shared.Constants;
 
 namespace PreSchoolManagement.Api.Extensions;
@@ -34,7 +35,7 @@ public static class MasterServicesDI
         services.Configure<FrontendSettings>(configuration.GetSection("FrontendSettings"));
         services.AddScoped<ICommitteeMasterService, CommitteeMasterService>();
         services.AddScoped<IBoardMasterService, BoardMasterService>();
-
+        services.AddScoped<IMediumMasterService,MediumMasterService>();
         services.AddScoped<IFileStorageService, FileStorageService>();
 
         

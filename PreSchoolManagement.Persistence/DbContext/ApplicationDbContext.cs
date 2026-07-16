@@ -28,6 +28,9 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
     public DbSet<BoardMaster> BoardMasters => Set<BoardMaster>();
 
+    public DbSet<MediumMaster> MediumMasters => Set<MediumMaster>();
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ReligionMaster>(entity =>
@@ -160,6 +163,12 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.ToTable("BoardMaster");
             entity.HasKey(e => e.BoardId);
+        });
+
+        modelBuilder.Entity<MediumMaster>(entity =>
+        {
+            entity.ToTable("MediumMaster");
+            entity.HasKey(e => e.MediumId);
         });
 
         base.OnModelCreating(modelBuilder);
