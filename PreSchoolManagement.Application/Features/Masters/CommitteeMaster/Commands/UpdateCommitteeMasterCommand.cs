@@ -4,4 +4,4 @@ using PreSchoolManagement.Domain.ResponseModels;
 
 namespace PreSchoolManagement.Application.Features.Commands;
 
-public class UpdateCommitteeMasterCommand : CommitteeMasterDto, IRequest<ApiResponse<int>>;
+public class UpdateCommitteeMasterCommand : CommitteeMasterDto, IRequest<ApiResponse<Guid>>;

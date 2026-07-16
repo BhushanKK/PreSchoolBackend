@@ -34,6 +34,9 @@ public static class MasterServicesDI
         services.Configure<FrontendSettings>(configuration.GetSection("FrontendSettings"));
         services.AddScoped<ICommitteeMasterService, CommitteeMasterService>();
         services.AddScoped<IBoardMasterService, BoardMasterService>();
+
+        services.AddScoped<IFileStorageService, FileStorageService>();
+
         
         return services;
     }

@@ -8,7 +8,6 @@ using PreSchoolManagement.Api.Endpoints;
 using PreSchoolManagement.Api.Extensions;
 using PreSchoolManagement.Api.Middlewares;
 using PreSchoolManagement.Infrastructure.Data;
-using SchoolManagement.Shared.Constants;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,8 +22,7 @@ LogFileCleanupExtensions.DeleteOldLogFiles(logDirectory, TimeSpan.FromDays(7));
 
 // Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // OpenApi
 builder.Services.AddOpenApi();
@@ -68,16 +66,18 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
+
 var app = builder.Build();
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.UseCors("ReactPolicy");
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<AuditMiddleware>();
 // OpenApi
 app.MapOpenApi();
-
 // Scalar
 app.MapScalarApiReference(options =>
 {
@@ -85,9 +85,6 @@ app.MapScalarApiReference(options =>
     options.WithTheme(ScalarTheme.BluePlanet);
     options.WithOpenApiRoutePattern("/openapi/{documentName}.json");
 });
-
 // Endpoints
-
 app.MapApplicationEndpoints();
-
-app.Run();
+await app.RunAsync();

@@ -8,34 +8,44 @@ using PreSchoolManagement.Shared.Utils;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class DeleteCommitteeMasterHandler(ICommitteeMasterService service)
-: IRequestHandler<DeleteCommitteeMasterCommand,ApiResponse<int>>
+public class DeleteCommitteeMasterHandler(ICommitteeMasterService service, IFileStorageService fileStorage)
+    : IRequestHandler<DeleteCommitteeMasterCommand, ApiResponse<Guid>>
 {
-    public async Task<ApiResponse<int>> Handle(DeleteCommitteeMasterCommand request,CancellationToken cancellationToken)
+    public async Task<ApiResponse<Guid>> Handle(DeleteCommitteeMasterCommand request,CancellationToken cancellationToken)
     {
-        if(request.CommitteeId <=0)
+        if (request.CommitteeId == Guid.Empty)
         {
-            return ApiResponse<int>.FailureResponse
+            return ApiResponse<Guid>.FailureResponse(
+                MessageHelper.InvalidId(
+                    EntityDescription.committee.ToString()),
+                (int)HttpStatusCode.BadRequest);
+        }
+
+        var entity = await service.GetByIdAsync(request.CommitteeId,cancellationToken);
+
+        if (entity is null)
+        {
+            return ApiResponse<Guid>.FailureResponse
             (
-                MessageHelper.InvalidId(EntityDescription.committee.ToString()),
-                (int)HttpStatusCode.BadRequest
+                MessageHelper.NotFound(
+                    EntityDescription.committee.ToString()),
+                (int)HttpStatusCode.NotFound
             );
         }
-        var entity = await service.GetByIdAsync(request.CommitteeId,cancellationToken );
-        if(entity is null)
-        {
-            return ApiResponse<int>.FailureResponse(MessageHelper.NotFound(EntityDescription.committee.ToString()),
-            (int)HttpStatusCode.NotFound);
-        }
 
+        // Delete logo from folder
+        if (!string.IsNullOrWhiteSpace(entity.LogoPath))
+            await fileStorage.DeleteAsync(entity.LogoPath,cancellationToken);
+
+        // Delete database record
         await service.DeleteAsync(entity, cancellationToken);
 
-        return ApiResponse<int>.SuccessResponse
+        return ApiResponse<Guid>.SuccessResponse
         (
             entity.CommitteeId,
-            MessageHelper.Deleted(EntityDescription.committee.ToString()),
+            MessageHelper.Deleted(
+                EntityDescription.committee.ToString()),
             (int)HttpStatusCode.OK
         );
-
     }
 }

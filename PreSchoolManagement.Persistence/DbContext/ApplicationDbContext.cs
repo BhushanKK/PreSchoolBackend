@@ -8,7 +8,7 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<ReligionMaster> ReligionMasters => Set<ReligionMaster>();
     public DbSet<CategoryMaster> CategoryMasters => Set<CategoryMaster>();
     public DbSet<CasteMaster> CasteMasters => Set<CasteMaster>();
-    public DbSet<SchoolDetailsMaster> SchoolDetailsMasters => Set<SchoolDetailsMaster>();
+    public DbSet<SchoolRegistration> SchoolRegistrations => Set<SchoolRegistration>();
     public DbSet<StandardMaster> StandardMasters => Set<StandardMaster>();
     public DbSet<DivisionMaster> DivisionMasters => Set<DivisionMaster>();
     public DbSet<RoleMaster> RoleMasters => Set<RoleMaster>();
@@ -48,10 +48,10 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.CategoryId);
         });
 
-        modelBuilder.Entity<SchoolDetailsMaster>(entity =>
+        modelBuilder.Entity<SchoolRegistration>(entity =>
         {
-            entity.ToTable("SchoolDetailsMaster");
-            entity.HasKey(e => e.SchoolId);
+            entity.ToTable("SchoolRegistration");
+            entity.HasKey(e => e.SchoolRegistrationId);
         });
 
         modelBuilder.Entity<StandardMaster>(entity =>
@@ -166,16 +166,16 @@ public partial class ApplicationDbContext : DbContext
         
 
         modelBuilder.Entity<PasswordResetToken>(entity =>
-{
-    entity.ToTable("PasswordResetToken");
+        {
+            entity.ToTable("PasswordResetToken");
 
-    entity.HasKey(x => x.PasswordResetTokenId);
+            entity.HasKey(x => x.PasswordResetTokenId);
 
-    entity.HasOne(x => x.User)
-        .WithMany(x => x.PasswordResetTokens)
-        .HasForeignKey(x => x.UserId)
-        .HasPrincipalKey(x => x.UserId)
-        .OnDelete(DeleteBehavior.Cascade);
-});
+            entity.HasOne(x => x.User)
+                .WithMany(x => x.PasswordResetTokens)
+                .HasForeignKey(x => x.UserId)
+                .HasPrincipalKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
     }
 }

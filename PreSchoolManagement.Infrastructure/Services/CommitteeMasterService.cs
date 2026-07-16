@@ -1,76 +1,108 @@
+using Serilog;
 using Microsoft.EntityFrameworkCore;
-using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
+using PreSchoolManagement.Infrastructure.Interfaces;
 using SchoolManagement.Domain.Entities;
-using Serilog;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
 public class CommitteeMasterService(ApplicationDbContext context) : ICommitteeMasterService
 {
-    public async Task<List<CommitteeMaster>> GetAllAsync(bool isFilter = false, CancellationToken cancellationToken= default)
-    => await context.CommitteeMasters
-        .AsNoTracking()
-        .Where(x => !isFilter || x.IsActive)
-        .ToListAsync(cancellationToken);
+    public async Task<List<CommitteeMaster>> GetAllAsync(
+        bool isFilter = false,
+        CancellationToken cancellationToken = default)
+        => await context.CommitteeMasters
+            .AsNoTracking()
+            .Where(x => !isFilter || x.IsActive)
+            .ToListAsync(cancellationToken);
 
-    public Task<CommitteeMaster?>GetByIdAsync(int id, CancellationToken cancellationToken)
-    => context.CommitteeMasters
-        .AsNoTracking()
-        .FirstOrDefaultAsync(x => x.CommitteeId == id, cancellationToken);
+    public Task<CommitteeMaster?> GetByIdAsync(
+        Guid committeeId,
+        CancellationToken cancellationToken = default)
+        => context.CommitteeMasters
+            .FirstOrDefaultAsync(x => x.CommitteeId == committeeId, cancellationToken);
 
-    public async Task AddAsync(CommitteeMaster committee,CancellationToken cancellationToken)
+    public async Task AddAsync(
+        CommitteeMaster committee,
+        CancellationToken cancellationToken = default)
     {
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+
         try
         {
-            await context.CommitteeMasters.AddAsync(committee,cancellationToken);
+            await context.CommitteeMasters.AddAsync(committee, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
-            Log.Error(ex,"An error occurred while adding Committee master record.");
+            Log.Error(ex, "An error occurred while adding CommitteeMaster.");
             throw;
         }
     }
 
-    public async Task UpdateAsync(CommitteeMaster committee,CancellationToken cancellationToken)
+    public async Task UpdateAsync(
+        CommitteeMaster committee,
+        CancellationToken cancellationToken = default)
     {
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+
         try
         {
             context.CommitteeMasters.Update(committee);
             await context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
-            Log.Error(ex, "An error occureed while updating an Committee master record.");
+            Log.Error(ex, "An error occurred while updating CommitteeMaster.");
             throw;
-            
         }
     }
-    public  async Task  DeleteAsync(CommitteeMaster committee,CancellationToken cancellationToken)
+
+    public async Task DeleteAsync(
+        CommitteeMaster committee,
+        CancellationToken cancellationToken = default)
     {
-        await using var transaction =await context.Database.BeginTransactionAsync(cancellationToken);
+        await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+
         try
         {
             context.CommitteeMasters.Remove(committee);
             await context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
-            Log.Error(ex,"An error occurred while deleting Committee master record.");
+            Log.Error(ex, "An error occurred while deleting CommitteeMaster.");
             throw;
         }
     }
 
-    public Task<bool>IsExistsAsync(string CommitteeName, OperationType operation,int? CommitteeId, CancellationToken cancellationToken)
-    => context.CommitteeMasters.AnyAsync(x => x.CommitteeName == CommitteeName &&(CommitteeId == null || x.CommitteeId !=CommitteeId),cancellationToken);
+    public Task<bool> IsExistsAsync(
+    string committeeName,
+    OperationType operation,
+    Guid? committeeId,
+    CancellationToken cancellationToken = default)
+    {
+        return operation switch
+        {
+            OperationType.Add =>
+                context.CommitteeMasters.AnyAsync(
+                    x => x.CommitteeName == committeeName,
+                    cancellationToken),
+
+            OperationType.Update =>
+                context.CommitteeMasters.AnyAsync(
+                    x => x.CommitteeName == committeeName &&
+                         x.CommitteeId != committeeId,
+                    cancellationToken),
+
+            _ => Task.FromResult(false)
+        };
+    }
 }

@@ -5,4 +5,4 @@ using SchoolManagement.Domain.Entities;
 namespace PreSchoolManagement.Application.Features.Queries;
 
 public sealed record GetByIdDesignationMasterQuery(int DesignationId)
-    : IRequest<ApiResponse<DesignationMaster>>;
+    : IRequest<ApiResponse<DesignationMaster?>>;
