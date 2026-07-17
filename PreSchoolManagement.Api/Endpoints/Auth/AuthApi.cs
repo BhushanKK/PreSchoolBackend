@@ -1,5 +1,6 @@
 
 
+using System.Globalization;
 using MediatR;
 using PreSchoolManagement.Application.Features.Auth.Commands;
 using PreSchoolManagement.Domain.Dtos;
@@ -15,16 +16,15 @@ public static class AuthApi
         var group = app.MapGroup("/api/auth")
             .WithTags("Authentication");
 
-       app.MapGet("/test-localization",
-        (
-            IMessageHelper messageHelper,
-            LocalizationService localizationService
-        ) =>
-        {
-            var committee = localizationService.Get("Committee");
-
-            return Results.Ok(messageHelper.Added(committee));
-        });
+       app.MapGet("/test-section", (ILocalizationService localizer) =>
+{
+    return Results.Ok(new
+    {
+        Culture = CultureInfo.CurrentUICulture.Name,
+        SectionName = localizer.Get("ValidationMessages", "SectionName"),
+        Required = localizer.Get("ValidationMessages", "Required"),
+    });
+});
         group.MapPost("/register", Register)
             .WithName("RegisterUser")
             .WithSummary("Register a new user")

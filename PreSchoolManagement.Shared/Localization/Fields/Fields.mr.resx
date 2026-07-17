@@ -3,36 +3,20 @@
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
+
   <resheader name="version">
     <value>2.0</value>
   </resheader>
+
   <resheader name="reader">
     <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
   </resheader>
+
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
   </resheader>
 
-    <data name="Required">
-      <value>{0} आवश्यक आहे.</value>
-    </data>
-
-    <data name="MaxLength">
-      <value>{0} {1} अक्षरांपेक्षा जास्त नसावे.</value>
-    </data>
-
-    <data name="GreaterThan">
-      <value>{0} हे {1} पेक्षा मोठे असावे.</value>
-    </data>
-
-    <data name="GreaterThanDate">
-      <value>{0} ही {1} नंतरची तारीख असावी.</value>
-    </data>
-    <data name="GreaterThanOrEqual" xml:space="preserve">
-      <value>{0} {1} पेक्षा मोठे किंवा समान असावे.</value>
-    </data>
-
-    <!-- Start : Academic Year and Financial Year Validations -->
+  <!-- Start : Academic Year and Financial Year Fields -->
 
     <data name="AcademicYearId">
       <value>शैक्षणिक वर्ष</value>
@@ -58,7 +42,7 @@
       <value>पर्यंत दिनांक</value>
     </data>
 
-    <!-- Start : Board Master Validation -->
+    <!-- Start : Board Master Fields -->
     <data name="BoardId" xml:space="preserve">
       <value>शैक्षणिक मंडळ</value>
     </data>
@@ -67,7 +51,7 @@
       <value>शैक्षणिक मंडळाचे नाव</value>
     </data>
 
-    <!-- Start : Caste and Category Master Validation -->
+    <!-- Start : Caste and Category Master Fields -->
     <data name="CasteId" xml:space="preserve">
       <value>जात</value>
     </data>
@@ -88,7 +72,7 @@
       <value>प्रवर्गाचे नाव</value>
     </data>
 
-    <!-- Start : Designation Master Validation -->
+    <!-- Start : Designation Master Fields -->
     <data name="DesignationId" xml:space="preserve">
       <value>पद</value>
     </data>
@@ -97,7 +81,7 @@
       <value>पदाचे नाव</value>
     </data>
 
-    <!-- Start : District Master Validation -->
+    <!-- Start : District Master Fields -->
     <data name="DistrictId" xml:space="preserve">
       <value>जिल्हा</value>
     </data>
@@ -110,7 +94,7 @@
       <value>राज्य</value>
     </data>
 
-    <!-- Start : Division Master Validation -->
+    <!-- Start : Division Master Fields -->
     <data name="DivisionId" xml:space="preserve">
       <value>विभाग</value>
     </data>
@@ -119,7 +103,7 @@
       <value>विभागाचे नाव</value>
     </data>
 
-    <!-- Start : EmployeeType Master Validation -->
+    <!-- Start : EmployeeType Master Fields -->
     <data name="EmployeeTypeId" xml:space="preserve">
       <value>कर्मचारी प्रकार</value>
     </data>
@@ -132,7 +116,7 @@
       <value>प्रदर्शन क्रम</value>
     </data>
 
-    <!-- Start : Holiday Master Validation -->
+    <!-- Start : Holiday Master Fields -->
     <data name="HolidayId" xml:space="preserve">
       <value>सुट्टी</value>
     </data>
@@ -141,7 +125,7 @@
       <value>सुट्टीचे नाव</value>
     </data>
 
-    <!-- Start : Role Master Validation -->
+    <!-- Start : Role Master Fields -->
     <data name="RoleId" xml:space="preserve">
       <value>रोल क्र.</value>
     </data>
@@ -150,7 +134,7 @@
       <value>रोल</value>
     </data>
 
-    <!-- Start : Section Master Validation -->
+    <!-- Start : Section Master Fields -->
     <data name="SectionId" xml:space="preserve">
       <value>विभाग क्र.</value>
     </data>
@@ -167,7 +151,7 @@
       <value>इयत्ता</value>
     </data>
 
-    <!-- Start : State Master Validation -->
+    <!-- Start : State Master Fields -->
     <data name="StateId" xml:space="preserve">
       <value>राज्य क्र.</value>
     </data>
@@ -176,7 +160,7 @@
       <value>राज्याचे नाव</value>
     </data>
     
-    <!-- Start : State Master Validation -->
+    <!-- Start : State Master Fields -->
     <data name="MediumId" xml:space="preserve">
       <value>माध्यम क्र.</value>
     </data>
@@ -184,5 +168,5 @@
     <data name="Medium" xml:space="preserve">
       <value>शिक्षण माध्यम</value>
     </data>
-
+    
 </root>

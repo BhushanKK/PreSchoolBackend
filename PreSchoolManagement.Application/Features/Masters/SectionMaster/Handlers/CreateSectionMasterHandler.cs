@@ -25,13 +25,14 @@ public class CreateSectionMasterHandler(
         CreateSectionMasterCommand request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.Role.ToString());
+        localization.Get("Masters", EntityDescription.Section.ToString());
 
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
-            var message = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
+            //var message = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
+            var message=validationResult.Errors[0].ErrorMessage;
 
             return ApiResponse<int>.FailureResponse
             (

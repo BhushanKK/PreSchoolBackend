@@ -38,7 +38,7 @@ public class UpdateCasteMasterCommandValidator
 
         RuleFor(x => x.Caste)
             .Required(localizer, "Caste")
-            .MaxLengthLocalized(localizer, "Caste", 100);
+            .MaxLengthLocalized(localizer, "Caste", 20);
 
         RuleFor(x => x.CategoryId)
             .GreaterThan(0)
