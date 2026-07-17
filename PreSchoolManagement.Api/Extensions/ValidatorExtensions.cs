@@ -28,6 +28,8 @@ public static class ValidatorExtensions
         services.AddValidatorsFromAssemblyContaining<ForgotPasswordValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateCommitteeMasterCommandValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateBoardMasterCommandValidator>();
+        services.AddValidatorsFromAssemblyContaining<CreateMediumMasterCommandValidator>();
+
         return services;
     }
 }
