@@ -178,4 +178,13 @@
     <data name="StateName" xml:space="preserve">
       <value>State Name</value>
     </data>
+    
+    <!-- Start : State Master Validation -->
+    <data name="MediumId" xml:space="preserve">
+      <value>Medium</value>
+    </data>
+
+    <data name="Medium" xml:space="preserve">
+      <value>Medium Name</value>
+    </data>
 </root>

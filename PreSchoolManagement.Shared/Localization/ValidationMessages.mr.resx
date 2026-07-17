@@ -169,11 +169,20 @@
 
     <!-- Start : State Master Validation -->
     <data name="StateId" xml:space="preserve">
-      <value>राज्य</value>
+      <value>राज्य क्र.</value>
     </data>
 
     <data name="StateName" xml:space="preserve">
       <value>राज्याचे नाव</value>
+    </data>
+    
+    <!-- Start : State Master Validation -->
+    <data name="MediumId" xml:space="preserve">
+      <value>माध्यम क्र.</value>
+    </data>
+
+    <data name="Medium" xml:space="preserve">
+      <value>शिक्षण माध्यम</value>
     </data>
 
 </root>

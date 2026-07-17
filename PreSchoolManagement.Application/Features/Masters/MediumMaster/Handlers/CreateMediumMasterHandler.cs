@@ -6,46 +6,56 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class CreateMediumMasterHandler(IMediumMasterService service,
-IValidator<CreateMediumMasterCommand> validator,
-IMapper mapper,ICurrentUserService currentUser)
-:IRequestHandler<CreateMediumMasterCommand,ApiResponse<int>>
+public class CreateMediumMasterHandler(
+    IMediumMasterService service,
+    IValidator<CreateMediumMasterCommand> validator,
+    IMapper mapper, ICurrentUserService currentUser,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
+    : IRequestHandler<CreateMediumMasterCommand, ApiResponse<int>>
 {
-    public async Task<ApiResponse<int>> Handle (CreateMediumMasterCommand request,CancellationToken cancellationToken)
+    public async Task<ApiResponse<int>> Handle(CreateMediumMasterCommand request, CancellationToken cancellationToken)
     {
-        var validationResult = await validator.ValidateAsync(request,cancellationToken);
-        
-        if(!validationResult.IsValid)
+        localization.Get("Masters", EntityDescription.Medium.ToString());
+
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
         {
-            var message = string.Join(" | ",validationResult.Errors.Select(e => e.ErrorMessage));
+            var message = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
 
             return ApiResponse<int>.FailureResponse(message,
             (int)HttpStatusCode.BadRequest);
         }
-        
-        var exists = await service.IsExistsAsync(request.Medium ??  string.Empty,
-        OperationType.Add, null,cancellationToken);
 
-        if(exists)
+        var exists = await service.IsExistsAsync(request.Medium ?? string.Empty,
+        OperationType.Add, null, cancellationToken);
+
+        if (exists)
         {
-            return ApiResponse<int>.FailureResponse(MessageHelper.AlreadyExists(EntityDescription.Medium.ToString()),
-            (int)HttpStatusCode.Conflict);
+            return ApiResponse<int>.FailureResponse
+            (
+                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.Medium.ToString()),
+                (int)HttpStatusCode.Conflict
+            );
         }
 
         var entity = mapper.Map<MediumMaster>(request);
 
-        entity.EntryDate =DateTime.UtcNow;
+        entity.EntryDate = DateTime.UtcNow;
         entity.EntryBy = currentUser.UserId;
 
         await service.AddAsync(entity, cancellationToken);
-        return ApiResponse<int>.SuccessResponse(
+        return ApiResponse<int>.SuccessResponse
+        (
             entity.MediumId,
-            MessageHelper.Added(EntityDescription.Medium.ToString()),
+            messageHelper.AddedEntity("Masters", EntityDescription.Medium.ToString()),
             (int)HttpStatusCode.Created
         );
     }

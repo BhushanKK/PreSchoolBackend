@@ -1,28 +1,33 @@
 using FluentValidation;
-using FluentValidation.Validators;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Shared.Extensions;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Validators;
 
-public class CreateMediumMasterCommandValidator : AbstractValidator<CreateMediumMasterCommand>
+public class CreateMediumMasterCommandValidator
+    : AbstractValidator<CreateMediumMasterCommand>
 {
-    public CreateMediumMasterCommandValidator()
+    public CreateMediumMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.Medium)
-            .NotEmpty().WithMessage("Medium Name is required.")
-            .MaximumLength(100).WithMessage("Medium Name must not exceed 100 characters.");
+            .Required(localizer, "Medium")
+            .MaxLengthLocalized(localizer, "Medium", 20);
     }
 }
 
-public class UpdateMediumMasterCommandValidator : AbstractValidator<UpdateMediumMasterCommand>
+public class UpdateMediumMasterCommandValidator
+    : AbstractValidator<UpdateMediumMasterCommand>
 {
-    public UpdateMediumMasterCommandValidator()
+    public UpdateMediumMasterCommandValidator(
+        ILocalizationService localizer)
     {
-        RuleFor(x =>x.MediumId)
-            .GreaterThan(0).WithMessage("Medium Id is required.");
+        RuleFor(x => x.MediumId)
+            .RequiredId(localizer, "MediumId");
 
-        RuleFor(x =>x.Medium)
-            .NotEmpty().WithMessage("Medium name is required.")
-            .MaximumLength(100).WithMessage("Medium name must not exceed 100 characters.");
+        RuleFor(x => x.Medium)
+            .Required(localizer, "Medium")
+            .MaxLengthLocalized(localizer, "Medium", 20);
     }
 }
