@@ -1,10 +1,6 @@
-
-
-using System.Globalization;
 using MediatR;
 using PreSchoolManagement.Application.Features.Auth.Commands;
 using PreSchoolManagement.Domain.Dtos;
-using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Api.Endpoints;
 
