@@ -6,25 +6,29 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
-
+using PreSchoolManagement.Shared.Localization;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class UpdateStateMasterHandler(
     IStateMasterService service,
-IValidator<UpdateStateMasterCommand> validator,
-IMapper mapper,
-ICurrentUserService currentUser)
+    IValidator<UpdateStateMasterCommand> validator,
+    IMapper mapper,
+    ICurrentUserService currentUser,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<UpdateStateMasterCommand, ApiResponse<int>>
 {
-    public async Task<ApiResponse<int>> Handle(UpdateStateMasterCommand request,CancellationToken cancellationToken)
+    public async Task<ApiResponse<int>> Handle(UpdateStateMasterCommand request, CancellationToken cancellationToken)
     {
-        var validationResult= await validator.ValidateAsync(request, cancellationToken);
+        localization.Get("Masters", EntityDescription.State.ToString());
 
-        if(!validationResult.IsValid)
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
         {
-            var message = string.Join("|",validationResult.Errors.Select(e => e.ErrorMessage));
+            var message = string.Join("|", validationResult.Errors.Select(e => e.ErrorMessage));
 
             return ApiResponse<int>.FailureResponse
             (
@@ -33,15 +37,15 @@ ICurrentUserService currentUser)
             );
         }
 
-        var existing = await service.GetByIdAsync(request.StateId,cancellationToken);
+        var existing = await service.GetByIdAsync(request.StateId, cancellationToken);
 
-        if(existing is null)
+        if (existing is null)
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.State.ToString()),
+                messageHelper.NotFoundEntity("Masters", EntityDescription.State.ToString()),
                 (int)HttpStatusCode.NotFound
-            );      
+            );
         }
 
         var exists = await service.IsExistsAsync
@@ -56,7 +60,7 @@ ICurrentUserService currentUser)
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.AlreadyExists(EntityDescription.State.ToString()),
+                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.State.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -70,8 +74,8 @@ ICurrentUserService currentUser)
         return ApiResponse<int>.SuccessResponse
         (
             entity.StateId,
-            MessageHelper.Updated(EntityDescription.State.ToString()),
+            messageHelper.UpdatedEntity("Masters", EntityDescription.State.ToString()),
             (int)HttpStatusCode.OK
         );
-    }   
+    }
 }

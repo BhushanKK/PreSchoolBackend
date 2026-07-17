@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+
+    <data name="Required">
+      <value>{0} आवश्यक आहे.</value>
+    </data>
+
+    <data name="MaxLength">
+      <value>{0} {1} अक्षरांपेक्षा जास्त नसावे.</value>
+    </data>
+
+    <data name="GreaterThan">
+      <value>{0} हे {1} पेक्षा मोठे असावे.</value>
+    </data>
+
+    <data name="GreaterThanDate">
+      <value>{0} ही {1} नंतरची तारीख असावी.</value>
+    </data>
+    <data name="GreaterThanOrEqual" xml:space="preserve">
+      <value>{0} {1} पेक्षा मोठे किंवा समान असावे.</value>
+    </data>
+
+    <!-- Start : Academic Year and Financial Year Validations -->
+
+    <data name="AcademicYearId">
+      <value>शैक्षणिक वर्ष</value>
+    </data>
+
+    <data name="AcademicYearName">
+      <value>शैक्षणिक वर्षाचे नाव</value>
+    </data>
+
+    <data name="FinancialYearId">
+      <value>आर्थिक वर्ष</value>
+    </data>
+
+    <data name="FinancialYearName">
+      <value>आर्थिक वर्षाचे नाव</value>
+    </data>
+
+    <data name="FromDate">
+      <value>पासून दिनांक</value>
+    </data>
+
+    <data name="ToDate">
+      <value>पर्यंत दिनांक</value>
+    </data>
+
+    <!-- Start : Board Master Validation -->
+    <data name="BoardId" xml:space="preserve">
+      <value>शैक्षणिक मंडळ</value>
+    </data>
+
+    <data name="BoardName" xml:space="preserve">
+      <value>शैक्षणिक मंडळाचे नाव</value>
+    </data>
+
+    <!-- Start : Caste and Category Master Validation -->
+    <data name="CasteId" xml:space="preserve">
+      <value>जात</value>
+    </data>
+
+    <data name="Caste" xml:space="preserve">
+      <value>जातीचे नाव</value>
+    </data>
+
+    <data name="Category" xml:space="preserve">
+      <value>प्रवर्ग</value>
+    </data>
+
+    <data name="CategoryId" xml:space="preserve">
+      <value>प्रवर्ग</value>
+    </data>
+
+    <data name="CategoryName" xml:space="preserve">
+      <value>प्रवर्गाचे नाव</value>
+    </data>
+
+    <!-- Start : Designation Master Validation -->
+    <data name="DesignationId" xml:space="preserve">
+      <value>पद</value>
+    </data>
+
+    <data name="Designation" xml:space="preserve">
+      <value>पदाचे नाव</value>
+    </data>
+
+    <!-- Start : District Master Validation -->
+    <data name="DistrictId" xml:space="preserve">
+      <value>जिल्हा</value>
+    </data>
+
+    <data name="DistrictName" xml:space="preserve">
+      <value>जिल्ह्याचे नाव</value>
+    </data>
+
+    <data name="State" xml:space="preserve">
+      <value>राज्य</value>
+    </data>
+
+    <!-- Start : Division Master Validation -->
+    <data name="DivisionId" xml:space="preserve">
+      <value>विभाग</value>
+    </data>
+
+    <data name="DivisionName" xml:space="preserve">
+      <value>विभागाचे नाव</value>
+    </data>
+
+    <!-- Start : EmployeeType Master Validation -->
+    <data name="EmployeeTypeId" xml:space="preserve">
+      <value>कर्मचारी प्रकार</value>
+    </data>
+
+    <data name="EmployeeTypeName" xml:space="preserve">
+      <value>कर्मचारी प्रकाराचे नाव</value>
+    </data>
+
+    <data name="DisplayOrder" xml:space="preserve">
+      <value>प्रदर्शन क्रम</value>
+    </data>
+
+    <!-- Start : Holiday Master Validation -->
+    <data name="HolidayId" xml:space="preserve">
+      <value>सुट्टी</value>
+    </data>
+
+    <data name="HolidayName" xml:space="preserve">
+      <value>सुट्टीचे नाव</value>
+    </data>
+
+    <!-- Start : Role Master Validation -->
+    <data name="RoleId" xml:space="preserve">
+      <value>रोल क्र.</value>
+    </data>
+
+    <data name="RoleName" xml:space="preserve">
+      <value>रोल</value>
+    </data>
+
+    <!-- Start : Section Master Validation -->
+    <data name="SectionId" xml:space="preserve">
+      <value>विभाग क्र.</value>
+    </data>
+
+    <data name="SectionName" xml:space="preserve">
+      <value>विभाग</value>
+    </data>
+
+    <data name="StandardId" xml:space="preserve">
+      <value>इयत्ता क्र.</value>
+    </data>
+
+    <data name="StandardName" xml:space="preserve">
+      <value>इयत्ता</value>
+    </data>
+
+    <!-- Start : State Master Validation -->
+    <data name="StateId" xml:space="preserve">
+      <value>राज्य</value>
+    </data>
+
+    <data name="StateName" xml:space="preserve">
+      <value>राज्याचे नाव</value>
+    </data>
+
+</root>

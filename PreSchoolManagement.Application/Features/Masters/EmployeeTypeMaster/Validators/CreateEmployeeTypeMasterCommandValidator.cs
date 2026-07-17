@@ -1,33 +1,51 @@
 using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Shared.Extensions;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Validators;
 
-public class CreateEmployeeTypeMasterCommandValidator :AbstractValidator<CreateEmployeeTypeMasterCommand>
+public class CreateEmployeeTypeMasterCommandValidator
+    : AbstractValidator<CreateEmployeeTypeMasterCommand>
 {
-    public CreateEmployeeTypeMasterCommandValidator()
+    public CreateEmployeeTypeMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.EmployeeTypeName)
-            .NotEmpty().WithMessage("Employee Type name is required.")
-            .MaximumLength(100).WithMessage("Employee Type name must not exceed 100 characters.");
+            .Required(localizer, "EmployeeTypeName")
+            .MaxLengthLocalized(localizer, "EmployeeTypeName", 100);
 
         RuleFor(x => x.DisplayOrder)
-            .GreaterThanOrEqualTo(0).WithMessage("Display Order must be greater than or equal to 0.");
+            .GreaterThanOrEqualTo(0)
+            .WithMessage(
+                localizer.Get(
+                    "ValidationMessages",
+                    "GreaterThanOrEqual",
+                    localizer.Get("ValidationMessages", "DisplayOrder"),
+                    "0"));
     }
 }
 
-public class UpdateEmployeeTypeMasterCommandValidator : AbstractValidator<UpdateEmployeeTypeMasterCommand>
+public class UpdateEmployeeTypeMasterCommandValidator
+    : AbstractValidator<UpdateEmployeeTypeMasterCommand>
 {
-    public UpdateEmployeeTypeMasterCommandValidator()
+    public UpdateEmployeeTypeMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.EmployeeTypeId)
-            .GreaterThan(0).WithMessage("Employee Type Id is required.");
+            .RequiredId(localizer, "EmployeeTypeId");
 
         RuleFor(x => x.EmployeeTypeName)
-            .NotEmpty().WithMessage("Employee Type name is required.")
-            .MaximumLength(100).WithMessage("Employee Type name must not exceed 100 characters.");
+            .Required(localizer, "EmployeeTypeName")
+            .MaxLengthLocalized(localizer, "EmployeeTypeName", 100);
 
         RuleFor(x => x.DisplayOrder)
-            .GreaterThanOrEqualTo(0).WithMessage("Display Order must be greater than or equal to 0.");
+            .GreaterThanOrEqualTo(0)
+            .WithMessage(
+                localizer.Get(
+                    "ValidationMessages",
+                    "GreaterThanOrEqual",
+                    localizer.Get("ValidationMessages", "DisplayOrder"),
+                    "0"));
     }
 }

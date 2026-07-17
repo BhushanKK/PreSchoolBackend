@@ -1,22 +1,28 @@
 using MediatR;
 using System.Net;
-using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Handlers;
 
-public class DeleteReligionMasterHandler(IReligionMasterService service) 
+public class DeleteReligionMasterHandler(
+    IReligionMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<DeleteReligionMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(DeleteReligionMasterCommand request, CancellationToken cancellationToken)
     {
+        localization.Get("Masters", EntityDescription.Religion.ToString());
+
         if (request.ReligionId <= 0)
             return ApiResponse<int>.FailureResponse
             (
-                "Invalid religion id.", 
+                messageHelper.InvalidIdEntity("Masters", EntityDescription.Religion.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
 
@@ -25,7 +31,7 @@ public class DeleteReligionMasterHandler(IReligionMasterService service)
         if (existing is null)
             return ApiResponse<int>.FailureResponse
             (
-                "Religion not found.", 
+                "Religion not found.",
                 (int)HttpStatusCode.NotFound
             );
 
@@ -33,8 +39,8 @@ public class DeleteReligionMasterHandler(IReligionMasterService service)
 
         return ApiResponse<int>.SuccessResponse
         (
-            request.ReligionId, 
-            MessageHelper.Deleted(EntityDescription.Religion.ToString()), 
+            request.ReligionId,
+            messageHelper.DeletedEntity("Masters", EntityDescription.Religion.ToString()),
             (int)HttpStatusCode.OK
         );
     }

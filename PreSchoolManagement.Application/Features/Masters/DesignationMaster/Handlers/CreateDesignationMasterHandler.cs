@@ -2,12 +2,13 @@ using MediatR;
 using AutoMapper;
 using System.Net;
 using FluentValidation;
-using PreSchoolManagement.Shared.Utils;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
@@ -15,13 +16,17 @@ public class CreateDesignationMasterHanler(
     IDesignationMasterService service,
     IValidator<CreateDesignationMasterCommand> validator,
     IMapper mapper,
-    ICurrentUserService currentUser)
+    ICurrentUserService currentUser,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<CreateDesignationMasterCommand,ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
         CreateDesignationMasterCommand request,
         CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.designation.ToString());
+
         var validationResult = await validator.ValidateAsync(request,cancellationToken);
 
         if(!validationResult.IsValid)
@@ -42,10 +47,11 @@ public class CreateDesignationMasterHanler(
             
         if(exists)
         {
-            return ApiResponse<int>.FailureResponse(
-                MessageHelper.AlreadyExists(EntityDescription.designation.ToString()),
-                (int)HttpStatusCode.Conflict);
-            
+            return ApiResponse<int>.FailureResponse
+            (
+                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.designation.ToString()),
+                (int)HttpStatusCode.Conflict
+            );            
         }
         var entity = mapper.Map<DesignationMaster>(request);
 
@@ -54,10 +60,11 @@ public class CreateDesignationMasterHanler(
 
         await service.AddAsync(entity,cancellationToken);
 
-        return ApiResponse<int>.SuccessResponse(
+        return ApiResponse<int>.SuccessResponse
+        (
             entity.DesignationId,
-            MessageHelper.Added(EntityDescription.designation.ToString()),
-            (int)HttpStatusCode.Created);
-        
+            messageHelper.AddedEntity("Masters",EntityDescription.designation.ToString()),
+            (int)HttpStatusCode.Created
+        );
     }
 }

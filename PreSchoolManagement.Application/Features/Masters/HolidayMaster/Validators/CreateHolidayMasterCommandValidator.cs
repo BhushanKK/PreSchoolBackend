@@ -1,27 +1,33 @@
 using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Shared.Extensions;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Validators;
 
-public class CreateHolidayMasterCommandValidator : AbstractValidator<CreateHolidayMasterCommand>
+public class CreateHolidayMasterCommandValidator
+    : AbstractValidator<CreateHolidayMasterCommand>
 {
-    public CreateHolidayMasterCommandValidator()
+    public CreateHolidayMasterCommandValidator(
+        ILocalizationService localizer)
     {
-        RuleFor(x => x.HolidayName)
-            .NotEmpty().WithMessage("Holiday name is required.")
-            .MaximumLength(100).WithMessage("Holiday name must not exceed 100 characters.");
+        RuleFor(x => x.HolidayName!)
+            .Required(localizer, "HolidayName")
+            .MaxLengthLocalized(localizer, "HolidayName", 100);
     }
 }
 
-public class UpdateHolidayMasterCommandValidator : AbstractValidator<UpdateHolidayMasterCommand>
+public class UpdateHolidayMasterCommandValidator
+    : AbstractValidator<UpdateHolidayMasterCommand>
 {
-    public UpdateHolidayMasterCommandValidator()
+    public UpdateHolidayMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.HolidayId)
-            .GreaterThan(0).WithMessage("HolidayID is required.");
+            .RequiredId(localizer, "HolidayId");
 
-        RuleFor(x => x.HolidayName)
-            .NotEmpty().WithMessage("Holiday name is required.")
-            .MaximumLength(100).WithMessage("Holiday name must not exceed 100 characters.");
+        RuleFor(x => x.HolidayName!)
+            .Required(localizer, "HolidayName")
+            .MaxLengthLocalized(localizer, "HolidayName", 100);
     }
 }

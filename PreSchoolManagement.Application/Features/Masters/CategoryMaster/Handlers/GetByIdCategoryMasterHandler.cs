@@ -4,12 +4,15 @@ using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
 using SchoolManagement.Domain.Entities;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
-
-public class GetByIdCategoryMasterHandler(ICategoryMasterService service)
+public class GetByIdCategoryMasterHandler(
+    ICategoryMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<GetByIdCategoryMasterQuery, ApiResponse<CategoryMaster?>>
 {
     public async Task<ApiResponse<CategoryMaster?>> Handle(
@@ -20,7 +23,7 @@ public class GetByIdCategoryMasterHandler(ICategoryMasterService service)
         {
             return ApiResponse<CategoryMaster?>.FailureResponse
             (
-                MessageHelper.InvalidId(EntityDescription.Category.ToString()),
+                messageHelper.InvalidIdEntity("Masters",EntityDescription.Category.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -31,7 +34,7 @@ public class GetByIdCategoryMasterHandler(ICategoryMasterService service)
         {
             return ApiResponse<CategoryMaster?>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.Category.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.Category.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -39,7 +42,7 @@ public class GetByIdCategoryMasterHandler(ICategoryMasterService service)
         return ApiResponse<CategoryMaster?>.SuccessResponse
         (
             data,
-            MessageHelper.Retrieved(EntityDescription.Category.ToString()),
+            messageHelper.RetrievedEntity("Masters",EntityDescription.Category.ToString()),
             (int)HttpStatusCode.OK
         );
     }

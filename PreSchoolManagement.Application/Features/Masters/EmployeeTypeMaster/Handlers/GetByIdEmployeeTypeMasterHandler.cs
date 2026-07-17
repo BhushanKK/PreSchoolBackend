@@ -5,22 +5,27 @@ using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Localization;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetByIdEmployeeTypeMasterHandler(IEmployeeTypeMasterService service)
+public class GetByIdEmployeeTypeMasterHandler(
+    IEmployeeTypeMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<GetByIdEmployeeTypeMasterQuery, ApiResponse<EmployeeTypeMaster?>>
 {
     public async Task<ApiResponse<EmployeeTypeMaster?>> Handle(GetByIdEmployeeTypeMasterQuery request,
         CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.EmployeeType.ToString());
+        
         if (request.EmployeeTypeId <= 0)
         {
             return ApiResponse<EmployeeTypeMaster?>.FailureResponse
             (
-                MessageHelper.InvalidId(
-                EntityDescription.EmployeeType.ToString()),
+                messageHelper.InvalidId(EntityDescription.EmployeeType.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -31,8 +36,7 @@ public class GetByIdEmployeeTypeMasterHandler(IEmployeeTypeMasterService service
         {
             return ApiResponse<EmployeeTypeMaster?>.FailureResponse
             (
-                MessageHelper.NotFound(
-                EntityDescription.EmployeeType.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.EmployeeType.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -40,8 +44,7 @@ public class GetByIdEmployeeTypeMasterHandler(IEmployeeTypeMasterService service
         return ApiResponse<EmployeeTypeMaster?>.SuccessResponse
         (
             data,
-            MessageHelper.Retrieved(
-            EntityDescription.EmployeeType.ToString()),
+            messageHelper.RetrievedEntity("Masters",EntityDescription.EmployeeType.ToString()),
             (int)HttpStatusCode.OK
         );
     }

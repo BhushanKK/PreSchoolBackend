@@ -4,23 +4,29 @@ using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
 using SchoolManagement.Domain.Entities;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetByIdStateMasterHandler(IStateMasterService service)
+public class GetByIdStateMasterHandler(
+    IStateMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<GetByIdStateMasterQuery, ApiResponse<StateMaster?>>
 {
     public async Task<ApiResponse<StateMaster?>> Handle(
         GetByIdStateMasterQuery request,
         CancellationToken cancellationToken)
     {
+        localization.Get("Masters", EntityDescription.State.ToString());
+
         if (request.StateId <= 0)
         {
             return ApiResponse<StateMaster?>.FailureResponse
             (
-                MessageHelper.InvalidId(EntityDescription.State.ToString()),
+                messageHelper.InvalidIdEntity("Masters", EntityDescription.State.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -31,7 +37,7 @@ public class GetByIdStateMasterHandler(IStateMasterService service)
         {
             return ApiResponse<StateMaster?>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.State.ToString()),
+                messageHelper.NotFoundEntity("Masters", EntityDescription.State.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -39,7 +45,7 @@ public class GetByIdStateMasterHandler(IStateMasterService service)
         return ApiResponse<StateMaster?>.SuccessResponse
         (
             data,
-            MessageHelper.Retrieved(EntityDescription.State.ToString()),
+            messageHelper.RetrievedEntity("Masters", EntityDescription.State.ToString()),
             (int)HttpStatusCode.OK
         );
     }

@@ -1,24 +1,30 @@
 using MediatR;
 using System.Net;
-using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetByIdDistrictMasterHandler(IDistrictMasterService service)
+public class GetByIdDistrictMasterHandler(
+    IDistrictMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     :IRequestHandler<GetByIdDistrictMasterQuery, ApiResponse<DistrictMaster?>>
 {
     public async Task<ApiResponse<DistrictMaster?>> Handle(GetByIdDistrictMasterQuery request, CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.District.ToString());
+
         if(request.DistrictId <= 0)
         {
             return ApiResponse<DistrictMaster?>.FailureResponse
             (
-                MessageHelper.InvalidId(EntityDescription.District.ToString()),
+                messageHelper.InvalidIdEntity("Masters",EntityDescription.District.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -29,7 +35,7 @@ public class GetByIdDistrictMasterHandler(IDistrictMasterService service)
         {
             return ApiResponse<DistrictMaster?>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.District.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.District.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -37,7 +43,7 @@ public class GetByIdDistrictMasterHandler(IDistrictMasterService service)
         return ApiResponse<DistrictMaster?>.SuccessResponse
         (
             data,
-            MessageHelper.Retrieved(EntityDescription.District.ToString()),
+            messageHelper.RetrievedEntity("Masters",EntityDescription.District.ToString()),
             (int)HttpStatusCode.OK
         );
     }

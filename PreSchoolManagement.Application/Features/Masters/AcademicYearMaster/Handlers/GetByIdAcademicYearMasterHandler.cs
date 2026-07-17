@@ -1,23 +1,30 @@
 using MediatR;
 using System.Net;
-using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetByIdAcademicYearMasterHandler(IAcademicYearMasterService service) : IRequestHandler<GetByIdAcademicYearMasterQuery, ApiResponse<AcademicYearMaster?>>
+public class GetByIdAcademicYearMasterHandler(
+    IAcademicYearMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization) 
+    : IRequestHandler<GetByIdAcademicYearMasterQuery, ApiResponse<AcademicYearMaster?>>
 {
     public async Task<ApiResponse<AcademicYearMaster?>> Handle(GetByIdAcademicYearMasterQuery request, CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.AcademicYear.ToString());
+        
         if (request.AcademicYearId <= 0)
         {
             return ApiResponse<AcademicYearMaster?>.FailureResponse
             (
-                MessageHelper.InvalidId(EntityDescription.AcademicYear.ToString()), 
+                messageHelper.InvalidIdEntity("Masters",EntityDescription.AcademicYear.ToString()), 
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -28,7 +35,7 @@ public class GetByIdAcademicYearMasterHandler(IAcademicYearMasterService service
         {
             return ApiResponse<AcademicYearMaster?>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.AcademicYear.ToString()), 
+                messageHelper.NotFoundEntity("Masters",EntityDescription.AcademicYear.ToString()), 
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -36,7 +43,7 @@ public class GetByIdAcademicYearMasterHandler(IAcademicYearMasterService service
         return ApiResponse<AcademicYearMaster?>.SuccessResponse
         (
             data, 
-            MessageHelper.Retrieved(EntityDescription.AcademicYear.ToString()), 
+            messageHelper.RetrievedEntity("Masters",EntityDescription.AcademicYear.ToString()), 
             (int)HttpStatusCode.OK
         );
     }

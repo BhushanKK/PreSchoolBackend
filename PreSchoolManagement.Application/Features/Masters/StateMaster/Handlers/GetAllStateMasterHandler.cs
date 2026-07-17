@@ -4,17 +4,23 @@ using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetAllStateMasterHandler(IStateMasterService service)
+public class GetAllStateMasterHandler(
+    IStateMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     :IRequestHandler<GetAllStateMasterQuery, ApiResponse<List<StateMaster>>>
 {
     public async Task<ApiResponse<List<StateMaster>>> Handle(
         GetAllStateMasterQuery request, CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.State.ToString());
+
         var data = await service.GetAllAsync(request.filter,cancellationToken);
 
         if(data != null)
@@ -22,7 +28,7 @@ public class GetAllStateMasterHandler(IStateMasterService service)
             return ApiResponse<List<StateMaster>>.SuccessResponse
             (
                 data,
-                MessageHelper.Retrieved(EntityDescription.State.ToString()),
+                messageHelper.RetrievedEntity("Masters",EntityDescription.State.ToString()),
                 (int)HttpStatusCode.OK
             );
         }
@@ -30,7 +36,7 @@ public class GetAllStateMasterHandler(IStateMasterService service)
         {
             return ApiResponse<List<StateMaster>>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.State.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.State.ToString()),
                 (int)HttpStatusCode.OK
             );
         }

@@ -5,18 +5,26 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
 using FluentValidation;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class UpdateDistrictMasterHandler(IDistrictMasterService service,
-    IValidator<UpdateDistrictMasterCommand> validator, IMapper mapper,
-    ICurrentUserService currentUser)
+public class UpdateDistrictMasterHandler(
+    IDistrictMasterService service,
+    IValidator<UpdateDistrictMasterCommand> validator, 
+    IMapper mapper,
+    ICurrentUserService currentUser,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<UpdateDistrictMasterCommand, ApiResponse<int>>
 {   
-    public async Task<ApiResponse<int>> Handle(UpdateDistrictMasterCommand request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<int>> Handle(UpdateDistrictMasterCommand request, 
+        CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.District.ToString());
+
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if(!validationResult.IsValid)
@@ -34,7 +42,7 @@ public class UpdateDistrictMasterHandler(IDistrictMasterService service,
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.District.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.District.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -50,7 +58,7 @@ public class UpdateDistrictMasterHandler(IDistrictMasterService service,
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.AlreadyExists(EntityDescription.District.ToString()),
+                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.District.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -64,7 +72,7 @@ public class UpdateDistrictMasterHandler(IDistrictMasterService service,
         return ApiResponse<int>.SuccessResponse
         (
             entity.DistrictId,
-            MessageHelper.Updated(EntityDescription.District.ToString()),
+            messageHelper.UpdatedEntity("Masters",EntityDescription.District.ToString()),
             (int)HttpStatusCode.OK
 
         );

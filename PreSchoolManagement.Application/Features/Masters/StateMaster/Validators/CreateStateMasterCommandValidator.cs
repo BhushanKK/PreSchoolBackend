@@ -1,27 +1,33 @@
 using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Shared.Extensions;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Validators;
 
-public class CreateStateMasterCommandValidator : AbstractValidator<CreateStateMasterCommand>
+public class CreateStateMasterCommandValidator
+    : AbstractValidator<CreateStateMasterCommand>
 {
-    public CreateStateMasterCommandValidator()
+    public CreateStateMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.StateName)
-            .NotEmpty().WithMessage("State name is required.")
-            .MaximumLength(50).WithMessage("State name must not exceed 50 characters");
+            .Required(localizer, "StateName")
+            .MaxLengthLocalized(localizer, "StateName", 20);
     }
 }
 
-public class UpdateStateMasterCommandValidator : AbstractValidator<UpdateStateMasterCommand>
+public class UpdateStateMasterCommandValidator
+    : AbstractValidator<UpdateStateMasterCommand>
 {
-    public UpdateStateMasterCommandValidator()
+    public UpdateStateMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.StateId)
-            .GreaterThan(0).WithMessage("State Id required.");
+            .RequiredId(localizer, "StateId");
 
         RuleFor(x => x.StateName)
-            .NotEmpty().WithMessage("State name is required.")
-            .MaximumLength(50).WithMessage("State name must not exceed 50 characters.");
+            .Required(localizer, "StateName")
+            .MaxLengthLocalized(localizer, "StateName", 20);
     }
 }

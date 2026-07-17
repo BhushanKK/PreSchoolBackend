@@ -2,42 +2,51 @@ using MediatR;
 using AutoMapper;
 using System.Net;
 using FluentValidation;
-using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class UpdateDivisionMasterHandler(
     IDivisionMasterService service,
     IValidator<UpdateDivisionMasterCommand> validator,
-    IMapper mapper)
+    IMapper mapper,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<UpdateDivisionMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
         UpdateDivisionMasterCommand request,
         CancellationToken cancellationToken)
     {
+        localization.Get("Masters", EntityDescription.Division.ToString());
+
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
             var message = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
 
-            return ApiResponse<int>.FailureResponse(
+            return ApiResponse<int>.FailureResponse
+            (
                 message,
-                (int)HttpStatusCode.BadRequest);
+                (int)HttpStatusCode.BadRequest
+            );
         }
 
         var entity = await service.GetByIdAsync(request.DivisionId, cancellationToken);
 
         if (entity is null)
         {
-            return ApiResponse<int>.FailureResponse(
-                MessageHelper.NotFound(EntityDescription.Division.ToString()),
-                (int)HttpStatusCode.NotFound);
+            return ApiResponse<int>.FailureResponse
+            (
+                messageHelper.NotFoundEntity("Masters", EntityDescription.Division.ToString()),
+                (int)HttpStatusCode.NotFound
+            );
         }
 
         var exists = await service.IsExistsAsync(
@@ -48,18 +57,22 @@ public class UpdateDivisionMasterHandler(
 
         if (exists)
         {
-            return ApiResponse<int>.FailureResponse(
-                MessageHelper.AlreadyExists(EntityDescription.Division.ToString()),
-                (int)HttpStatusCode.Conflict);
+            return ApiResponse<int>.FailureResponse
+            (
+                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.Division.ToString()),
+                (int)HttpStatusCode.Conflict
+            );
         }
 
         mapper.Map(request, entity);
 
         await service.UpdateAsync(entity, cancellationToken);
 
-        return ApiResponse<int>.SuccessResponse(
+        return ApiResponse<int>.SuccessResponse
+        (
             entity.DivisionId,
-            MessageHelper.Updated(EntityDescription.Division.ToString()),
-            (int)HttpStatusCode.OK);
+            messageHelper.UpdatedEntity("Masters", EntityDescription.Division.ToString()),
+            (int)HttpStatusCode.OK
+        );
     }
 }

@@ -1,26 +1,33 @@
 using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Shared.Extensions;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Validators;
-public class CreateBoardMasterCommandValidator : AbstractValidator<CreateBoardMasterCommand>
+
+public class CreateBoardMasterCommandValidator
+    : AbstractValidator<CreateBoardMasterCommand>
 {
-    public CreateBoardMasterCommandValidator()
+    public CreateBoardMasterCommandValidator(
+        ILocalizationService localizer)
     {
-        RuleFor(x =>x.BoardName)
-            .NotEmpty().WithMessage("Board Name is required.")
-            .MaximumLength(100).WithMessage("Board Name must not exceed 100 characters.");
+        RuleFor(x => x.BoardName)
+            .Required(localizer, "BoardName")
+            .MaxLengthLocalized(localizer, "BoardName", 100);
     }
 }
 
-public class UpdateBoardMasterCommandValidator : AbstractValidator<UpdateBoardMasterCommand>
+public class UpdateBoardMasterCommandValidator
+    : AbstractValidator<UpdateBoardMasterCommand>
 {
-    public UpdateBoardMasterCommandValidator()
+    public UpdateBoardMasterCommandValidator(
+        ILocalizationService localizer)
     {
-        RuleFor(x =>x.BoardId)
-            .GreaterThan(0).WithMessage("Board Id id required.");
+        RuleFor(x => x.BoardId)
+            .RequiredId(localizer, "BoardId");
 
         RuleFor(x => x.BoardName)
-            .NotEmpty().WithMessage("Board Name is required.")
-            .MaximumLength(100).WithMessage("Board Name must not exceed 100 characters.");
+            .Required(localizer, "BoardName")
+            .MaxLengthLocalized(localizer, "BoardName", 100);
     }
 }

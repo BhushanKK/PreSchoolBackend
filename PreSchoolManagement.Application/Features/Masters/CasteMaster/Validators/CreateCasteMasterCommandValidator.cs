@@ -1,35 +1,53 @@
 using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Shared.Extensions;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Validators;
 
-public class CreateCasteMasterCommandValidator : AbstractValidator<CreateCasteMasterCommand>
+public class CreateCasteMasterCommandValidator
+    : AbstractValidator<CreateCasteMasterCommand>
 {
-    public CreateCasteMasterCommandValidator()
+    public CreateCasteMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.Caste)
-            .NotEmpty().WithMessage("Caste name is required.")
-            .MaximumLength(100).WithMessage("Caste name must not exceed 100 characters.");
+            .Required(localizer, "Caste")
+            .MaxLengthLocalized(localizer, "Caste", 100);
 
         RuleFor(x => x.CategoryId)
-            .GreaterThan(0).When(x => x.CategoryId.HasValue)
-            .WithMessage("CategoryId must be greater than 0 when provided.");
+            .GreaterThan(0)
+            .When(x => x.CategoryId.HasValue)
+            .WithMessage(
+                localizer.Get(
+                    "ValidationMessages",
+                    "GreaterThan",
+                    localizer.Get("ValidationMessages", "Category"),
+                    "0"));
     }
 }
 
-public class UpdateCasteMasterCommandValidator : AbstractValidator<UpdateCasteMasterCommand>
+public class UpdateCasteMasterCommandValidator
+    : AbstractValidator<UpdateCasteMasterCommand>
 {
-    public UpdateCasteMasterCommandValidator()
+    public UpdateCasteMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.CasteId)
-            .GreaterThan(0).WithMessage("CasteId is required.");
+            .RequiredId(localizer, "CasteId");
 
         RuleFor(x => x.Caste)
-            .NotEmpty().WithMessage("Caste name is required.")
-            .MaximumLength(100).WithMessage("Caste name must not exceed 100 characters.");
+            .Required(localizer, "Caste")
+            .MaxLengthLocalized(localizer, "Caste", 100);
 
         RuleFor(x => x.CategoryId)
-            .GreaterThan(0).When(x => x.CategoryId.HasValue)
-            .WithMessage("CategoryId must be greater than 0 when provided.");
+            .GreaterThan(0)
+            .When(x => x.CategoryId.HasValue)
+            .WithMessage(
+                localizer.Get(
+                    "ValidationMessages",
+                    "GreaterThan",
+                    localizer.Get("ValidationMessages", "Category"),
+                    "0"));
     }
 }

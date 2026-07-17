@@ -5,22 +5,27 @@ using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetByIdDesignationMasterHandler(IDesignationMasterService service)
+public class GetByIdDesignationMasterHandler(
+    IDesignationMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<GetByIdDesignationMasterQuery, ApiResponse<DesignationMaster?>>
 {
     public async Task<ApiResponse<DesignationMaster?>> Handle(GetByIdDesignationMasterQuery request,
         CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.designation.ToString());
+
         if (request.DesignationId <= 0)
         {
             return ApiResponse<DesignationMaster?>.FailureResponse
             (
-                MessageHelper.InvalidId(
-                EntityDescription.designation.ToString()),
+                messageHelper.InvalidIdEntity("Masters",EntityDescription.designation.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -31,8 +36,7 @@ public class GetByIdDesignationMasterHandler(IDesignationMasterService service)
         {
             return ApiResponse<DesignationMaster?>.FailureResponse
             (
-                MessageHelper.NotFound(
-                EntityDescription.designation.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.designation.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -41,8 +45,7 @@ public class GetByIdDesignationMasterHandler(IDesignationMasterService service)
         return ApiResponse<DesignationMaster?>.SuccessResponse
         (
             data,
-            MessageHelper.Retrieved(
-                EntityDescription.designation.ToString()),
+            messageHelper.RetrievedEntity("Masters",EntityDescription.designation.ToString()),
             (int)HttpStatusCode.OK
         );
     }

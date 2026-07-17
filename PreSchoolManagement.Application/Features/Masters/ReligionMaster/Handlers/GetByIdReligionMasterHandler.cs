@@ -1,23 +1,29 @@
 using MediatR;
 using System.Net;
-using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Localization;
+using PreSchoolManagement.Shared.Common;
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetByIdReligionMasterHandler(IReligionMasterService service) 
+public class GetByIdReligionMasterHandler(
+    IReligionMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<GetByIdReligionMasterQuery, ApiResponse<ReligionMaster?>>
 {
     public async Task<ApiResponse<ReligionMaster?>> Handle(GetByIdReligionMasterQuery request, CancellationToken cancellationToken)
     {
+        localization.Get("Masters", EntityDescription.Religion.ToString());
+
         if (request.ReligionId <= 0)
         {
             return ApiResponse<ReligionMaster?>.FailureResponse
             (
-                MessageHelper.InvalidId(EntityDescription.Religion.ToString()), 
+                messageHelper.InvalidIdEntity("Masters", EntityDescription.Religion.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -28,7 +34,7 @@ public class GetByIdReligionMasterHandler(IReligionMasterService service)
         {
             return ApiResponse<ReligionMaster?>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.Religion.ToString()), 
+                messageHelper.NotFoundEntity("Masters", EntityDescription.Religion.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -36,7 +42,7 @@ public class GetByIdReligionMasterHandler(IReligionMasterService service)
         return ApiResponse<ReligionMaster?>.SuccessResponse
         (
             data, 
-            MessageHelper.Retrieved(EntityDescription.Religion.ToString()), 
+            messageHelper.RetrievedEntity("Masters", EntityDescription.Religion.ToString()),
             (int)HttpStatusCode.OK
         );
     }

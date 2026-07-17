@@ -1,4 +1,6 @@
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 using SchoolManagement.Domain;
 
 namespace PreSchoolManagement.Api.Extensions;
@@ -10,7 +12,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<AuditContext>();
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
-        
+        services.AddSingleton<ILocalizationService,LocalizationService>();
+        services.AddScoped<IMessageHelper, MessageHelper>();
         return services;
     }
 }

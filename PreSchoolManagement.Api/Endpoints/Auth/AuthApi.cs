@@ -3,6 +3,8 @@
 using MediatR;
 using PreSchoolManagement.Application.Features.Auth.Commands;
 using PreSchoolManagement.Domain.Dtos;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Api.Endpoints;
 
@@ -13,6 +15,16 @@ public static class AuthApi
         var group = app.MapGroup("/api/auth")
             .WithTags("Authentication");
 
+       app.MapGet("/test-localization",
+        (
+            IMessageHelper messageHelper,
+            LocalizationService localizationService
+        ) =>
+        {
+            var committee = localizationService.Get("Committee");
+
+            return Results.Ok(messageHelper.Added(committee));
+        });
         group.MapPost("/register", Register)
             .WithName("RegisterUser")
             .WithSummary("Register a new user")

@@ -1,47 +1,54 @@
 using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Shared.Extensions;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Validators;
-
-public class CreateFinancialYearMasterCommandValidator : AbstractValidator<CreateFinancialYearMasterCommand>
+public class CreateFinancialYearMasterCommandValidator
+    : AbstractValidator<CreateFinancialYearMasterCommand>
 {
-    public CreateFinancialYearMasterCommandValidator()
+    public CreateFinancialYearMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.FinancialYearName)
-            .NotEmpty().WithMessage("Financial Year name is required.")
-            .MaximumLength(100).WithMessage("Financial Year name must not exceed 100 characters.");
+            .Required(localizer, "FinancialYearName")
+            .MaxLengthLocalized(localizer, "FinancialYearName", 100);
 
         RuleFor(x => x.FromDate)
-            .NotEmpty()
-            .WithMessage("From Date is required.");
+            .RequiredDate(localizer, "FromDate");
 
         RuleFor(x => x.ToDate)
-            .NotEmpty()
-            .WithMessage("To Date is required.")
-            .GreaterThan(x => x.FromDate)
-            .WithMessage("To Date must be later than From Date.");   
+            .RequiredDate(localizer, "ToDate")
+            .GreaterThanDate(
+                x => x.FromDate,
+                localizer,
+                "ToDate",
+                "FromDate");
     }
 }
 
-public class UpdateFinancialYearMasterCommandValidator : AbstractValidator<UpdateFinancialYearMasterCommand>
+public class UpdateFinancialYearMasterCommandValidator
+    : AbstractValidator<UpdateFinancialYearMasterCommand>
 {
-    public UpdateFinancialYearMasterCommandValidator()
+    public UpdateFinancialYearMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.FinancialYearId)
-            .GreaterThan(0).WithMessage("FinancialYearId is required.");
+            .RequiredId(localizer, "FinancialYearId");
 
         RuleFor(x => x.FinancialYearName)
-            .NotEmpty().WithMessage("FinancialYearName is required.")
-            .MaximumLength(100).WithMessage("FinancialYearName must not exceed 100 characters.");
-        
+            .Required(localizer, "FinancialYearName")
+            .MaxLengthLocalized(localizer, "FinancialYearName", 100);
+
         RuleFor(x => x.FromDate)
-            .NotEmpty()
-            .WithMessage("From Date is required.");
+            .RequiredDate(localizer, "FromDate");
 
         RuleFor(x => x.ToDate)
-            .NotEmpty()
-            .WithMessage("To Date is required.")
-            .GreaterThan(x => x.FromDate)
-            .WithMessage("To Date must be later than From Date.");
+            .RequiredDate(localizer, "ToDate")
+            .GreaterThanDate(
+                x => x.FromDate,
+                localizer,
+                "ToDate",
+                "FromDate");
     }
 }

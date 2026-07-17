@@ -6,16 +6,23 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class UpdateBoardMasterHandler(IBoardMasterService service,IValidator<UpdateBoardMasterCommand>validator,
-IMapper mapper)
+public class UpdateBoardMasterHandler(
+    IBoardMasterService service,
+    IValidator<UpdateBoardMasterCommand>validator,
+    IMapper mapper,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
 : IRequestHandler<UpdateBoardMasterCommand,ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(UpdateBoardMasterCommand request,CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.Board.ToString());
+
         var validationResult = await validator.ValidateAsync(request,cancellationToken);
 
         if(!validationResult.IsValid)
@@ -30,7 +37,7 @@ IMapper mapper)
         if(entity is null)
         {
             return ApiResponse<int>.FailureResponse(
-                MessageHelper.NotFound(EntityDescription.Board.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.Board.ToString()),
                 (int)HttpStatusCode.NotFound);
             
         }
@@ -40,14 +47,21 @@ IMapper mapper)
 
         if(exists)
         {
-            return ApiResponse<int>.FailureResponse(MessageHelper.AlreadyExists(EntityDescription.Board.ToString()),
-            (int)HttpStatusCode.Conflict);
+            return ApiResponse<int>.FailureResponse
+            (
+                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Board.ToString()),
+                (int)HttpStatusCode.Conflict
+            );
         }
         mapper.Map(request, entity);
 
         await service.UpdateAsync(entity,cancellationToken);
 
-        return ApiResponse<int>.SuccessResponse(entity.BoardId,MessageHelper.Updated(EntityDescription.Board.ToString()),
-        (int)HttpStatusCode.OK);
+        return ApiResponse<int>.SuccessResponse
+        (
+            entity.BoardId,
+            messageHelper.UpdatedEntity("Masters",EntityDescription.Board.ToString()),
+            (int)HttpStatusCode.OK
+        );
     }
 }

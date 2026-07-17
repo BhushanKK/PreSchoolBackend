@@ -1,23 +1,29 @@
 using MediatR;
 using System.Net;
-using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Handlers;
 
-public class DeleteCasteMasterHandler(ICasteMasterService service)
+public class DeleteCasteMasterHandler(
+    ICasteMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<DeleteCasteMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(DeleteCasteMasterCommand request, CancellationToken cancellationToken)
     {
+        localization.Get("Masters" ,EntityDescription.Caste.ToString());
+
         if (request.CasteId <= 0)
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.InvalidId(EntityDescription.Caste.ToString()), 
+                messageHelper.InvalidIdEntity("Masters" ,EntityDescription.Caste.ToString()), 
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -27,7 +33,7 @@ public class DeleteCasteMasterHandler(ICasteMasterService service)
         if (existing is null)
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.Caste.ToString()), 
+                messageHelper.NotFoundEntity("Masters" ,EntityDescription.Caste.ToString()),
                 (int)HttpStatusCode.NotFound
             );
 
@@ -36,7 +42,7 @@ public class DeleteCasteMasterHandler(ICasteMasterService service)
         return ApiResponse<int>.SuccessResponse
         (
             request.CasteId, 
-            MessageHelper.Deleted(EntityDescription.Caste.ToString()), 
+            messageHelper.DeletedEntity("Masters" ,EntityDescription.Caste.ToString()), 
             (int)HttpStatusCode.OK
         );
     }

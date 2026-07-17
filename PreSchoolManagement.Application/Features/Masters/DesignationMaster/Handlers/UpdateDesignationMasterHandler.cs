@@ -6,18 +6,23 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class UpdateDesignationMasterHandler(
     IDesignationMasterService service,
     IValidator<UpdateDesignationMasterCommand>validator,
-    IMapper mapper,ICurrentUserService currentUser)
+    IMapper mapper,ICurrentUserService currentUser,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<UpdateDesignationMasterCommand,ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(UpdateDesignationMasterCommand request,CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.designation);
+
         var validationResult = await validator.ValidateAsync(request,cancellationToken);
 
         if(!validationResult.IsValid)
@@ -35,7 +40,7 @@ public class UpdateDesignationMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.designation.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.designation.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -52,7 +57,7 @@ public class UpdateDesignationMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.AlreadyExists(EntityDescription.designation.ToString()),
+                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.designation.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -66,7 +71,7 @@ public class UpdateDesignationMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.DesignationId,
-            MessageHelper.Updated(EntityDescription.designation.ToString()),
+            messageHelper.UpdatedEntity("Masters",EntityDescription.designation.ToString()),
             (int)HttpStatusCode.OK
         );
     }

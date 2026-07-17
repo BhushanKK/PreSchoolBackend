@@ -2,21 +2,27 @@ using MediatR;
 using System.Net;
 using AutoMapper;
 using FluentValidation;
-using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class UpdateAcademicYearMasterHandler(IAcademicYearMasterService service, 
-    IValidator<UpdateAcademicYearMasterCommand> validator, IMapper mapper
-    ,ICurrentUserService currentUser) 
+public class UpdateAcademicYearMasterHandler(
+    IAcademicYearMasterService service, 
+    IValidator<UpdateAcademicYearMasterCommand> validator, 
+    IMapper mapper,
+    ICurrentUserService currentUser,
+    IMessageHelper messageHelper,
+    ILocalizationService localizer) 
     : IRequestHandler<UpdateAcademicYearMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(UpdateAcademicYearMasterCommand request, CancellationToken cancellationToken)
     {
+        localizer.Get("Masters", EntityDescription.AcademicYear.ToString());
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         
         if (!validationResult.IsValid)
@@ -34,7 +40,7 @@ public class UpdateAcademicYearMasterHandler(IAcademicYearMasterService service,
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.AcademicYear.ToString()), 
+                messageHelper.NotFoundEntity("Masters",EntityDescription.AcademicYear.ToString()), 
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -50,7 +56,7 @@ public class UpdateAcademicYearMasterHandler(IAcademicYearMasterService service,
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.AlreadyExists(EntityDescription.AcademicYear.ToString()), 
+                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.AcademicYear.ToString()), 
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -65,7 +71,7 @@ public class UpdateAcademicYearMasterHandler(IAcademicYearMasterService service,
         return ApiResponse<int>.SuccessResponse
         (
             entity.AcademicYearId, 
-            MessageHelper.Updated(EntityDescription.AcademicYear.ToString()), 
+            messageHelper.UpdatedEntity("Masters",EntityDescription.AcademicYear.ToString()), 
             (int)HttpStatusCode.OK
         );
     }

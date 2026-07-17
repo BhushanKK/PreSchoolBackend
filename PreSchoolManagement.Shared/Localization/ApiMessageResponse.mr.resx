@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+
+  <data name="Added" xml:space="preserve">
+    <value>{0} यशस्वीरित्या जोडण्यात आले.</value>
+  </data>
+
+  <data name="Updated" xml:space="preserve">
+    <value>{0} यशस्वीरित्या अद्ययावत करण्यात आले.</value>
+  </data>
+
+  <data name="Deleted" xml:space="preserve">
+    <value>{0} यशस्वीरित्या हटविण्यात आले.</value>
+  </data>
+
+  <data name="NotFound" xml:space="preserve">
+    <value>{0} सापडले नाही.</value>
+  </data>
+
+  <data name="AlreadyExists" xml:space="preserve">
+    <value>{0} आधीपासून अस्तित्वात आहे.</value>
+  </data>
+</root>

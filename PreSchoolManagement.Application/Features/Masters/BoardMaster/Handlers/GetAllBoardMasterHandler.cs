@@ -4,20 +4,28 @@ using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetAllBoardMasterHandler(IBoardMasterService service)
+public class GetAllBoardMasterHandler(
+    IBoardMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
 : IRequestHandler<GetAllBoardMasterQuery, ApiResponse<List<BoardMaster>>>
 {
     public async Task<ApiResponse<List<BoardMaster>>> Handle( GetAllBoardMasterQuery request,CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.Board.ToString());
         var boards = await service.GetAllAsync(cancellationToken);
          
-        return ApiResponse<List<BoardMaster>>.SuccessResponse(boards,
-        MessageHelper.Retrieved(EntityDescription.Board.ToString()),
-        (int)HttpStatusCode.OK);
+        return ApiResponse<List<BoardMaster>>.SuccessResponse
+        (
+            boards,
+            messageHelper.RetrievedEntity("Masters",EntityDescription.Board.ToString()),
+            (int)HttpStatusCode.OK
+        );
     }
 }

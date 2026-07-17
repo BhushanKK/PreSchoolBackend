@@ -1,32 +1,43 @@
 using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Shared.Extensions;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Validators;
 
-public class CreateDistrictMasterCommandValidator : AbstractValidator<CreateDistrictMasterCommand>
+public class CreateDistrictMasterCommandValidator
+    : AbstractValidator<CreateDistrictMasterCommand>
 {
-    public CreateDistrictMasterCommandValidator()
+    public CreateDistrictMasterCommandValidator(
+        ILocalizationService localizer)
     {
-        RuleFor(x => x.DistrictName)
-            .NotEmpty().WithMessage("District name is required.")
-            .MaximumLength(100).WithMessage("District name must not exceed 100 characters.");
-
+        RuleFor(x => x.DistrictName!)
+            .Required(localizer, "DistrictName")
+            .MaxLengthLocalized(localizer, "DistrictName", 100);
     }
 }
 
-public class UpdateDistrictMasterCommandValidator : AbstractValidator<UpdateDistrictMasterCommand>
+public class UpdateDistrictMasterCommandValidator
+    : AbstractValidator<UpdateDistrictMasterCommand>
 {
-    public UpdateDistrictMasterCommandValidator()
+    public UpdateDistrictMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.DistrictId)
-            .GreaterThan(0).WithMessage("DistrictId is required.");
+            .RequiredId(localizer, "DistrictId");
 
-        RuleFor(x => x.DistrictName)
-            .NotEmpty().WithMessage("District name is required")
-            .MaximumLength(100).WithMessage("District name must not be exceed 100 chatacter");
+        RuleFor(x => x.DistrictName!)
+            .Required(localizer, "DistrictName")
+            .MaxLengthLocalized(localizer, "DistrictName", 100);
 
         RuleFor(x => x.StateId)
-            .GreaterThan(0).When(x => x.StateId.HasValue)
-            .WithMessage("DistrictId must be greater than 0 when provided.");
+            .GreaterThan(0)
+            .When(x => x.StateId.HasValue)
+            .WithMessage(
+                localizer.Get(
+                    "ValidationMessages",
+                    "GreaterThan",
+                    localizer.Get("ValidationMessages", "State"),
+                    "0"));
     }
 }

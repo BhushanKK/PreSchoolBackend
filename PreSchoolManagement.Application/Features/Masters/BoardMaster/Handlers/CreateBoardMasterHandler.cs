@@ -6,16 +6,25 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class CreateBoardMasterHandler(IBoardMasterService service,IValidator<CreateBoardMasterCommand> validator,IMapper mapper,ICurrentUserService currentUser)
+public class CreateBoardMasterHandler(
+    IBoardMasterService service,
+    IValidator<CreateBoardMasterCommand> validator,
+    IMapper mapper,
+    ICurrentUserService currentUser,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
 : IRequestHandler<CreateBoardMasterCommand,ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(CreateBoardMasterCommand request,CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.Board.ToString());
+        
         var validationResult = await validator.ValidateAsync(request,cancellationToken);
         if(!validationResult.IsValid)
         {
@@ -30,8 +39,11 @@ public class CreateBoardMasterHandler(IBoardMasterService service,IValidator<Cre
 
         if(exists)
         {
-            return ApiResponse<int>.FailureResponse(MessageHelper.AlreadyExists(EntityDescription.Board.ToString()),
-            (int)HttpStatusCode.Conflict);
+            return ApiResponse<int>.FailureResponse
+            (
+                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Board.ToString()),
+                (int)HttpStatusCode.Conflict
+            );
         }
         var entity = mapper.Map<BoardMaster>(request);
 
@@ -39,10 +51,11 @@ public class CreateBoardMasterHandler(IBoardMasterService service,IValidator<Cre
         entity.EntryBy = currentUser.UserId;
 
         await service.AddAsync(entity, cancellationToken);
-        return ApiResponse<int>.SuccessResponse(
+        return ApiResponse<int>.SuccessResponse
+        (
             entity.BoardId,
-            MessageHelper.Added(EntityDescription.Board.ToString()),
-            (int)HttpStatusCode.Created);
-        
+            messageHelper.AddedEntity("Masters",EntityDescription.Board.ToString()),
+            (int)HttpStatusCode.Created
+        );
     }
 }

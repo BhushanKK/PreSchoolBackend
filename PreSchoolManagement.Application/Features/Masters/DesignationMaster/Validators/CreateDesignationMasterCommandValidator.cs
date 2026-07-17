@@ -1,27 +1,33 @@
 using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Shared.Extensions;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Validators;
 
-public class CreateDesignationMasterCommandValidator :AbstractValidator<CreateDesignationMasterCommand>
+public class CreateDesignationMasterCommandValidator
+    : AbstractValidator<CreateDesignationMasterCommand>
 {
-    public CreateDesignationMasterCommandValidator()
+    public CreateDesignationMasterCommandValidator(
+        ILocalizationService localizer)
     {
-        RuleFor(x => x.Designation)
-            .NotEmpty().WithMessage("Designation  name is required.")
-            .MaximumLength(100).WithMessage("Designation name must not be exceed 100 characters.");
-       
+        RuleFor(x => x.Designation!)
+            .Required(localizer, "Designation")
+            .MaxLengthLocalized(localizer, "Designation", 100);
     }
 }
-public class UpdateDesignationMasterCommandValidator : AbstractValidator<UpdateDesignationMasterCommand>
-{
-    public UpdateDesignationMasterCommandValidator()
-    {
-        RuleFor(x =>x.DesignationId)
-            .GreaterThan(0).WithMessage("Designation Id is required.");
 
-        RuleFor(x => x.Designation)
-            .NotEmpty().WithMessage("Designation name is required.")
-            .MaximumLength(100).WithMessage("Designaation name  must not exceed 100 character.");
+public class UpdateDesignationMasterCommandValidator
+    : AbstractValidator<UpdateDesignationMasterCommand>
+{
+    public UpdateDesignationMasterCommandValidator(
+        ILocalizationService localizer)
+    {
+        RuleFor(x => x.DesignationId)
+            .RequiredId(localizer, "DesignationId");
+
+        RuleFor(x => x.Designation!)
+            .Required(localizer, "Designation")
+            .MaxLengthLocalized(localizer, "Designation", 100);
     }
 }

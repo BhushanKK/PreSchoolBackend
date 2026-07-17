@@ -2,24 +2,29 @@ using MediatR;
 using AutoMapper;
 using System.Net;
 using FluentValidation;
-using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class UpdateHolidayMasterHandler(
     IHolidayMasterService service,
     IValidator<UpdateHolidayMasterCommand> validator,
-    IMapper mapper)
+    IMapper mapper,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<UpdateHolidayMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
         UpdateHolidayMasterCommand request,
         CancellationToken cancellationToken)
     {
+        localization.Get("Masters", EntityDescription.Holiday.ToString());
+
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
@@ -35,9 +40,11 @@ public class UpdateHolidayMasterHandler(
 
         if (entity is null)
         {
-            return ApiResponse<int>.FailureResponse(
-                MessageHelper.NotFound(EntityDescription.Holiday.ToString()),
-                (int)HttpStatusCode.NotFound);
+            return ApiResponse<int>.FailureResponse
+            (
+                messageHelper.NotFoundEntity("Masters", EntityDescription.Holiday.ToString()),
+                (int)HttpStatusCode.NotFound
+            );
         }
 
         var exists = await service.IsExistsAsync(
@@ -48,18 +55,22 @@ public class UpdateHolidayMasterHandler(
 
         if (exists)
         {
-            return ApiResponse<int>.FailureResponse(
-                MessageHelper.AlreadyExists(EntityDescription.Holiday.ToString()),
-                (int)HttpStatusCode.Conflict);
+            return ApiResponse<int>.FailureResponse
+            (
+                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.Holiday.ToString()),
+                (int)HttpStatusCode.Conflict
+            );
         }
 
         mapper.Map(request, entity);
 
         await service.UpdateAsync(entity, cancellationToken);
 
-        return ApiResponse<int>.SuccessResponse(
+        return ApiResponse<int>.SuccessResponse
+        (
             entity.HolidayId,
-            MessageHelper.Updated(EntityDescription.Holiday.ToString()),
-            (int)HttpStatusCode.OK);
+            messageHelper.UpdatedEntity("Masters", EntityDescription.Holiday.ToString()),
+            (int)HttpStatusCode.OK
+        );
     }
 }

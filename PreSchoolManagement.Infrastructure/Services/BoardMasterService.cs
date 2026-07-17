@@ -1,4 +1,3 @@
-using System.Reflection.Emit;
 using Microsoft.EntityFrameworkCore;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
@@ -11,10 +10,10 @@ namespace PreSchoolManagement.Infrastructure.Services;
 public class BoardMasterService(ApplicationDbContext context):IBoardMasterService
 {
     public Task<List<BoardMaster>> GetAllAsync(CancellationToken cancellationToken)
-    => context.BoardMasters.AsNoTracking().ToListAsync(cancellationToken);
+        => context.BoardMasters.AsNoTracking().ToListAsync(cancellationToken);
 
     public async Task<BoardMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-    => await context.BoardMasters.FindAsync([id],cancellationToken);
+        => await context.BoardMasters.FindAsync([id],cancellationToken);
 
     public async Task AddAsync (BoardMaster board,CancellationToken cancellationToken)
     {

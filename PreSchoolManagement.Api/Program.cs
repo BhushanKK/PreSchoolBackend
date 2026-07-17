@@ -8,6 +8,9 @@ using PreSchoolManagement.Api.Endpoints;
 using PreSchoolManagement.Api.Extensions;
 using PreSchoolManagement.Api.Middlewares;
 using PreSchoolManagement.Infrastructure.Data;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
+using PreSchoolManagement.Shared.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +51,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero
         };
     });
+
 builder.Services.AddAuthorization();
 
 // Application Services
@@ -55,7 +59,7 @@ builder.Services.AddMasterServices(builder.Configuration);
 builder.Services.AddMediatRServices();
 builder.Services.AddValidatorServices();
 builder.Services.AddMapperServices();
-
+builder.Services.AddSingleton<LocalizationService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactPolicy", policy =>
@@ -68,6 +72,22 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+var supportedCultures = new[]
+{
+    new CultureInfo("en"),
+    new CultureInfo("mr"),
+    new CultureInfo("hi")
+};
+
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("en"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+};
+
+app.UseRequestLocalization(localizationOptions);
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
