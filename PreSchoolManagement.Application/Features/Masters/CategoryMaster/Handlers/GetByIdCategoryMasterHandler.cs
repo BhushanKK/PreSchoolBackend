@@ -19,6 +19,8 @@ public class GetByIdCategoryMasterHandler(
         GetByIdCategoryMasterQuery request,
         CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.Category.ToString());
+        
         if (request.CategoryId <= 0)
         {
             return ApiResponse<CategoryMaster?>.FailureResponse

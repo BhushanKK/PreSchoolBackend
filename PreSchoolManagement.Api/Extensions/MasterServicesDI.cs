@@ -1,6 +1,5 @@
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Infrastructure.Services;
-using SchoolManagement.Domain.Entities;
 using SchoolManagement.Shared.Constants;
 
 namespace PreSchoolManagement.Api.Extensions;

@@ -1,6 +1,5 @@
 using MediatR;
 using PreSchoolManagement.Application.Features.Commands;
-using PreSchoolManagement.Application.Features.Handlers;
 using PreSchoolManagement.Application.Features.Queries;
 
 namespace PreSchoolManagement.Api.Endpoints;

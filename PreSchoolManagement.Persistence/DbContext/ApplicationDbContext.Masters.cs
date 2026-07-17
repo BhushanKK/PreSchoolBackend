@@ -20,4 +20,5 @@ public partial class ApplicationDbContext
     public DbSet<DesignationMaster> DesignationMasters => Set<DesignationMaster>();
     public DbSet<BoardMaster> BoardMasters => Set<BoardMaster>();
     public DbSet<RoleMaster> RoleMasters => Set<RoleMaster>();
+    public DbSet<MediumMaster> MediumMasters => Set<MediumMaster>();
 }
