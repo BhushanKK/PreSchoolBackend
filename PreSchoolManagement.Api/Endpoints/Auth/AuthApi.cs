@@ -4,7 +4,6 @@ using System.Globalization;
 using MediatR;
 using PreSchoolManagement.Application.Features.Auth.Commands;
 using PreSchoolManagement.Domain.Dtos;
-using PreSchoolManagement.Shared.Common;
 using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Api.Endpoints;
@@ -16,15 +15,6 @@ public static class AuthApi
         var group = app.MapGroup("/api/auth")
             .WithTags("Authentication");
 
-       app.MapGet("/test-section", (ILocalizationService localizer) =>
-{
-    return Results.Ok(new
-    {
-        Culture = CultureInfo.CurrentUICulture.Name,
-        SectionName = localizer.Get("ValidationMessages", "SectionName"),
-        Required = localizer.Get("ValidationMessages", "Required"),
-    });
-});
         group.MapPost("/register", Register)
             .WithName("RegisterUser")
             .WithSummary("Register a new user")
