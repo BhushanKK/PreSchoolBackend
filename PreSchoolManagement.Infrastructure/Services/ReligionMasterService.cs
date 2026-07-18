@@ -11,7 +11,7 @@ public class ReligionMasterService(ApplicationDbContext context) : IReligionMast
 {
     public Task<List<ReligionMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken = default)
         => context.ReligionMasters
-        .Where(x => !filter)
+        .Where(x => !filter|| x.IsActive)
         .AsNoTracking()
         .ToListAsync(cancellationToken);
 

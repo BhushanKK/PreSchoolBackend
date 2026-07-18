@@ -14,6 +14,7 @@ public class GetAllRelligionMasterHandler(
     ILocalizationService localization)
     : IRequestHandler<GetAllReligionMasterQuery, ApiResponse<List<ReligionMaster>>>
 {
+
     public async Task<ApiResponse<List<ReligionMaster>>> Handle(GetAllReligionMasterQuery request, CancellationToken cancellationToken)
     {
         localization.Get("Masters", EntityDescription.Religion.ToString());
