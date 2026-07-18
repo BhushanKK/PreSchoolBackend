@@ -4,20 +4,26 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Handlers;
 
-public class DeleteCategoryMasterHandler(ICategoryMasterService service)
+public class DeleteCategoryMasterHandler(
+    ICategoryMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<DeleteCategoryMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(DeleteCategoryMasterCommand request, CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.Category.ToString());
+
         if (request.CategoryId <= 0)
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.InvalidId(EntityDescription.Category.ToString()),
+                messageHelper.InvalidIdEntity("Masters",EntityDescription.Category.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -28,7 +34,7 @@ public class DeleteCategoryMasterHandler(ICategoryMasterService service)
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.Category.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.Category.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -38,7 +44,7 @@ public class DeleteCategoryMasterHandler(ICategoryMasterService service)
         return ApiResponse<int>.SuccessResponse
         (
             request.CategoryId,
-            MessageHelper.Deleted(EntityDescription.Category.ToString()),
+            messageHelper.DeletedEntity("Masters",EntityDescription.Category.ToString()),
             (int)HttpStatusCode.OK
         );
     }

@@ -8,6 +8,9 @@ using PreSchoolManagement.Api.Endpoints;
 using PreSchoolManagement.Api.Extensions;
 using PreSchoolManagement.Api.Middlewares;
 using PreSchoolManagement.Infrastructure.Data;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
+using PreSchoolManagement.Shared.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,8 +25,7 @@ LogFileCleanupExtensions.DeleteOldLogFiles(logDirectory, TimeSpan.FromDays(7));
 
 // Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // OpenApi
 builder.Services.AddOpenApi();
@@ -49,14 +51,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero
         };
     });
+
 builder.Services.AddAuthorization();
 
 // Application Services
-builder.Services.AddMasterServices();
+builder.Services.AddMasterServices(builder.Configuration);
 builder.Services.AddMediatRServices();
 builder.Services.AddValidatorServices();
 builder.Services.AddMapperServices();
-
+builder.Services.AddSingleton<LocalizationService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactPolicy", policy =>
@@ -67,16 +70,34 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
+
 var app = builder.Build();
+
+var supportedCultures = new[]
+{
+    new CultureInfo("en"),
+    new CultureInfo("mr"),
+    new CultureInfo("hi")
+};
+
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("en"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+};
+
+app.UseRequestLocalization(localizationOptions);
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.UseCors("ReactPolicy");
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<AuditMiddleware>();
 // OpenApi
 app.MapOpenApi();
-
 // Scalar
 app.MapScalarApiReference(options =>
 {
@@ -84,9 +105,6 @@ app.MapScalarApiReference(options =>
     options.WithTheme(ScalarTheme.BluePlanet);
     options.WithOpenApiRoutePattern("/openapi/{documentName}.json");
 });
-
 // Endpoints
-
 app.MapApplicationEndpoints();
-
-app.Run();
+await app.RunAsync();

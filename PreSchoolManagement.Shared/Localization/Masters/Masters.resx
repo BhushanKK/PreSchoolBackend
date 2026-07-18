@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+
+  <data name="AcademicYear" xml:space="preserve">
+    <value>Academic Year</value>
+  </data>
+
+  <data name="Committee" xml:space="preserve">
+    <value>Committee</value>
+  </data>
+
+  <data name="Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+
+  <data name="Religion" xml:space="preserve">
+    <value>Religion</value>
+  </data>
+
+  <data name="Caste" xml:space="preserve">
+    <value>Caste</value>
+  </data>
+
+  <data name="SubCaste" xml:space="preserve">
+    <value>Sub Caste</value>
+  </data>
+
+  <data name="Board" xml:space="preserve">
+    <value>Board</value>
+  </data>
+
+  <data name="Medium" xml:space="preserve">
+    <value>Medium</value>
+  </data>
+
+  <data name="Standard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+
+  <data name="Section" xml:space="preserve">
+    <value>Section</value>
+  </data>
+
+  <data name="School" xml:space="preserve">
+    <value>School</value>
+  </data>
+
+  <data name="FinancialYear" xml:space="preserve">
+    <value>Financial Year</value>
+  </data>
+
+  <data name="Holiday" xml:space="preserve">
+    <value>Holiday</value>
+  </data>
+
+  <data name="Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+
+  <data name="Menu" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+
+</root>

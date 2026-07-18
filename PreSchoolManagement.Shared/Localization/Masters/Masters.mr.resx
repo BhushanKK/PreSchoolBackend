@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+
+  <data name="AcademicYear" xml:space="preserve">
+    <value>शैक्षणिक वर्ष</value>
+  </data>
+
+  <data name="Committee" xml:space="preserve">
+    <value>समिती</value>
+  </data>
+
+  <data name="Category" xml:space="preserve">
+    <value>प्रवर्ग</value>
+  </data>
+
+  <data name="Religion" xml:space="preserve">
+    <value>धर्म</value>
+  </data>
+
+  <data name="Caste" xml:space="preserve">
+    <value>जात</value>
+  </data>
+
+  <data name="SubCaste" xml:space="preserve">
+    <value>पोटजात</value>
+  </data>
+
+  <data name="Board" xml:space="preserve">
+    <value>शैक्षणिक मंडळ</value>
+  </data>
+
+  <data name="Medium" xml:space="preserve">
+    <value>माध्यम</value>
+  </data>
+
+  <data name="Standard" xml:space="preserve">
+    <value>इयत्ता</value>
+  </data>
+
+  <data name="Section" xml:space="preserve">
+    <value>विभाग</value>
+  </data>
+
+  <data name="School" xml:space="preserve">
+    <value>शाळा</value>
+  </data>
+
+  <data name="FinancialYear" xml:space="preserve">
+    <value>आर्थिक वर्ष</value>
+  </data>
+
+  <data name="Holiday" xml:space="preserve">
+    <value>सुट्टी</value>
+  </data>
+
+  <data name="Role" xml:space="preserve">
+    <value>भूमिका</value>
+  </data>
+
+  <data name="Menu" xml:space="preserve">
+    <value>मेनू</value>
+  </data>
+
+</root>

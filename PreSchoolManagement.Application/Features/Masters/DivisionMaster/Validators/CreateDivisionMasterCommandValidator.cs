@@ -1,27 +1,33 @@
 using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Shared.Extensions;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Validators;
 
-public class CreateDivisionMasterCommandValidator : AbstractValidator<CreateDivisionMasterCommand>
+public class CreateDivisionMasterCommandValidator
+    : AbstractValidator<CreateDivisionMasterCommand>
 {
-    public CreateDivisionMasterCommandValidator()
+    public CreateDivisionMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.DivisionName)
-            .NotEmpty().WithMessage("Division name is required.")
-            .MaximumLength(100).WithMessage("Division name must not exceed 100 characters.");
+            .Required(localizer, "DivisionName")
+            .MaxLengthLocalized(localizer, "DivisionName", 100);
     }
 }
 
-public class UpdateDivisionMasterCommandValidator : AbstractValidator<UpdateDivisionMasterCommand>
+public class UpdateDivisionMasterCommandValidator
+    : AbstractValidator<UpdateDivisionMasterCommand>
 {
-    public UpdateDivisionMasterCommandValidator()
+    public UpdateDivisionMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.DivisionId)
-            .GreaterThan(0).WithMessage("DivisionID is required.");
+            .RequiredId(localizer, "DivisionId");
 
         RuleFor(x => x.DivisionName)
-            .NotEmpty().WithMessage("Division name is required.")
-            .MaximumLength(100).WithMessage("Division name must not exceed 100 characters.");
+            .Required(localizer, "DivisionName")
+            .MaxLengthLocalized(localizer, "DivisionName", 100);
     }
 }

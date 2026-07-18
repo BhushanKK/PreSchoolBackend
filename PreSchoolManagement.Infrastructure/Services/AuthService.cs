@@ -19,7 +19,9 @@ IConfiguration configuration, IAccountLockoutService accountLockoutService) : IA
 {
     public async Task<UserDetailsMaster?> GetUserByUserNameAsync(string userName, CancellationToken cancellationToken)
         => await context.UserDetailsMasters
-        .FirstOrDefaultAsync(x => x.UserName == userName, cancellationToken);
+        .FirstOrDefaultAsync(x => x.UserName == userName
+        || x.Email == userName || x.MobileNumber == userName,
+        cancellationToken);
 
     public async Task<UserDetailsMaster?> GetUserByEmailAsync(string email, CancellationToken cancellationToken)
         => await context.UserDetailsMasters
@@ -112,16 +114,16 @@ IConfiguration configuration, IAccountLockoutService accountLockoutService) : IA
     CancellationToken cancellationToken)
     {
         var token = await context.RefreshTokens
-            .Include(x => x.User)
+            .Include(x => x.UserDetailsMasters)
             .FirstOrDefaultAsync(x =>
                 x.Token == refreshToken &&
                 !x.IsRevoked &&
                 x.ExpiryDate > DateTime.UtcNow,
                 cancellationToken);
 
-        if (token?.User == null ||
-            !token.User.IsActive ||
-            token.User.IsDeleted)
+        if (token?.UserDetailsMasters == null ||
+            !token.UserDetailsMasters.IsActive ||
+            token.UserDetailsMasters.IsDeleted)
         {
             return new AuthTokenResponse
             {
@@ -130,7 +132,7 @@ IConfiguration configuration, IAccountLockoutService accountLockoutService) : IA
             };
         }
 
-        var response = GenerateTokenResponse(token.User);
+        var response = GenerateTokenResponse(token.UserDetailsMasters);
 
         // Revoke old refresh token
         token.IsRevoked = true;
@@ -219,7 +221,7 @@ IConfiguration configuration, IAccountLockoutService accountLockoutService) : IA
             100_000,
             HashAlgorithmName.SHA256,
             32);
-
+string str= Convert.ToBase64String(hash) ;
         return Convert.ToBase64String(hash) == storedHash;
     }
 
@@ -269,7 +271,7 @@ IConfiguration configuration, IAccountLockoutService accountLockoutService) : IA
 
         // Invalidate existing sessions
         user.JwtTokenVersion++;
-       
+
         var tokens = await context.RefreshTokens
         .Where(x =>
         x.UserId == userId &&
@@ -294,5 +296,30 @@ IConfiguration configuration, IAccountLockoutService accountLockoutService) : IA
             Success = true,
             Message = "Password changed successfully."
         };
+    }
+
+    public async Task UpdateUserAsync(
+    UserDetailsMaster user,
+    CancellationToken cancellationToken)
+    {
+        context.UserDetailsMasters.Update(user);
+
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task ResetPasswordAsync(
+    UserDetailsMaster user,
+    string newPassword,
+    CancellationToken cancellationToken)
+    {
+        // Generate new PBKDF2 hash and salt
+        var hash = HashPassword(newPassword, out var salt);
+        user.PasswordHash = hash;
+        user.PasswordSalt = Convert.ToBase64String(salt);
+        // Invalidate existing sessions
+        user.JwtTokenVersion++;
+        user.AccessToken = null;
+        user.ModifyDate = DateTime.UtcNow;
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

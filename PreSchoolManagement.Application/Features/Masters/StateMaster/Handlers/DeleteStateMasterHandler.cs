@@ -4,20 +4,26 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Handlers;
 
-public class DeleteStateMasterHandler(IStateMasterService service)
+public class DeleteStateMasterHandler(
+    IStateMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     :IRequestHandler<DeleteStateMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(DeleteStateMasterCommand request,CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.State.ToString());
+        
         if (request.StateId <=0)
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.InvalidId(EntityDescription.State.ToString()),
+                messageHelper.InvalidIdEntity("Masters",EntityDescription.State.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -27,7 +33,7 @@ public class DeleteStateMasterHandler(IStateMasterService service)
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.State.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.State.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -37,7 +43,7 @@ public class DeleteStateMasterHandler(IStateMasterService service)
         return ApiResponse<int>.SuccessResponse
         (
             request.StateId,
-            MessageHelper.Deleted(EntityDescription.State.ToString()),
+            messageHelper.DeletedEntity("Masters",EntityDescription.State.ToString()),
             (int)HttpStatusCode.OK
         );
     }

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+
+  <!-- Start : Academic Year and Financial Year Fields -->
+
+    <data name="AcademicYearId" xml:space="preserve">
+      <value>Academic Year</value>
+    </data>
+
+    <data name="AcademicYearName" xml:space="preserve">
+      <value>Academic Year Name</value>
+    </data>
+
+    <data name="FinancialYearId" xml:space="preserve">
+      <value>Financial Year</value>
+    </data>
+
+    <data name="FinancialYearName" xml:space="preserve">
+      <value>Financial Year Name</value>
+    </data>
+
+    <data name="FromDate" xml:space="preserve">
+      <value>From Date</value>
+    </data>
+
+    <data name="ToDate" xml:space="preserve">
+      <value>To Date</value>
+    </data>
+
+    <!-- Start : Board Master Fields -->
+    <data name="BoardId" xml:space="preserve">
+      <value>Board</value>
+    </data>
+
+    <data name="BoardName" xml:space="preserve">
+      <value>Board Name</value>
+    </data>
+
+    <!-- Start : Caste and Category Master Fields -->
+    <data name="CasteId" xml:space="preserve">
+      <value>Caste</value>
+    </data>
+
+    <data name="Caste" xml:space="preserve">
+      <value>Caste Name</value>
+    </data>
+
+    <data name="Category" xml:space="preserve">
+      <value>Category</value>
+    </data>
+
+    <data name="CategoryId" xml:space="preserve">
+      <value>Category</value>
+    </data>
+
+    <data name="CategoryName" xml:space="preserve">
+      <value>Category Name</value>
+    </data>
+    
+    <!-- Start : Designation Master Fields -->
+    <data name="DesignationId" xml:space="preserve">
+      <value>Designation</value>
+    </data>
+
+    <data name="Designation" xml:space="preserve">
+      <value>Designation Name</value>
+    </data>
+
+    <!-- Start : District Master Fields -->
+    <data name="DistrictId" xml:space="preserve">
+      <value>District</value>
+    </data>
+
+    <data name="DistrictName" xml:space="preserve">
+      <value>District Name</value>
+    </data>
+
+    <data name="State" xml:space="preserve">
+      <value>State</value>
+    </data>
+
+    <!-- Start : Division Master Fields -->
+
+    <data name="DivisionId" xml:space="preserve">
+      <value>Division</value>
+    </data>
+
+    <data name="DivisionName" xml:space="preserve">
+      <value>Division Name</value>
+    </data>
+
+    <!-- Start : EmployeeType Master Fields -->
+    <data name="EmployeeTypeId" xml:space="preserve">
+      <value>Employee Type</value>
+    </data>
+
+    <data name="EmployeeTypeName" xml:space="preserve">
+      <value>Employee Type Name</value>
+    </data>
+
+    <data name="DisplayOrder" xml:space="preserve">
+      <value>Display Order</value>
+    </data>
+    
+    <!-- Start : Holiday Master Fields -->
+    <data name="HolidayId" xml:space="preserve">
+      <value>Holiday</value>
+    </data>
+
+    <data name="HolidayName" xml:space="preserve">
+      <value>Holiday Name</value>
+    </data>
+    
+    <!-- Start : Role Master Fields -->
+    <data name="RoleId" xml:space="preserve">
+      <value>Role</value>
+    </data>
+
+    <data name="RoleName" xml:space="preserve">
+      <value>Role Name</value>
+    </data>
+
+    <!-- Start : Section Master Fields -->
+    <data name="SectionId" xml:space="preserve">
+      <value>Section</value>
+    </data>
+
+    <data name="SectionName" xml:space="preserve">
+      <value>Section Name</value>
+    </data>
+
+    <!-- Start : Standard Master Fields -->
+    <data name="StandardId" xml:space="preserve">
+      <value>Standard</value>
+    </data>
+
+    <data name="StandardName" xml:space="preserve">
+      <value>Standard Name</value>
+    </data>
+    
+    <!-- Start : State Master Fields -->
+    <data name="StateId" xml:space="preserve">
+      <value>State</value>
+    </data>
+
+    <data name="StateName" xml:space="preserve">
+      <value>State Name</value>
+    </data>
+    
+    <!-- Start : State Master Fields -->
+    <data name="MediumId" xml:space="preserve">
+      <value>Medium</value>
+    </data>
+
+    <data name="Medium" xml:space="preserve">
+      <value>Medium Name</value>
+    </data>
+</root>

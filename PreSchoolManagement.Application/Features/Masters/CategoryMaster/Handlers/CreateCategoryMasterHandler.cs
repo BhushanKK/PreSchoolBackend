@@ -1,13 +1,14 @@
+using MediatR;
+using System.Net;
 using AutoMapper;
 using FluentValidation;
-using MediatR;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
 using SchoolManagement.Domain.Entities;
-using System.Net;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
@@ -15,13 +16,17 @@ public class CreateCategoryMasterHandler(
     ICategoryMasterService service,
     IValidator<CreateCategoryMasterCommand> validator,
     IMapper mapper,
-    ICurrentUserService currentUser)
+    ICurrentUserService currentUser,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<CreateCategoryMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
         CreateCategoryMasterCommand request,
         CancellationToken cancellationToken)
     {
+        localization.Get("Masterss",EntityDescription.Category.ToString());
+
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
@@ -38,9 +43,11 @@ public class CreateCategoryMasterHandler(
 
         if (exists)
         {
-            return ApiResponse<int>.FailureResponse(
-                MessageHelper.AlreadyExists(EntityDescription.Category.ToString()),
-                (int)HttpStatusCode.Conflict);
+            return ApiResponse<int>.FailureResponse
+            (
+                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Category.ToString()),
+                (int)HttpStatusCode.Conflict
+            );
         }
 
         var entity = mapper.Map<CategoryMaster>(request);
@@ -51,7 +58,7 @@ public class CreateCategoryMasterHandler(
 
         return ApiResponse<int>.SuccessResponse(
             entity.CategoryId,
-            MessageHelper.Added(EntityDescription.Category.ToString()),
+            messageHelper.AddedEntity("Masters",EntityDescription.Category.ToString()),
             (int)HttpStatusCode.Created);
     }
 }

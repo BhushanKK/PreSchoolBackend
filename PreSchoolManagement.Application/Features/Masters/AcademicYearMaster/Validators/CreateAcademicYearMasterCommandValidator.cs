@@ -1,47 +1,55 @@
 using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Shared.Extensions;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Validators;
 
-public class CreateAcademicYearMasterCommandValidator : AbstractValidator<CreateAcademicYearMasterCommand>
+public class CreateAcademicYearMasterCommandValidator
+    : AbstractValidator<CreateAcademicYearMasterCommand>
 {
-    public CreateAcademicYearMasterCommandValidator()
+    public CreateAcademicYearMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.AcademicYearName)
-            .NotEmpty().WithMessage("Academic Year name is required.")
-            .MaximumLength(100).WithMessage("Academic Year name must not exceed 100 characters.");
+            .Required(localizer, "AcademicYearName")
+            .MaxLengthLocalized(localizer, "AcademicYearName", 100);
 
         RuleFor(x => x.FromDate)
-            .NotEmpty()
-            .WithMessage("From Date is required.");
+            .RequiredDate(localizer, "FromDate");
 
         RuleFor(x => x.ToDate)
-            .NotEmpty()
-            .WithMessage("To Date is required.")
-            .GreaterThan(x => x.FromDate)
-            .WithMessage("To Date must be later than From Date.");
+            .RequiredDate(localizer, "ToDate")
+            .GreaterThanDate(
+                x => x.FromDate,
+                localizer,
+                "ToDate",
+                "FromDate");
     }
 }
 
-public class UpdateAcademicYearMasterCommandValidator : AbstractValidator<UpdateAcademicYearMasterCommand>
+public class UpdateAcademicYearMasterCommandValidator
+    : AbstractValidator<UpdateAcademicYearMasterCommand>
 {
-    public UpdateAcademicYearMasterCommandValidator()
+    public UpdateAcademicYearMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.AcademicYearId)
-            .GreaterThan(0).WithMessage("AcademicYearId is required.");
+            .RequiredId(localizer, "AcademicYearId");
 
         RuleFor(x => x.AcademicYearName)
-            .NotEmpty().WithMessage("AcademicYearName is required.")
-            .MaximumLength(100).WithMessage("AcademicYearName must not exceed 100 characters.");
+            .Required(localizer, "AcademicYearName")
+            .MaxLengthLocalized(localizer, "AcademicYearName", 100);
 
         RuleFor(x => x.FromDate)
-            .NotEmpty()
-            .WithMessage("From Date is required.");
+            .RequiredDate(localizer, "FromDate");
 
         RuleFor(x => x.ToDate)
-            .NotEmpty()
-            .WithMessage("To Date is required.")
-            .GreaterThan(x => x.FromDate)
-            .WithMessage("To Date must be later than From Date.");
+            .RequiredDate(localizer, "ToDate")
+            .GreaterThanDate(
+                x => x.FromDate,
+                localizer,
+                "ToDate",
+                "FromDate");
     }
 }

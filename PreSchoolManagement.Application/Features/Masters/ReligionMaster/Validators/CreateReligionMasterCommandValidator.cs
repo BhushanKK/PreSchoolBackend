@@ -1,28 +1,33 @@
 using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Shared.Extensions;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Validators;
 
-public class CreateReligionMasterCommandValidator : AbstractValidator<CreateReligionMasterCommand>
+public class CreateReligionMasterCommandValidator
+    : AbstractValidator<CreateReligionMasterCommand>
 {
-    public CreateReligionMasterCommandValidator()
+    public CreateReligionMasterCommandValidator(
+        ILocalizationService localizer)
     {
-        RuleFor(x => x.Religion)
-            .NotEmpty().WithMessage("Religion name is required.")
-            .MaximumLength(100).WithMessage("Religion name must not exceed 100 characters.");    
+        RuleFor(x => x.Religion!)
+            .Required(localizer, "Religion")
+            .MaxLengthLocalized(localizer, "Religion", 50);
     }
 }
 
-public class UpdateReligionMasterCommandValidator : AbstractValidator<UpdateReligionMasterCommand>
+public class UpdateReligionMasterCommandValidator
+    : AbstractValidator<UpdateReligionMasterCommand>
 {
-    public UpdateReligionMasterCommandValidator()
+    public UpdateReligionMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.ReligionId)
-            .GreaterThan(0).WithMessage("ReligionId is required.");
+            .RequiredId(localizer, "ReligionId");
 
-        RuleFor(x => x.Religion)
-            .NotEmpty().WithMessage("Religion name is required.")
-            .MaximumLength(100).WithMessage("Religion name must not exceed 100 characters.");
+        RuleFor(x => x.Religion!)
+            .Required(localizer, "Religion")
+            .MaxLengthLocalized(localizer, "Religion", 50);
     }
 }
-

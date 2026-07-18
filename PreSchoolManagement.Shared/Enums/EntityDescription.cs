@@ -17,5 +17,8 @@ public enum EntityDescription
     RolePermission,
     Holiday,
     EmployeeType,
-    designation
+    designation,
+    committee,
+    Board,
+    Medium
 }

@@ -4,30 +4,40 @@ using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
 using SchoolManagement.Domain.Entities;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetByIdDivisionMasterHandler(IDivisionMasterService service)
+public class GetByIdDivisionMasterHandler(
+    IDivisionMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<GetByIdDivisionMasterQuery, ApiResponse<DivisionMaster?>>
 {
     public async Task<ApiResponse<DivisionMaster?>> Handle(
         GetByIdDivisionMasterQuery request,
         CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.Division.ToString());
+
         var Division = await service.GetByIdAsync(request.DivisionId, cancellationToken);
 
         if (Division is null)
         {
-            return ApiResponse<DivisionMaster?>.FailureResponse(
-                MessageHelper.NotFound(EntityDescription.Division.ToString()),
-                (int)HttpStatusCode.NotFound);
+            return ApiResponse<DivisionMaster?>.FailureResponse
+            (
+                messageHelper.NotFoundEntity("Masters",EntityDescription.Division.ToString()),
+                (int)HttpStatusCode.NotFound
+            );
         }
 
-        return ApiResponse<DivisionMaster?>.SuccessResponse(
+        return ApiResponse<DivisionMaster?>.SuccessResponse
+        (
             Division,
-            MessageHelper.Retrieved(EntityDescription.Division.ToString()),
-            (int)HttpStatusCode.OK);
+            messageHelper.RetrievedEntity("Masters",EntityDescription.Division.ToString()),
+            (int)HttpStatusCode.OK
+        );
     }
 }

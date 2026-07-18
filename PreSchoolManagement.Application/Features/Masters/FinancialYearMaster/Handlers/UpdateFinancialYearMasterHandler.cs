@@ -2,29 +2,35 @@ using MediatR;
 using System.Net;
 using AutoMapper;
 using FluentValidation;
-using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class UpdateFinancialYearMasterHandler(IFinancialYearMasterService service, 
-    IValidator<UpdateFinancialYearMasterCommand> validator, IMapper mapper
-    ,ICurrentUserService currentUser) 
+public class UpdateFinancialYearMasterHandler(
+    IFinancialYearMasterService service,
+    IValidator<UpdateFinancialYearMasterCommand> validator,
+    IMapper mapper,
+    ICurrentUserService currentUser,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<UpdateFinancialYearMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(UpdateFinancialYearMasterCommand request, CancellationToken cancellationToken)
     {
+        localization.Get("Masters", EntityDescription.FinancialYear.ToString());
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
-        
+
         if (!validationResult.IsValid)
         {
             var message = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
             return ApiResponse<int>.FailureResponse
             (
-                message, 
+                message,
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -34,15 +40,15 @@ public class UpdateFinancialYearMasterHandler(IFinancialYearMasterService servic
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.FinancialYear.ToString()), 
+                messageHelper.NotFoundEntity("Masters", EntityDescription.FinancialYear.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
 
         var exists = await service.IsExistsAsync
         (
-            request.FinancialYearName ?? string.Empty, 
-            OperationType.Update, 
+            request.FinancialYearName ?? string.Empty,
+            OperationType.Update,
             request.FinancialYearId, cancellationToken
         );
 
@@ -50,7 +56,7 @@ public class UpdateFinancialYearMasterHandler(IFinancialYearMasterService servic
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.AlreadyExists(EntityDescription.FinancialYear.ToString()), 
+                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.FinancialYear.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -64,8 +70,8 @@ public class UpdateFinancialYearMasterHandler(IFinancialYearMasterService servic
 
         return ApiResponse<int>.SuccessResponse
         (
-            entity.FinancialYearId, 
-            MessageHelper.Updated(EntityDescription.FinancialYear.ToString()), 
+            entity.FinancialYearId,
+            messageHelper.UpdatedEntity("Masters", EntityDescription.FinancialYear.ToString()),
             (int)HttpStatusCode.OK
         );
     }

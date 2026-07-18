@@ -2,12 +2,13 @@ using MediatR;
 using AutoMapper;
 using System.Net;
 using FluentValidation;
-using PreSchoolManagement.Shared.Utils;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
@@ -15,36 +16,46 @@ public class CreateSectionMasterHandler(
     ISectionMasterService service,
     IValidator<CreateSectionMasterCommand> validator,
     IMapper mapper,
-    ICurrentUserService currentUser)
+    ICurrentUserService currentUser,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<CreateSectionMasterCommand, ApiResponse<int>>
-{  
+{
     public async Task<ApiResponse<int>> Handle(
         CreateSectionMasterCommand request,
         CancellationToken cancellationToken)
-
     {
+        localization.Get("Masters", EntityDescription.Section.ToString());
+
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
-            var message = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
+            //var message = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
+            var message=validationResult.Errors[0].ErrorMessage;
 
-            return ApiResponse<int>.FailureResponse(
+            return ApiResponse<int>.FailureResponse
+            (
                 message,
-                (int)HttpStatusCode.BadRequest);
+                (int)HttpStatusCode.BadRequest
+            );
         }
 
-        var exists = await service.IsExistsAsync(
+        var exists = await service.IsExistsAsync
+        (
             request.SectionName ?? string.Empty,
             OperationType.Add,
             null,
-            cancellationToken);
+            cancellationToken
+        );
 
         if (exists)
         {
-            return ApiResponse<int>.FailureResponse(
-                MessageHelper.AlreadyExists(EntityDescription.Section.ToString()),
-                (int)HttpStatusCode.Conflict);
+            return ApiResponse<int>.FailureResponse
+            (
+                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.Section.ToString()),
+                (int)HttpStatusCode.Conflict
+            );
         }
 
         var entity = mapper.Map<SectionMaster>(request);
@@ -54,9 +65,11 @@ public class CreateSectionMasterHandler(
 
         await service.AddAsync(entity, cancellationToken);
 
-        return ApiResponse<int>.SuccessResponse(
+        return ApiResponse<int>.SuccessResponse
+        (
             entity.SectionId,
-            MessageHelper.Added(EntityDescription.Section.ToString()),
-            (int)HttpStatusCode.Created);
+            messageHelper.AddedEntity("Masters", EntityDescription.Section.ToString()),
+            (int)HttpStatusCode.Created
+        );
     }
 }

@@ -2,21 +2,28 @@ using MediatR;
 using System.Net;
 using AutoMapper;
 using FluentValidation;
-using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class UpdateCasteMasterHandler(ICasteMasterService service, 
-    IValidator<UpdateCasteMasterCommand> validator, IMapper mapper,
-    ICurrentUserService currentUser) 
+public class UpdateCasteMasterHandler(
+    ICasteMasterService service, 
+    IValidator<UpdateCasteMasterCommand> validator, 
+    IMapper mapper,
+    ICurrentUserService currentUser,
+    IMessageHelper messageHelper,
+    ILocalizationService localization) 
     : IRequestHandler<UpdateCasteMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(UpdateCasteMasterCommand request, CancellationToken cancellationToken)
     {
+        localization.Get("Masters" ,EntityDescription.Caste.ToString());
+
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         
         if (!validationResult.IsValid)
@@ -34,7 +41,7 @@ public class UpdateCasteMasterHandler(ICasteMasterService service,
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.Caste.ToString()), 
+                messageHelper.NotFoundEntity("Masters" ,EntityDescription.Caste.ToString()), 
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -50,7 +57,7 @@ public class UpdateCasteMasterHandler(ICasteMasterService service,
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.AlreadyExists(EntityDescription.Caste.ToString()), 
+                messageHelper.AlreadyExistsEntity("Masters" ,EntityDescription.Caste.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -61,11 +68,10 @@ public class UpdateCasteMasterHandler(ICasteMasterService service,
 
         await service.UpdateAsync(entity, cancellationToken);
 
-
         return ApiResponse<int>.SuccessResponse
         (
             entity.CasteID, 
-            MessageHelper.Updated(EntityDescription.Caste.ToString()), 
+            messageHelper.UpdatedEntity("Masters" ,EntityDescription.Caste.ToString()),
             (int)HttpStatusCode.OK
         );
     }

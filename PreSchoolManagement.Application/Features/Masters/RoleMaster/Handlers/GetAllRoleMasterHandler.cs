@@ -3,24 +3,32 @@ using System.Net;
 using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Domain.Utils;
+using PreSchoolManagement.Shared.Localization;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetAllRoleMasterHandler(IRoleMasterService service)
+public class GetAllRoleMasterHandler(
+    IRoleMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<GetAllRoleMasterQuery, ApiResponse<List<RoleMaster>>>
 {
     public async Task<ApiResponse<List<RoleMaster>>> Handle(
         GetAllRoleMasterQuery request,
         CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.Role.ToString());
+
         var roles = await service.GetAllAsync(cancellationToken);
 
-        return ApiResponse<List<RoleMaster>>.SuccessResponse(
+        return ApiResponse<List<RoleMaster>>.SuccessResponse
+        (
             roles,
-            MessageHelper.Retrieved(EntityDescription.Role.ToString()),
-            (int)HttpStatusCode.OK);
+            messageHelper.RetrievedEntity("Masters",EntityDescription.Role.ToString()),
+            (int)HttpStatusCode.OK
+        );
     }
 }

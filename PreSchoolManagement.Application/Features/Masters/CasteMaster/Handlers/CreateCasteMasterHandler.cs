@@ -2,22 +2,29 @@ using MediatR;
 using AutoMapper;
 using System.Net;
 using FluentValidation;
-using PreSchoolManagement.Shared.Utils;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Localization;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class CreateCasteMasterHandler(ICasteMasterService service, 
-IValidator<CreateCasteMasterCommand> validator, IMapper mapper,
-ICurrentUserService currentUser) 
+public class CreateCasteMasterHandler(
+    ICasteMasterService service,
+    IValidator<CreateCasteMasterCommand> validator, 
+    IMapper mapper,
+    ICurrentUserService currentUser,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
 : IRequestHandler<CreateCasteMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(CreateCasteMasterCommand request, CancellationToken cancellationToken)
     {
+        localization.Get("Masters" ,EntityDescription.Caste.ToString());
+        
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
         {
@@ -27,7 +34,7 @@ ICurrentUserService currentUser)
 
         var exists = await service.IsExistsAsync(request.Caste ?? string.Empty, OperationType.Add, null, cancellationToken);
         if (exists)
-            return ApiResponse<int>.FailureResponse(MessageHelper.AlreadyExists(EntityDescription.Caste.ToString()), (int)HttpStatusCode.Conflict);
+            return ApiResponse<int>.FailureResponse(messageHelper.AlreadyExistsEntity("Masters" ,EntityDescription.Caste.ToString()), (int)HttpStatusCode.Conflict);
 
         var entity = mapper.Map<CasteMaster>(request);
         entity.EntryDate = DateTime.UtcNow;
@@ -35,6 +42,11 @@ ICurrentUserService currentUser)
 
         await service.AddAsync(entity, cancellationToken);
 
-        return ApiResponse<int>.SuccessResponse(entity.CasteID, MessageHelper.Added(EntityDescription.Caste.ToString()), (int)HttpStatusCode.Created);
+        return ApiResponse<int>.SuccessResponse
+        (
+            entity.CasteID, 
+            messageHelper.AddedEntity("Masters" ,EntityDescription.Caste.ToString()), 
+            (int)HttpStatusCode.Created
+        );
     }
 }

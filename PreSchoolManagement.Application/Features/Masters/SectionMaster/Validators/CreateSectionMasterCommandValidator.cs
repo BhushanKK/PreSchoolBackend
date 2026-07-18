@@ -1,27 +1,33 @@
 using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Shared.Extensions;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Validators;
 
-public class CreateSectionMasterCommandValidator : AbstractValidator<CreateSectionMasterCommand>
+public class CreateSectionMasterCommandValidator
+    : AbstractValidator<CreateSectionMasterCommand>
 {
-    public CreateSectionMasterCommandValidator()
+    public CreateSectionMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.SectionName)
-            .NotEmpty().WithMessage("Section name is required.")
-            .MaximumLength(100).WithMessage("Section name must not exceed 100 characters.");
+            .Required(localizer, "SectionName")
+            .MaxLengthLocalized(localizer, "SectionName", 20);
     }
 }
 
-public class UpdateSectionMasterCommandValidator : AbstractValidator<UpdateSectionMasterCommand>
+public class UpdateSectionMasterCommandValidator
+    : AbstractValidator<UpdateSectionMasterCommand>
 {
-    public UpdateSectionMasterCommandValidator()
+    public UpdateSectionMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.SectionId)
-            .GreaterThan(0).WithMessage("SectionID is required.");
+            .RequiredId(localizer, "SectionId");
 
         RuleFor(x => x.SectionName)
-            .NotEmpty().WithMessage("Section name is required.")
-            .MaximumLength(100).WithMessage("Section name must not exceed 100 characters.");
+            .Required(localizer, "SectionName")
+            .MaxLengthLocalized(localizer, "SectionName", 20);
     }
 }

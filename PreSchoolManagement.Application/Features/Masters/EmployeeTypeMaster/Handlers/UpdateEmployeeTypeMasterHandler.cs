@@ -6,18 +6,23 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Localization;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class UpdateEmployeeTypeMasterHandler(
     IEmployeeTypeMasterService service,
     IValidator<UpdateEmployeeTypeMasterCommand> validator,
-    IMapper mapper,ICurrentUserService currentUser)
+    IMapper mapper,ICurrentUserService currentUser,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     :IRequestHandler<UpdateEmployeeTypeMasterCommand,ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(UpdateEmployeeTypeMasterCommand request,CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.EmployeeType.ToString());
+
         var validationResult = await validator.ValidateAsync(request,cancellationToken);
         if(!validationResult.IsValid)
         {
@@ -34,10 +39,9 @@ public class UpdateEmployeeTypeMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.EmployeeType.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.EmployeeType.ToString()),
                 (int)HttpStatusCode.NotFound
             );
-
         }
 
         var exists = await service.IsExistsAsync
@@ -52,7 +56,7 @@ public class UpdateEmployeeTypeMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.AlreadyExists(EntityDescription.EmployeeType.ToString()),
+                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.EmployeeType.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -66,9 +70,8 @@ public class UpdateEmployeeTypeMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.EmployeeTypeId,
-            MessageHelper.Updated(EntityDescription.EmployeeType.ToString()),
+            messageHelper.UpdatedEntity("Masters",EntityDescription.EmployeeType.ToString()),
             (int)HttpStatusCode.OK
         );
     }
-
 }

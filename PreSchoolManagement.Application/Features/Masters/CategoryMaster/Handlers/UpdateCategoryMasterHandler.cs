@@ -6,7 +6,8 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
@@ -14,13 +15,17 @@ public class UpdateCategoryMasterHandler(
     ICategoryMasterService service,
     IValidator<UpdateCategoryMasterCommand> validator,
     IMapper mapper,
-    ICurrentUserService currentUser)
+    ICurrentUserService currentUser,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<UpdateCategoryMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
         UpdateCategoryMasterCommand request,
         CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.Category.ToString());
+
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
@@ -40,7 +45,7 @@ public class UpdateCategoryMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.Category.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.Category.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -57,7 +62,7 @@ public class UpdateCategoryMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.AlreadyExists(EntityDescription.Category.ToString()),
+                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Category.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -71,7 +76,7 @@ public class UpdateCategoryMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.CategoryId,
-            MessageHelper.Updated(EntityDescription.Category.ToString()),
+            messageHelper.UpdatedEntity("Masters",EntityDescription.Category.ToString()),
             (int)HttpStatusCode.OK
         );
     }

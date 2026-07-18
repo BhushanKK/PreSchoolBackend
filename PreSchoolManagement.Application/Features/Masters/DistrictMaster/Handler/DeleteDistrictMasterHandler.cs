@@ -1,23 +1,31 @@
 using MediatR;
 using System.Net;
-using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Handlers;
 
-public class DeleteDistrictMasterHandler(IDistrictMasterService service)
+public class DeleteDistrictMasterHandler(
+    IDistrictMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<DeleteDistrictMasterCommand, ApiResponse<int>>
 {
-    public async Task<ApiResponse<int>> Handle(DeleteDistrictMasterCommand request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<int>> Handle(
+        DeleteDistrictMasterCommand request, 
+        CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.District.ToString());
+
         if ( request.DistrictId <=0)
         {
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.InvalidId(EntityDescription.District.ToString()),
+                messageHelper.InvalidIdEntity("Masters",EntityDescription.District.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -27,7 +35,7 @@ public class DeleteDistrictMasterHandler(IDistrictMasterService service)
         if ( existing is null)
             return ApiResponse<int>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.District.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.District.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         
@@ -36,7 +44,7 @@ public class DeleteDistrictMasterHandler(IDistrictMasterService service)
         return ApiResponse<int>.SuccessResponse
         (
             request.DistrictId,
-            MessageHelper.Deleted(EntityDescription.District.ToString()),
+            messageHelper.DeletedEntity("Masters",EntityDescription.District.ToString()),
             (int)HttpStatusCode.OK
         );
     }

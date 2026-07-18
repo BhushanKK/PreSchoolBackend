@@ -1,27 +1,33 @@
 using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Shared.Extensions;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Validators;
 
-public class CreateStandardMasterCommandValidator : AbstractValidator<CreateStandardMasterCommand>
+public class CreateStandardMasterCommandValidator
+    : AbstractValidator<CreateStandardMasterCommand>
 {
-    public CreateStandardMasterCommandValidator()
+    public CreateStandardMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.StandardName)
-            .NotEmpty().WithMessage("Standard name is required.")
-            .MaximumLength(100).WithMessage("Standard name must not exceed 100 characters.");
+            .Required(localizer, "StandardName")
+            .MaxLengthLocalized(localizer, "StandardName", 20);
     }
 }
 
-public class UpdateStandardMasterCommandValidator : AbstractValidator<UpdateStandardMasterCommand>
+public class UpdateStandardMasterCommandValidator
+    : AbstractValidator<UpdateStandardMasterCommand>
 {
-    public UpdateStandardMasterCommandValidator()
+    public UpdateStandardMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.StandardId)
-            .GreaterThan(0).WithMessage("StandardID is required.");
+            .RequiredId(localizer, "StandardId");
 
         RuleFor(x => x.StandardName)
-            .NotEmpty().WithMessage("Standard name is required.")
-            .MaximumLength(100).WithMessage("Standard name must not exceed 100 characters.");
+            .Required(localizer, "StandardName")
+            .MaxLengthLocalized(localizer, "StandardName", 20);
     }
 }

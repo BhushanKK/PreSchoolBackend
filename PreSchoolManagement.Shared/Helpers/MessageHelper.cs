@@ -1,12 +1,51 @@
-namespace PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Localization;
 
-public static class MessageHelper
+namespace PreSchoolManagement.Shared.Common;
+
+public class MessageHelper(ILocalizationService localizer) : IMessageHelper
 {
-    public static string Added(string entityName) => $"{entityName} added successfully.";
-    public static string Updated(string entityName) => $"{entityName} updated successfully.";
-    public static string Deleted(string entityName) => $"{entityName} deleted successfully.";
-    public static string Retrieved(string entityName) => $"{entityName} retrieved successfully.";
-    public static string AlreadyExists(string entityName) => $"{entityName} already exists.";
-    public static string NotFound(string entityName) => $"{entityName} not found.";
-    public static string InvalidId(string entityName) => $"Invalid {entityName.ToLowerInvariant()} id.";
+    public string Entity(string resourceName, string key)
+        => localizer.Get(resourceName, key);
+
+    public string Added(string entity)
+        => localizer.Get("ApiMessageResponse", "Added", entity);
+
+    public string Updated(string entity)
+        => localizer.Get("ApiMessageResponse", "Updated", entity);
+
+    public string Deleted(string entity)
+        => localizer.Get("ApiMessageResponse", "Deleted", entity);
+
+    public string Retrieved(string entity)
+        => localizer.Get("ApiMessageResponse", "Retrieved", entity);
+
+    public string AlreadyExists(string entity)
+        => localizer.Get("ApiMessageResponse", "AlreadyExists", entity);
+
+    public string NotFound(string entity)
+        => localizer.Get("ApiMessageResponse", "NotFound", entity);
+
+    public string InvalidId(string entity)
+        => localizer.Get("ApiMessageResponse", "InvalidId", entity);
+
+    public string AddedEntity(string resourceName, string key)
+        => Added(Entity(resourceName, key));
+
+    public string UpdatedEntity(string resourceName, string key)
+        => Updated(Entity(resourceName, key));
+
+    public string DeletedEntity(string resourceName, string key)
+        => Deleted(Entity(resourceName, key));
+
+    public string RetrievedEntity(string resourceName, string key)
+        => Retrieved(Entity(resourceName, key));
+
+    public string AlreadyExistsEntity(string resourceName, string key)
+        => AlreadyExists(Entity(resourceName, key));
+
+    public string NotFoundEntity(string resourceName, string key)
+        => NotFound(Entity(resourceName, key));
+
+    public string InvalidIdEntity(string resourceName, string key)
+        => InvalidId(Entity(resourceName, key));
 }

@@ -3,16 +3,22 @@ using System.Net;
 using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Domain.Utils;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetAllDistrictMasterHandler(IDistrictMasterService service)
+public class GetAllDistrictMasterHandler(
+    IDistrictMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     :IRequestHandler<GetAllDistrictMasterQuery, ApiResponse<List<DistrictMasterQueryDto>>>
 {
     public async Task<ApiResponse<List<DistrictMasterQueryDto>>> Handle(GetAllDistrictMasterQuery request, CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.District.ToString());
+
         var data = await service.GetAllAsync(cancellationToken);
         
         if(data!=null)
@@ -20,7 +26,7 @@ public class GetAllDistrictMasterHandler(IDistrictMasterService service)
             return ApiResponse<List<DistrictMasterQueryDto>>.SuccessResponse
             (
                 data,
-                MessageHelper.Retrieved(EntityDescription.District.ToString()),
+                messageHelper.RetrievedEntity("Masters",EntityDescription.District.ToString()),
                 (int)HttpStatusCode.OK
             );
         }
@@ -28,7 +34,7 @@ public class GetAllDistrictMasterHandler(IDistrictMasterService service)
         {
             return ApiResponse<List<DistrictMasterQueryDto>>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.District.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.District.ToString()),
                 (int)HttpStatusCode.OK
             );
         }

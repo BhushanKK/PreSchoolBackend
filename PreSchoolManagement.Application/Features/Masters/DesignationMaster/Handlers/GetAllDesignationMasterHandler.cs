@@ -4,17 +4,23 @@ using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetAllDesignationMasterHandler(IDesignationMasterService service)
+public class GetAllDesignationMasterHandler(
+    IDesignationMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     :IRequestHandler<GetAllDesignationMasterQuery,ApiResponse<List<DesignationMaster>>>
 {
     public async Task<ApiResponse<List<DesignationMaster>>> Handle(GetAllDesignationMasterQuery request,
     CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.designation.ToString());
+
         var data = await service.GetAllAsync(request.filter,cancellationToken);
 
         if(data !=null)
@@ -22,7 +28,7 @@ public class GetAllDesignationMasterHandler(IDesignationMasterService service)
             return ApiResponse<List<DesignationMaster>>.SuccessResponse
             (
                 data,
-                MessageHelper.Retrieved(EntityDescription.designation.ToString()),
+                messageHelper.RetrievedEntity("Masters",EntityDescription.designation.ToString()),
                 (int)HttpStatusCode.OK
             );
         }
@@ -31,7 +37,7 @@ public class GetAllDesignationMasterHandler(IDesignationMasterService service)
         {
             return ApiResponse<List<DesignationMaster>>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.designation.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.designation.ToString()),
                 (int)HttpStatusCode.OK
             );
         }

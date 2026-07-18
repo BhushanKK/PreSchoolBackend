@@ -1,27 +1,33 @@
 using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Shared.Extensions;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Validators;
 
-public class CreateRoleMasterCommandValidator : AbstractValidator<CreateRoleMasterCommand>
+public class CreateRoleMasterCommandValidator
+    : AbstractValidator<CreateRoleMasterCommand>
 {
-    public CreateRoleMasterCommandValidator()
+    public CreateRoleMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.RoleName)
-            .NotEmpty().WithMessage("Role name is required.")
-            .MaximumLength(100).WithMessage("Role name must not exceed 100 characters.");
+            .Required(localizer, "RoleName")
+            .MaxLengthLocalized(localizer, "RoleName", 100);
     }
 }
 
-public class UpdateRoleMasterCommandValidator : AbstractValidator<UpdateRoleMasterCommand>
+public class UpdateRoleMasterCommandValidator
+    : AbstractValidator<UpdateRoleMasterCommand>
 {
-    public UpdateRoleMasterCommandValidator()
+    public UpdateRoleMasterCommandValidator(
+        ILocalizationService localizer)
     {
         RuleFor(x => x.RoleId)
-            .GreaterThan(0).WithMessage("RoleID is required.");
+            .RequiredId(localizer, "RoleId");
 
         RuleFor(x => x.RoleName)
-            .NotEmpty().WithMessage("Role name is required.")
-            .MaximumLength(100).WithMessage("Role name must not exceed 100 characters.");
+            .Required(localizer, "RoleName")
+            .MaxLengthLocalized(localizer, "RoleName", 100);
     }
 }

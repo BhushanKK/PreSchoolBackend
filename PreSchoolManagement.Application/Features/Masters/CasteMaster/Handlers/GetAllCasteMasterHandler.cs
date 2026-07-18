@@ -1,19 +1,25 @@
 using System.Net;
 using MediatR;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Domain.Dtos;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetAllCasteMasterHandler(ICasteMasterService service) 
+public class GetAllCasteMasterHandler(
+    ICasteMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization) 
     : IRequestHandler<GetAllCasteMasterQuery, ApiResponse<List<CasteMasterQueryDto>>>
 {
     public async Task<ApiResponse<List<CasteMasterQueryDto>>> Handle(GetAllCasteMasterQuery request, CancellationToken cancellationToken)
     {
+        localization.Get("Masters" ,EntityDescription.Caste.ToString());
+
         var data = await service.GetAllAsync(request.filter, cancellationToken);
         
         if(data!=null)
@@ -21,7 +27,7 @@ public class GetAllCasteMasterHandler(ICasteMasterService service)
             return ApiResponse<List<CasteMasterQueryDto>>.SuccessResponse
             (
                 data, 
-                MessageHelper.Retrieved(EntityDescription.Caste.ToString()),
+                messageHelper.RetrievedEntity("Masters" ,EntityDescription.Caste.ToString()),
                 (int)HttpStatusCode.OK
             );
         }
@@ -29,7 +35,7 @@ public class GetAllCasteMasterHandler(ICasteMasterService service)
         {
             return ApiResponse<List<CasteMasterQueryDto>>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.Caste.ToString()),
+                messageHelper.NotFoundEntity("Masters" ,EntityDescription.Caste.ToString()),
                 (int)HttpStatusCode.OK
             );
         }

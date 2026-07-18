@@ -9,7 +9,7 @@ public class CasteMasterDto
 
     public int? CategoryId { get; set; }
 
-    public string? Caste { get; set; }
+    public string Caste { get; set; }=string.Empty;
 
     public bool IsActive { get; set; }
 }

@@ -4,18 +4,24 @@ using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetAllCategoryMasterHandler(ICategoryMasterService service)
+public class GetAllCategoryMasterHandler(
+    ICategoryMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization)
     : IRequestHandler<GetAllCategoryMasterQuery, ApiResponse<List<CategoryMaster>>>
 {
     public async Task<ApiResponse<List<CategoryMaster>>> Handle(
         GetAllCategoryMasterQuery request,
         CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.Category.ToString());
+
         var data = await service.GetAllAsync(request.filter,cancellationToken);
 
         if (data != null)
@@ -23,7 +29,7 @@ public class GetAllCategoryMasterHandler(ICategoryMasterService service)
             return ApiResponse<List<CategoryMaster>>.SuccessResponse
             (
                 data,
-                MessageHelper.Retrieved(EntityDescription.Category.ToString()),
+                messageHelper.RetrievedEntity("Masters",EntityDescription.Category.ToString()),
                 (int)HttpStatusCode.OK
             );
         }
@@ -31,7 +37,7 @@ public class GetAllCategoryMasterHandler(ICategoryMasterService service)
         {
             return ApiResponse<List<CategoryMaster>>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.Category.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.Category.ToString()),
                 (int)HttpStatusCode.OK
             );
         }

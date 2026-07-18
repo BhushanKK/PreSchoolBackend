@@ -1,23 +1,29 @@
 using MediatR;
 using System.Net;
-using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetByIdFinancialYearMasterHandler(IFinancialYearMasterService service) : IRequestHandler<GetByIdFinancialYearMasterQuery, ApiResponse<FinancialYearMaster?>>
+public class GetByIdFinancialYearMasterHandler(
+    IFinancialYearMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localization) 
+    : IRequestHandler<GetByIdFinancialYearMasterQuery, ApiResponse<FinancialYearMaster?>>
 {
     public async Task<ApiResponse<FinancialYearMaster?>> Handle(GetByIdFinancialYearMasterQuery request, CancellationToken cancellationToken)
     {
+        localization.Get("Masters",EntityDescription.FinancialYear.ToString());
         if (request.FinancialYearId <= 0)
         {
             return ApiResponse<FinancialYearMaster?>.FailureResponse
             (
-                MessageHelper.InvalidId(EntityDescription.FinancialYear.ToString()), 
+                messageHelper.InvalidIdEntity("Masters",EntityDescription.FinancialYear.ToString()), 
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -28,7 +34,7 @@ public class GetByIdFinancialYearMasterHandler(IFinancialYearMasterService servi
         {
             return ApiResponse<FinancialYearMaster?>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.FinancialYear.ToString()), 
+                messageHelper.NotFoundEntity("Masters",EntityDescription.FinancialYear.ToString()), 
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -36,7 +42,7 @@ public class GetByIdFinancialYearMasterHandler(IFinancialYearMasterService servi
         return ApiResponse<FinancialYearMaster?>.SuccessResponse
         (
             data, 
-            MessageHelper.Retrieved(EntityDescription.FinancialYear.ToString()), 
+            messageHelper.RetrievedEntity("Masters",EntityDescription.FinancialYear.ToString()), 
             (int)HttpStatusCode.OK
         );
     }

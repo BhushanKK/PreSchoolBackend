@@ -1,27 +1,32 @@
 using System.Net;
 using MediatR;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
+using PreSchoolManagement.Shared.Localization;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetAllAcademicYearMasterHandler(IAcademicYearMasterService service) 
+public class GetAllAcademicYearMasterHandler(
+    IAcademicYearMasterService service,
+    IMessageHelper messageHelper,
+    ILocalizationService localizer)
 : IRequestHandler<GetAllAcademicYearMasterQuery, ApiResponse<List<AcademicYearMaster>>>
 {
     public async Task<ApiResponse<List<AcademicYearMaster>>> Handle(GetAllAcademicYearMasterQuery request, CancellationToken cancellationToken)
     {
-        var data = await service.GetAllAsync(request.filter,cancellationToken);
+        localizer.Get("Masters", EntityDescription.AcademicYear.ToString());
+        var data = await service.GetAllAsync(request.filter, cancellationToken);
 
-        if(data!=null)
+        if (data != null)
         {
             return ApiResponse<List<AcademicYearMaster>>.SuccessResponse
             (
-                data, 
-                MessageHelper.Retrieved(EntityDescription.AcademicYear.ToString()),
+                data,
+                messageHelper.RetrievedEntity("Masters", EntityDescription.AcademicYear.ToString()),
                 (int)HttpStatusCode.OK
             );
         }
@@ -29,7 +34,7 @@ public class GetAllAcademicYearMasterHandler(IAcademicYearMasterService service)
         {
             return ApiResponse<List<AcademicYearMaster>>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.AcademicYear.ToString()),
+                messageHelper.NotFoundEntity("Masters", EntityDescription.AcademicYear.ToString()),
                 (int)HttpStatusCode.OK
             );
         }

@@ -21,6 +21,8 @@ public static class MapperExtensions
         services.AddAutoMapper(typeof(StateMasterProfile));
         services.AddAutoMapper(typeof(EmployeeTypeMasterProfile));
         services.AddAutoMapper(typeof(DesignationMasterProfile));
+        services.AddAutoMapper(typeof(BoardMasterProfile));
+        services.AddAutoMapper(typeof(MediumMasterProfile));
         
         return services;
     }
