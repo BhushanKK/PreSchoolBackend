@@ -9,7 +9,6 @@ using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
 using SchoolManagement.Domain.Entities;
 
-
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class CreateRoleMasterHandler(

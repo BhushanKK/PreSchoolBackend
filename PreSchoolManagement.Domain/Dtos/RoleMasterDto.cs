@@ -8,7 +8,8 @@ public class RoleMasterDto
     public int RoleId { get; set; }
     public string RoleName { get; set; } = string.Empty;
     public bool IsActive { get; set; } = false;
-    public List<RoleTranslationDto> Translations { get; set; } = new();
+    public ICollection<RoleTranslationDto> Translations { get; set; } 
+    = new List<RoleTranslationDto>();
 }
 
 public class RoleTranslationDto

@@ -44,20 +44,16 @@ public class UpdateRoleMasterHandler(
                     EntityDescription.Role.ToString()),
                 (int)HttpStatusCode.NotFound);
         }
+        var isExist = await service.IsExistsAsync(request.RoleName,OperationType.Update,
+        request.RoleId,cancellationToken);
 
-        if (await service.IsExistsAsync(
-                request.RoleName,
-                OperationType.Update,
-                request.RoleId,
-                cancellationToken))
+        if (isExist)
         {
-            return ApiResponse<int>.FailureResponse(
-                messageHelper.AlreadyExistsEntity
-                (
-                    "Masters",
-                    EntityDescription.Role.ToString()),
-                    (int)HttpStatusCode.Conflict
-                );
+            return ApiResponse<int>.FailureResponse
+            (
+                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Role.ToString()),
+                (int)HttpStatusCode.Conflict
+            );
         }
 
         // Update master
@@ -84,29 +80,25 @@ public class UpdateRoleMasterHandler(
                 });
             }
             else
-            {
                 translation.RoleName = dto.RoleName;
-            }
         }
 
         // Remove deleted translations
         var removedTranslations = entity.Translations
             .Where(x => !request.Translations
-                .Any(t => t.LanguageCode == x.LanguageCode))
+            .Any(t => t.LanguageCode == x.LanguageCode))
             .ToList();
 
         foreach (var translation in removedTranslations)
-        {
             entity.Translations.Remove(translation);
-        }
 
         await service.UpdateAsync(entity, cancellationToken);
 
-        return ApiResponse<int>.SuccessResponse(
+        return ApiResponse<int>.SuccessResponse
+        (
             entity.RoleId,
-            messageHelper.UpdatedEntity(
-                "Masters",
-                EntityDescription.Role.ToString()),
-            (int)HttpStatusCode.OK);
+            messageHelper.UpdatedEntity("Masters",EntityDescription.Role.ToString()),
+            (int)HttpStatusCode.OK
+        );
     }
 }
