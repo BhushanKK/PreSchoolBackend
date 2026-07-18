@@ -8,8 +8,7 @@ public class SectionMasterProfile : Profile
 {
     public SectionMasterProfile()
     {
-        CreateMap<SectionMasterDto, SectionMaster>()
-            .ForMember(d => d.SectionId, opt => opt.MapFrom(s => s.SectionId))
-            .ForMember(d => d.SectionName, opt => opt.MapFrom(s => s.SectionName ?? string.Empty));
+        CreateMap<SectionTranslationDto, SectionTranslation>();
+        CreateMap<SectionMasterDto, SectionMaster>();
     }
 }

@@ -12,16 +12,13 @@ namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class GetAllRoleMasterHandler(
     IRoleMasterService service,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<GetAllRoleMasterQuery, ApiResponse<List<RoleMaster>>>
 {
     public async Task<ApiResponse<List<RoleMaster>>> Handle(
         GetAllRoleMasterQuery request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Role.ToString());
-
         var roles = await service.GetAllAsync(cancellationToken);
 
         return ApiResponse<List<RoleMaster>>.SuccessResponse

@@ -1,4 +1,5 @@
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Infrastructure.Services;
 using PreSchoolManagement.Shared.Common;
 using PreSchoolManagement.Shared.Localization;
 using SchoolManagement.Domain;
@@ -14,6 +15,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddSingleton<ILocalizationService,LocalizationService>();
         services.AddScoped<IMessageHelper, MessageHelper>();
+        services.AddScoped<ILanguageService, LanguageService>();
         return services;
     }
 }

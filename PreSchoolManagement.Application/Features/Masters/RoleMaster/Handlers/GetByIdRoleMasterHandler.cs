@@ -6,21 +6,17 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class GetByIdRoleMasterHandler(IRoleMasterService service,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<GetByIdRoleMasterQuery, ApiResponse<RoleMaster?>>
 {
     public async Task<ApiResponse<RoleMaster?>> Handle(
         GetByIdRoleMasterQuery request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.Role.ToString());
-
         var role = await service.GetByIdAsync(request.RoleID, cancellationToken);
 
         if (role is null)

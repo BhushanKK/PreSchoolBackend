@@ -10,5 +10,6 @@ public class MenuMaster : BaseEntity
     public bool IsPublic { get; set; }
     public string? RoleIds { get; set; } 
     public virtual MenuMaster? ParentMenu { get; set; }
+    public bool IsActive { get; set; } = false;
     public virtual ICollection<MenuMaster> ChildMenus { get; set; } = new List<MenuMaster>();
 }

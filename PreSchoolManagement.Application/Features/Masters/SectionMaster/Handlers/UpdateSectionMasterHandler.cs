@@ -1,44 +1,42 @@
-using MediatR;
 using AutoMapper;
-using System.Net;
 using FluentValidation;
+using MediatR;
+using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
-using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
+using SchoolManagement.Domain.Entities;
+using System.Net;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class UpdateSectionMasterHandler(
     ISectionMasterService service,
     IValidator<UpdateSectionMasterCommand> validator,
+    ICurrentUserService currentUser,
     IMapper mapper,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<UpdateSectionMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
         UpdateSectionMasterCommand request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Section.ToString());
-
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
-            var message = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
-
             return ApiResponse<int>.FailureResponse
             (
-                message,
+                string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage)),
                 (int)HttpStatusCode.BadRequest
             );
         }
 
-        var entity = await service.GetByIdAsync(request.SectionId, cancellationToken);
+        var entity = await service.GetForUpdateAsync(
+            request.SectionId,
+            cancellationToken);
 
         if (entity is null)
         {
@@ -51,7 +49,7 @@ public class UpdateSectionMasterHandler(
 
         var exists = await service.IsExistsAsync
         (
-            request.SectionName ?? string.Empty,
+            request.SectionName,
             OperationType.Update,
             request.SectionId,
             cancellationToken
@@ -61,19 +59,54 @@ public class UpdateSectionMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Section.ToString()),
+                messageHelper.AlreadyExistsEntity(
+                "Masters",
+                EntityDescription.Section.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
 
+        // Update master
         mapper.Map(request, entity);
+        var currentDate = DateTime.UtcNow;
+        var userId = currentUser.UserId;
+        entity.ModifyBy = userId;
+        entity.ModifyDate = currentDate;
+
+        foreach (var dto in request.Translations)
+        {
+            var translation = entity.Translations
+                .FirstOrDefault(x => x.LanguageCode == dto.LanguageCode);
+
+            if (translation == null)
+            {
+                entity.Translations.Add(new SectionTranslation
+                {
+                    LanguageCode = dto.LanguageCode,
+                    SectionName = dto.SectionName
+                });
+            }
+            else
+                translation.SectionName = dto.SectionName;
+        }
+
+        // Remove deleted translations
+        var removedTranslations = entity.Translations
+            .Where(x => !request.Translations
+            .Any(t => t.LanguageCode == x.LanguageCode))
+            .ToList();
+
+        foreach (var translation in removedTranslations)
+            entity.Translations.Remove(translation);
 
         await service.UpdateAsync(entity, cancellationToken);
 
         return ApiResponse<int>.SuccessResponse
         (
             entity.SectionId,
-            messageHelper.UpdatedEntity("Masters",EntityDescription.Section.ToString()),
+            messageHelper.UpdatedEntity(
+            "Masters",
+            EntityDescription.Section.ToString()),
             (int)HttpStatusCode.OK
         );
     }

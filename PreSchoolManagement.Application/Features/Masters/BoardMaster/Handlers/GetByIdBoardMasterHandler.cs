@@ -20,7 +20,7 @@ public class GetByIdBoardMasterHandler(
         GetByIdBoardMasterQuery request,CancellationToken cancellationToken)
 
     {
-        localization.Get("Masters",EntityDescription.Board.ToString());
+        
 
         var board = await service.GetByIdAsync(request.BoardId,cancellationToken);
 

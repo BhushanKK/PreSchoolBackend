@@ -4,21 +4,43 @@ using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
-public class SectionMasterService(ApplicationDbContext context) : ISectionMasterService
+public class SectionMasterService(
+    ApplicationDbContext context,
+    ILanguageService languageService)
+    : ISectionMasterService
 {
-    public Task<List<SectionMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken = default)
-        => context.SectionMasters
-        .AsNoTracking()
-        .Where(x => !filter || x.IsActive)
-        .ToListAsync(cancellationToken);
+    public async Task<List<SectionMaster>> GetAllAsync(
+    bool filter = false,
+    CancellationToken cancellationToken = default)
+    {
+        var sections = await context.SectionMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .Where(x => !filter || x.IsActive)
+            .ToListAsync(cancellationToken);
+
+        return sections
+            .Select(x => MapSection(x, languageService.CurrentLanguage))
+            .ToList();
+    }
 
     public async Task<SectionMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => await context.SectionMasters
-        .AsNoTracking()
-        .FirstOrDefaultAsync(x => x.SectionId == id, cancellationToken);
+    {
+        var language = languageService.CurrentLanguage;
+
+        var section = await context.SectionMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .FirstOrDefaultAsync(x => x.SectionId == id, cancellationToken);
+
+        return section is null 
+            ? null 
+            : MapSection(section, languageService.CurrentLanguage);
+    }
 
     public async Task AddAsync(SectionMaster Section, CancellationToken cancellationToken)
     {
@@ -83,4 +105,26 @@ public class SectionMasterService(ApplicationDbContext context) : ISectionMaster
             x => x.SectionName == SectionName &&
                  (SectionId == null || x.SectionId != SectionId),
             cancellationToken);
+    public async Task<SectionMaster?> GetForUpdateAsync(
+    int id,
+    CancellationToken cancellationToken)
+    => await context.SectionMasters
+        .Include(x => x.Translations)
+        .FirstOrDefaultAsync(x => x.SectionId == id, cancellationToken);
+
+    private SectionMaster MapSection(SectionMaster section, string language)
+    {
+        return new SectionMaster
+        {
+            SectionId = section.SectionId,
+            SectionName = TranslationHelper.GetTranslatedValue(
+                section.Translations,
+                language,
+                x => x.LanguageCode,
+                x => x.SectionName,
+                section.SectionName),
+
+            IsActive = section.IsActive
+        };
+    }
 }

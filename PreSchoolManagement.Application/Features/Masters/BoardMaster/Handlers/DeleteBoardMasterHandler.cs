@@ -18,7 +18,7 @@ public class DeleteBoardMasterHandler(
     public async Task<ApiResponse<int>> Handle(DeleteBoardMasterCommand request,
     CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Board.ToString());
+        
 
         var entity = await service.GetByIdAsync(request.BoardId,cancellationToken);
         

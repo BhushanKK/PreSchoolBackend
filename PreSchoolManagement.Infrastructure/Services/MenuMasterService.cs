@@ -75,7 +75,6 @@ public class MenuMasterService(ApplicationDbContext context, ICurrentUserService
         await context.MenuMasters.AddAsync(
             menuMaster,
             cancellationToken);
-
         await context.SaveChangesAsync(cancellationToken);
         return menuMaster;
     }

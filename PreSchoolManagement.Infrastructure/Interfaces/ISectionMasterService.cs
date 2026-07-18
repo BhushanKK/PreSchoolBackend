@@ -6,14 +6,10 @@ namespace PreSchoolManagement.Infrastructure.Interfaces;
 public interface ISectionMasterService
 {
     Task<List<SectionMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken = default);
-
     Task<SectionMaster?> GetByIdAsync(int id, CancellationToken cancellationToken);
-
     Task AddAsync(SectionMaster Section, CancellationToken cancellationToken);
-
     Task UpdateAsync(SectionMaster Section, CancellationToken cancellationToken);
-
     Task DeleteAsync(SectionMaster Section, CancellationToken cancellationToken);
-
     Task<bool> IsExistsAsync(string SectionName, OperationType operation, int? SectionId, CancellationToken cancellationToken);
+    Task<SectionMaster?> GetForUpdateAsync(int id,CancellationToken cancellationToken);
 }

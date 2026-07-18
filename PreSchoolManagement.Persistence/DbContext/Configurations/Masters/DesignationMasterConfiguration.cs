@@ -9,6 +9,36 @@ public class DesignationMasterConfiguration : IEntityTypeConfiguration<Designati
     public void Configure(EntityTypeBuilder<DesignationMaster> entity)
     {
         entity.ToTable("DesignationMaster");
-        entity.HasKey(e => e.DesignationId);
+
+        entity.HasKey(x => x.DesignationId);
+    }
+}
+
+public class DesignationTranslationConfiguration : IEntityTypeConfiguration<DesignationTranslation>
+{
+    public void Configure(EntityTypeBuilder<DesignationTranslation> entity)
+    {
+        entity.ToTable("DesignationTranslation");
+
+        entity.HasKey(x => x.DesignationTranslationId);
+
+        entity.Property(x => x.LanguageCode)
+            .HasMaxLength(5)
+            .IsRequired();
+
+        entity.Property(x => x.Designation)
+            .HasMaxLength(100)
+            .IsRequired();
+
+        entity.HasIndex(x => new
+        {
+            x.DesignationId,
+            x.LanguageCode
+        }).IsUnique();
+
+        entity.HasOne(x => x.DesignationMaster)
+            .WithMany(x => x.Translations)
+            .HasForeignKey(x => x.DesignationId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

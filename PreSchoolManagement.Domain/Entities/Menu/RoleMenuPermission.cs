@@ -10,4 +10,5 @@ public class RoleMenuPermission : BaseEntity
     public bool CanDelete { get; set; }
     public bool CanPrint { get; set; }
     public bool CanExport { get; set; }
+    public bool IsActive { get; set; } = false;
 }

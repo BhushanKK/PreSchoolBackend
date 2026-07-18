@@ -7,4 +7,5 @@ public class CommitteeMaster : BaseEntity
     public string? Slogan { get; set; }
     public string? Logo { get; set; }
     public string? LogoPath { get; set; }
+    public bool IsActive { get; set; } = false;
 }

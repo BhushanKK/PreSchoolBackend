@@ -11,16 +11,13 @@ namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class DeleteRoleMasterHandler(
     IRoleMasterService service,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<DeleteRoleMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
         DeleteRoleMasterCommand request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Role.ToString());
-
         var entity = await service.GetByIdAsync(request.RoleId, cancellationToken);
 
         if (entity is null)
@@ -34,9 +31,11 @@ public class DeleteRoleMasterHandler(
 
         await service.DeleteAsync(entity, cancellationToken);
 
-        return ApiResponse<int>.SuccessResponse(
+        return ApiResponse<int>.SuccessResponse
+        (
             entity.RoleId,
             messageHelper.DeletedEntity("Masters",EntityDescription.Role.ToString()),
-            (int)HttpStatusCode.OK);
+            (int)HttpStatusCode.OK
+        );
     }
 }
