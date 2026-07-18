@@ -13,10 +13,9 @@ public class GetAllHolidayMasterHandler(IHolidayMasterService service)
     : IRequestHandler<GetAllHolidayMasterQuery, ApiResponse<List<HolidayMaster>>>
 {
     public async Task<ApiResponse<List<HolidayMaster>>> Handle(
-        GetAllHolidayMasterQuery request,
-        CancellationToken cancellationToken)
+        GetAllHolidayMasterQuery request, CancellationToken cancellationToken)
     {
-        var Holidays = await service.GetAllAsync(cancellationToken);
+        var Holidays = await service.GetAllAsync(request.filter, cancellationToken);
 
         return ApiResponse<List<HolidayMaster>>.SuccessResponse(
             Holidays,

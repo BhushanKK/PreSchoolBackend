@@ -9,8 +9,8 @@ namespace PreSchoolManagement.Infrastructure.Services;
 
 public class HolidayMasterService(ApplicationDbContext context) : IHolidayMasterService
 {
-    public Task<List<HolidayMaster>> GetAllAsync(CancellationToken cancellationToken)
-        => context.HolidayMasters.ToListAsync(cancellationToken);
+        public Task<List<HolidayMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken = default)
+            => context.HolidayMasters.ToListAsync(cancellationToken);
 
     public async Task<HolidayMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
         => await context.HolidayMasters.FindAsync([id], cancellationToken);

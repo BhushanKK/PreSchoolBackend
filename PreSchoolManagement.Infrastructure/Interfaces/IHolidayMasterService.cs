@@ -5,7 +5,7 @@ namespace PreSchoolManagement.Infrastructure.Interfaces;
 
 public interface IHolidayMasterService
 {
-    Task<List<HolidayMaster>> GetAllAsync(CancellationToken cancellationToken);
+    Task<List<HolidayMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken=default);
 
     Task<HolidayMaster?> GetByIdAsync(int id, CancellationToken cancellationToken);
 
