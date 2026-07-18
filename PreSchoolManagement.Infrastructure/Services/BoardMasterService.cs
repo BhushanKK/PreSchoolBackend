@@ -2,40 +2,60 @@ using Microsoft.EntityFrameworkCore;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
 using SchoolManagement.Domain.Entities;
 using Serilog;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
-public class BoardMasterService(ApplicationDbContext context):IBoardMasterService
+public class BoardMasterService(
+    ApplicationDbContext context,
+    ILanguageService languageService) : IBoardMasterService
 {
-    public Task<List<BoardMaster>> GetAllAsync(CancellationToken cancellationToken)
-        => context.BoardMasters.AsNoTracking().ToListAsync(cancellationToken);
+    public async Task<List<BoardMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken = default)
+    {
+        var boards = await context.BoardMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .Where(x => !filter || x.IsActive)
+            .ToListAsync(cancellationToken);
+
+        return boards.Select(x => MapBoard(x, languageService.CurrentLanguage)).ToList();
+    }
 
     public async Task<BoardMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => await context.BoardMasters.FindAsync([id],cancellationToken);
+    {
+        var role = await context.BoardMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .FirstOrDefaultAsync(x => x.BoardId == id, cancellationToken);
 
-    public async Task AddAsync (BoardMaster board,CancellationToken cancellationToken)
+        return role is null
+            ? null
+            : MapBoard(role, languageService.CurrentLanguage);
+    }
+
+    public async Task AddAsync(BoardMaster board, CancellationToken cancellationToken)
     {
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
         try
         {
-            await context.BoardMasters.AddAsync(board,cancellationToken);
+            await context.BoardMasters.AddAsync(board, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
 
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
-            Log.Error(ex,"An error occurred while adding board master record.");
+            Log.Error(ex, "An error occurred while adding board master record.");
             throw;
         }
     }
 
-    public async Task UpdateAsync(BoardMaster board,CancellationToken cancellationToken)
+    public async Task UpdateAsync(BoardMaster board, CancellationToken cancellationToken)
     {
-        await using var transaction = await  context.Database.BeginTransactionAsync(cancellationToken);
+        await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
         try
         {
             context.BoardMasters.Update(board);
@@ -43,15 +63,15 @@ public class BoardMasterService(ApplicationDbContext context):IBoardMasterServic
             await transaction.CommitAsync(cancellationToken);
 
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
-            Log.Error(ex,"An error occurred while updating board master record.");
+            Log.Error(ex, "An error occurred while updating board master record.");
             throw;
         }
     }
 
-    public async Task DeleteAsync(BoardMaster board,CancellationToken cancellationToken)
+    public async Task DeleteAsync(BoardMaster board, CancellationToken cancellationToken)
     {
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
         try
@@ -61,17 +81,38 @@ public class BoardMasterService(ApplicationDbContext context):IBoardMasterServic
             await transaction.CommitAsync(cancellationToken);
 
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
-            Log.Error(ex,"An error occurred while deleting board master record.");
+            Log.Error(ex, "An error occurred while deleting board master record.");
             throw;
         }
     }
 
-    public Task<bool> IsExistsAsync(string boardName, OperationType operation,int? boardId,CancellationToken cancellationToken)
-    => context.BoardMasters.AnyAsync(x => x.BoardName == boardName && 
-    (boardId == null || x.BoardId != boardId),
-    cancellationToken);
+    public Task<bool> IsExistsAsync(string boardName, OperationType operation, int? boardId, CancellationToken cancellationToken)
+        => context.BoardMasters.AnyAsync(x => x.BoardName == boardName &&
+        (boardId == null || x.BoardId != boardId),
+        cancellationToken);
 
+    public async Task<BoardMaster?> GetForUpdateAsync(int id,
+    CancellationToken cancellationToken)
+    => await context.BoardMasters
+        .Include(x => x.Translations)
+        .FirstOrDefaultAsync(x => x.BoardId == id, cancellationToken);
+
+    private BoardMaster MapBoard(BoardMaster board, string language)
+    {
+        return new BoardMaster
+        {
+            BoardId = board.BoardId,
+            BoardName = TranslationHelper.GetTranslatedValue(
+                board.Translations,
+                language,
+                x => x.LanguageCode,
+                x => x.BoardName,
+                board.BoardName),
+
+            IsActive = board.IsActive
+        };
+    }
 }

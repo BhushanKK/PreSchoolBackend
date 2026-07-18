@@ -8,4 +8,12 @@ public class BoardMasterDto
     public int BoardId { get; set;}
     public string BoardName { get; set;}= string.Empty;
     public bool IsActive { get; set;}=false;
+    public ICollection<BoardTranslationDto> Translations { get; set; } 
+    = new List<BoardTranslationDto>();
+}
+
+public class BoardTranslationDto
+{
+    public string LanguageCode { get; set; } = string.Empty;
+    public string BoardName { get; set; } = string.Empty;
 }

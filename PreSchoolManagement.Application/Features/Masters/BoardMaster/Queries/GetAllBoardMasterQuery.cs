@@ -4,5 +4,5 @@ using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Queries;
 
-public sealed record GetAllBoardMasterQuery
+public sealed record GetAllBoardMasterQuery(bool filter = false)
 : IRequest<ApiResponse<List<BoardMaster>>>;

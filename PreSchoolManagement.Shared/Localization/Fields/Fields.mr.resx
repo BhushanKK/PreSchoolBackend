@@ -96,11 +96,15 @@
 
     <!-- Start : Division Master Fields -->
     <data name="DivisionId" xml:space="preserve">
-      <value>विभाग</value>
+      <value>तुकडी</value>
     </data>
 
     <data name="DivisionName" xml:space="preserve">
-      <value>विभागाचे नाव</value>
+      <value>तुकडी</value>
+    </data>
+    
+    <data name="Division" xml:space="preserve">
+      <value>तुकडी</value>
     </data>
 
     <!-- Start : EmployeeType Master Fields -->

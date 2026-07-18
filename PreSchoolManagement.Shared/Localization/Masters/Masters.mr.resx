@@ -48,6 +48,10 @@
     <value>माध्यम</value>
   </data>
 
+  <data name="Division" xml:space="preserve">
+    <value>तुकडी</value>
+  </data>
+
   <data name="Standard" xml:space="preserve">
     <value>इयत्ता</value>
   </data>

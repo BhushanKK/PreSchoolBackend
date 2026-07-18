@@ -5,22 +5,18 @@ using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class GetAllDesignationMasterHandler(
     IDesignationMasterService service,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     :IRequestHandler<GetAllDesignationMasterQuery,ApiResponse<List<DesignationMaster>>>
 {
     public async Task<ApiResponse<List<DesignationMaster>>> Handle(GetAllDesignationMasterQuery request,
     CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.designation.ToString());
-
         var data = await service.GetAllAsync(request.filter,cancellationToken);
 
         if(data !=null)

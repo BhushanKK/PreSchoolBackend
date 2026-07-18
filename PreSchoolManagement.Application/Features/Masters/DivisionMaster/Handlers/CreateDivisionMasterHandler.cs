@@ -16,16 +16,13 @@ public class CreateDivisionMasterHandler(
     IValidator<CreateDivisionMasterCommand> validator,
     IMapper mapper,
     ICurrentUserService currentUser,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<CreateDivisionMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
         CreateDivisionMasterCommand request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Division.ToString());
-
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)

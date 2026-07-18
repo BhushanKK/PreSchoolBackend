@@ -8,8 +8,7 @@ public class DesignationMasterProfile : Profile
 {
     public DesignationMasterProfile()
     {
-        CreateMap<DesignationMasterDto,DesignationMaster>()
-            .ForMember(d => d.DesignationId,opt => opt.MapFrom(s => s.DesignationId))
-            .ForMember(d => d.Designation,opt => opt.MapFrom(s => s.Designation ?? string.Empty));
+        CreateMap<DesignationMasterDto,DesignationMaster>();
+        CreateMap<DesignationTranslationDto,DesignationTranslation>();
     }
 }

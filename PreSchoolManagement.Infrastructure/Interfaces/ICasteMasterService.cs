@@ -12,4 +12,5 @@ public interface ICasteMasterService
     Task UpdateAsync(CasteMaster caste, CancellationToken cancellationToken);
     Task DeleteAsync(CasteMaster caste, CancellationToken cancellationToken);
     Task<bool> IsExistsAsync(string caste, OperationType operation, int? casteId, CancellationToken cancellationToken);
+    Task<CasteMaster?> GetForUpdateAsync(int id,CancellationToken cancellationToken);
 }

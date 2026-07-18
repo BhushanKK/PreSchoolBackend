@@ -4,21 +4,36 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using Serilog;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
-public class AcademicYearMasterService(ApplicationDbContext context) : IAcademicYearMasterService
+public class AcademicYearMasterService(
+    ApplicationDbContext context,
+    ILanguageService languageService) : IAcademicYearMasterService
 {
-    public async Task<List<AcademicYearMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken = default)
-    => await context.AcademicYearMasters
-        .AsNoTracking()
-        .Where(x => !filter || x.IsActive)
-        .ToListAsync(cancellationToken);
+    public async Task<List<AcademicYearMaster>> GetAllAsync(bool filter = false,CancellationToken cancellationToken=default)
+    {
+        var years = await context.AcademicYearMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .Where(x => !filter || x.IsActive)
+            .ToListAsync(cancellationToken);
 
-    public async Task<AcademicYearMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => await context.AcademicYearMasters
-        .AsNoTracking()
-        .FirstOrDefaultAsync(x => x.AcademicYearId==id, cancellationToken);
+        return years.Select(x => MapAcademicYear(x, languageService.CurrentLanguage)).ToList();
+    }
+
+    public async Task<AcademicYearMaster?> GetByIdAsync(int id,CancellationToken cancellationToken)
+    {
+        var role = await context.AcademicYearMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .FirstOrDefaultAsync(x => x.AcademicYearId == id, cancellationToken);
+
+        return role is null
+            ? null
+            : MapAcademicYear(role, languageService.CurrentLanguage);
+    }
 
     public async Task AddAsync(AcademicYearMaster academicYear, CancellationToken cancellationToken)
     {
@@ -76,4 +91,29 @@ public class AcademicYearMasterService(ApplicationDbContext context) : IAcademic
 
     public Task<bool> IsExistsAsync(string academicYear, OperationType operation, int? academicYearId, CancellationToken cancellationToken)
         => context.AcademicYearMasters.AnyAsync(x => x.AcademicYearName == academicYear && (academicYearId == null || x.AcademicYearId != academicYearId), cancellationToken);
+
+    public async Task<AcademicYearMaster?> GetForUpdateAsync(
+    int id,
+    CancellationToken cancellationToken)
+    => await context.AcademicYearMasters
+        .Include(x => x.Translations)
+        .FirstOrDefaultAsync(x => x.AcademicYearId == id, cancellationToken);
+
+    private AcademicYearMaster MapAcademicYear(AcademicYearMaster academicYear, string language)
+{
+    return new AcademicYearMaster
+    {
+        AcademicYearId = academicYear.AcademicYearId,
+        AcademicYearName = TranslationHelper.GetTranslatedValue(
+            academicYear.Translations,
+            language,
+            x => x.LanguageCode,
+            x => x.AcademicYearName,
+            academicYear.AcademicYearName),
+
+        FromDate = academicYear.FromDate,
+        ToDate = academicYear.ToDate,
+        IsActive = academicYear.IsActive
+    };
+}
 }

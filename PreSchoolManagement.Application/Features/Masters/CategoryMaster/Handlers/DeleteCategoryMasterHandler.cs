@@ -5,20 +5,16 @@ using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Handlers;
 
 public class DeleteCategoryMasterHandler(
     ICategoryMasterService service,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<DeleteCategoryMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(DeleteCategoryMasterCommand request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Category.ToString());
-
         if (request.CategoryId <= 0)
         {
             return ApiResponse<int>.FailureResponse

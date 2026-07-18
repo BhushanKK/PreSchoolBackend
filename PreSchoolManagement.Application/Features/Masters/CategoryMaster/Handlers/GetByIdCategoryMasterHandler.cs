@@ -6,21 +6,17 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 public class GetByIdCategoryMasterHandler(
     ICategoryMasterService service,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<GetByIdCategoryMasterQuery, ApiResponse<CategoryMaster?>>
 {
     public async Task<ApiResponse<CategoryMaster?>> Handle(
         GetByIdCategoryMasterQuery request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Category.ToString());
-        
         if (request.CategoryId <= 0)
         {
             return ApiResponse<CategoryMaster?>.FailureResponse

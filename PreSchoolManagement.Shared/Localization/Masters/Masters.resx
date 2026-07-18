@@ -44,6 +44,10 @@
     <value>Board</value>
   </data>
 
+  <data name="Division" xml:space="preserve">
+    <value>Division</value>
+  </data>
+  
   <data name="Medium" xml:space="preserve">
     <value>Medium</value>
   </data>

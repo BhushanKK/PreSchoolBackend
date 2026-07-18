@@ -11,16 +11,13 @@ namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class DeleteDivisionMasterHandler(
     IDivisionMasterService service,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<DeleteDivisionMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
         DeleteDivisionMasterCommand request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Division.ToString());
-
         var entity = await service.GetByIdAsync(request.DivisionId, cancellationToken);
 
         if (entity is null)

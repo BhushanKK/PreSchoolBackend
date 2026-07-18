@@ -4,23 +4,42 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using SchoolManagement.Domain.Entities;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
-public class CategoryMasterService(ApplicationDbContext context) : ICategoryMasterService
+public class CategoryMasterService(
+    ApplicationDbContext context,
+    ILanguageService languageService) : ICategoryMasterService
 {
-    public Task<List<CategoryMaster>> GetAllAsync(
-    bool applyFilter = false,
-    CancellationToken cancellationToken = default) =>
-    context.CategoryMasters
-        .AsNoTracking()
-        .Where(x => !applyFilter || x.IsActive)
-        .ToListAsync(cancellationToken);
+    public async Task<List<CategoryMaster>> GetAllAsync(
+    bool filter = false,
+    CancellationToken cancellationToken = default)
+    {
+        var categories = await context.CategoryMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .Where(x => !filter || x.IsActive)
+            .ToListAsync(cancellationToken);
 
-    public async Task<CategoryMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => await context.CategoryMasters
-        .AsNoTracking()
-        .FirstOrDefaultAsync(x => x.CategoryId == id, cancellationToken);
+        return categories
+            .Select(x => MapCategory(x, languageService.CurrentLanguage))
+            .ToList();
+    }
+
+    public async Task<CategoryMaster?> GetByIdAsync(
+        int id,
+        CancellationToken cancellationToken)
+    {
+        var category = await context.CategoryMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .FirstOrDefaultAsync(x => x.CategoryId == id, cancellationToken);
+
+        return category is null
+            ? null
+            : MapCategory(category, languageService.CurrentLanguage);
+    }
 
     public async Task AddAsync(CategoryMaster category, CancellationToken cancellationToken)
     {
@@ -85,4 +104,26 @@ public class CategoryMasterService(ApplicationDbContext context) : ICategoryMast
             x => x.CategoryName == category &&
                  (categoryId == null || x.CategoryId != categoryId),
             cancellationToken);
+
+    public async Task<CategoryMaster?> GetForUpdateAsync(int id,
+    CancellationToken cancellationToken)
+    => await context.CategoryMasters
+        .Include(x => x.Translations)
+        .FirstOrDefaultAsync(x => x.CategoryId == id, cancellationToken);
+
+    private CategoryMaster MapCategory(CategoryMaster category, string language)
+    {
+        return new CategoryMaster
+        {
+            CategoryId = category.CategoryId,
+            CategoryName = TranslationHelper.GetTranslatedValue(
+                category.Translations,
+                language,
+                x => x.LanguageCode,
+                x => x.CategoryName,
+                category.CategoryName),
+
+            IsActive = category.IsActive
+        };
+    }
 }

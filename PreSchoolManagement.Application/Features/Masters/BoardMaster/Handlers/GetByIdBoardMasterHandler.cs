@@ -5,23 +5,19 @@ using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class GetByIdBoardMasterHandler(
     IBoardMasterService service,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<GetByIdBoardMasterQuery,ApiResponse<BoardMaster?>>
 {
     public async Task<ApiResponse<BoardMaster?>> Handle(
         GetByIdBoardMasterQuery request,CancellationToken cancellationToken)
 
     {
-        
-
         var board = await service.GetByIdAsync(request.BoardId,cancellationToken);
 
         if(board is null)

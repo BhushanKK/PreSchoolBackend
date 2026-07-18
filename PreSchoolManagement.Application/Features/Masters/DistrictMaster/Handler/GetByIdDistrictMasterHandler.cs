@@ -12,14 +12,11 @@ namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class GetByIdDistrictMasterHandler(
     IDistrictMasterService service,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     :IRequestHandler<GetByIdDistrictMasterQuery, ApiResponse<DistrictMaster?>>
 {
     public async Task<ApiResponse<DistrictMaster?>> Handle(GetByIdDistrictMasterQuery request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.District.ToString());
-
         if(request.DistrictId <= 0)
         {
             return ApiResponse<DistrictMaster?>.FailureResponse
