@@ -18,7 +18,7 @@ public class GetAllBoardMasterHandler(
 {
     public async Task<ApiResponse<List<BoardMaster>>> Handle( GetAllBoardMasterQuery request,CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Board.ToString());
+        
         var boards = await service.GetAllAsync(cancellationToken);
          
         return ApiResponse<List<BoardMaster>>.SuccessResponse

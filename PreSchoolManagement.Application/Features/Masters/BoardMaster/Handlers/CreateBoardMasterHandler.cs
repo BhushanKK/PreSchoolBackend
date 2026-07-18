@@ -23,7 +23,7 @@ public class CreateBoardMasterHandler(
 {
     public async Task<ApiResponse<int>> Handle(CreateBoardMasterCommand request,CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Board.ToString());
+        
         
         var validationResult = await validator.ValidateAsync(request,cancellationToken);
         if(!validationResult.IsValid)

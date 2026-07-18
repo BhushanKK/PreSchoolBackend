@@ -21,7 +21,7 @@ public class UpdateBoardMasterHandler(
 {
     public async Task<ApiResponse<int>> Handle(UpdateBoardMasterCommand request,CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Board.ToString());
+        
 
         var validationResult = await validator.ValidateAsync(request,cancellationToken);
 
