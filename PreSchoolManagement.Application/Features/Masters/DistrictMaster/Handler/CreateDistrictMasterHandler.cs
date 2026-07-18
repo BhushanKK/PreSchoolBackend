@@ -8,7 +8,6 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
@@ -17,14 +16,11 @@ public class CreateDistrictMasterHandler(
     IValidator<CreateDistrictMasterCommand> validator , 
     IMapper mapper,
     ICurrentUserService currentUser,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
-:IRequestHandler<CreateDistrictMasterCommand, ApiResponse<int>>
+    IMessageHelper messageHelper)
+    :IRequestHandler<CreateDistrictMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(CreateDistrictMasterCommand request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.District.ToString());
-
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
         {

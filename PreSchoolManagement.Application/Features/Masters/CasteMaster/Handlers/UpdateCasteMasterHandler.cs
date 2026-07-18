@@ -1,77 +1,109 @@
-using MediatR;
-using System.Net;
 using AutoMapper;
 using FluentValidation;
+using MediatR;
+using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
-using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
+using SchoolManagement.Domain.Entities;
+using System.Net;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class UpdateCasteMasterHandler(
-    ICasteMasterService service, 
-    IValidator<UpdateCasteMasterCommand> validator, 
-    IMapper mapper,
+    ICasteMasterService service,
+    IValidator<UpdateCasteMasterCommand> validator,
     ICurrentUserService currentUser,
-    IMessageHelper messageHelper,
-    ILocalizationService localization) 
+    IMapper mapper,
+    IMessageHelper messageHelper)
     : IRequestHandler<UpdateCasteMasterCommand, ApiResponse<int>>
 {
-    public async Task<ApiResponse<int>> Handle(UpdateCasteMasterCommand request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<int>> Handle(
+        UpdateCasteMasterCommand request,
+        CancellationToken cancellationToken)
     {
-        localization.Get("Masters" ,EntityDescription.Caste.ToString());
-
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
-        
+
         if (!validationResult.IsValid)
         {
-            var message = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
             return ApiResponse<int>.FailureResponse
             (
-                message, 
+                string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage)),
                 (int)HttpStatusCode.BadRequest
             );
         }
 
-        var existing = await service.GetByIdAsync(request.CasteId, cancellationToken);
-        if (existing is null)
+        var entity = await service.GetForUpdateAsync(request.CasteId,cancellationToken);
+
+        if (entity is null)
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters" ,EntityDescription.Caste.ToString()), 
+                messageHelper.NotFoundEntity("Masters",EntityDescription.Caste.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
 
-        var exists = await service.IsExistsAsync
+        var isExist = await service.IsExistsAsync
         (
-            request.Caste ?? string.Empty, 
-            OperationType.Update, 
-            request.CasteId, cancellationToken
+            request.Caste,
+            OperationType.Update,
+            request.CasteId,
+            cancellationToken
         );
 
-        if (exists)
+        if (isExist)
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters" ,EntityDescription.Caste.ToString()),
+                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Caste.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
 
-        var entity = mapper.Map(request, existing);
-        entity.ModifyDate = DateTime.UtcNow;
-        entity.ModifyBy = currentUser.UserId ?? null;
+        // Update master
+        mapper.Map(request, entity);
+
+        var userId = currentUser.UserId;
+        var currentDate = DateTime.UtcNow;
+
+        entity.ModifyBy = userId;
+        entity.ModifyDate = currentDate;
+
+        // Synchronize translations
+        foreach (var dto in request.Translations)
+        {
+            var translation = entity.Translations
+                .FirstOrDefault(x => x.LanguageCode == dto.LanguageCode);
+
+            if (translation == null)
+            {
+                entity.Translations.Add(new CasteTranslation
+                {
+                    LanguageCode = dto.LanguageCode,
+                    CasteName = dto.Caste
+                });
+            }
+            else
+                translation.CasteName = dto.Caste;
+        }
+
+        // Remove deleted translations
+        var removedTranslations = entity.Translations
+            .Where(x => !request.Translations
+            .Any(t => t.LanguageCode == x.LanguageCode))
+            .ToList();
+
+        foreach (var translation in removedTranslations)
+            entity.Translations.Remove(translation);
 
         await service.UpdateAsync(entity, cancellationToken);
 
         return ApiResponse<int>.SuccessResponse
         (
-            entity.CasteID, 
-            messageHelper.UpdatedEntity("Masters" ,EntityDescription.Caste.ToString()),
+            entity.CasteID,
+            messageHelper.UpdatedEntity("Masters",EntityDescription.Caste.ToString()),
             (int)HttpStatusCode.OK
         );
     }

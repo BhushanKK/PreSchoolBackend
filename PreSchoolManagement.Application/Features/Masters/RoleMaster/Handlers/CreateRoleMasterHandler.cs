@@ -33,16 +33,14 @@ public class CreateRoleMasterHandler(
                 (int)HttpStatusCode.BadRequest
             );
         }
-        
-        bool isExist = await service.IsExistsAsync(request.RoleName,OperationType.Add,null,cancellationToken);
-        
+
+        bool isExist = await service.IsExistsAsync(request.RoleName, OperationType.Add, null, cancellationToken);
+
         if (isExist)
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity(
-                    "Masters",
-                    EntityDescription.Role.ToString()),
+                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.Role.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -57,9 +55,7 @@ public class CreateRoleMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.RoleId,
-            messageHelper.AddedEntity(
-                "Masters",
-                EntityDescription.Role.ToString()),
+            messageHelper.AddedEntity("Masters", EntityDescription.Role.ToString()),
             (int)HttpStatusCode.Created
         );
     }

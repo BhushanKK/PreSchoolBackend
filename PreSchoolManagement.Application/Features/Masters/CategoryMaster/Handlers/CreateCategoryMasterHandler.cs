@@ -8,7 +8,6 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
@@ -17,16 +16,13 @@ public class CreateCategoryMasterHandler(
     IValidator<CreateCategoryMasterCommand> validator,
     IMapper mapper,
     ICurrentUserService currentUser,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<CreateCategoryMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
         CreateCategoryMasterCommand request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masterss",EntityDescription.Category.ToString());
-
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
@@ -35,11 +31,13 @@ public class CreateCategoryMasterHandler(
             return ApiResponse<int>.FailureResponse(message, (int)HttpStatusCode.BadRequest);
         }
 
-        var exists = await service.IsExistsAsync(
+        var exists = await service.IsExistsAsync
+        (
             request.CategoryName ?? string.Empty,
             OperationType.Add,
             null,
-            cancellationToken);
+            cancellationToken
+        );
 
         if (exists)
         {
@@ -56,9 +54,11 @@ public class CreateCategoryMasterHandler(
 
         await service.AddAsync(entity, cancellationToken);
 
-        return ApiResponse<int>.SuccessResponse(
+        return ApiResponse<int>.SuccessResponse
+        (
             entity.CategoryId,
             messageHelper.AddedEntity("Masters",EntityDescription.Category.ToString()),
-            (int)HttpStatusCode.Created);
+            (int)HttpStatusCode.Created
+        );
     }
 }

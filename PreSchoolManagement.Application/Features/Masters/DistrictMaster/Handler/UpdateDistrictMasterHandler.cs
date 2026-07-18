@@ -1,44 +1,42 @@
-using System.Net;
 using MediatR;
+using System.Net;
 using AutoMapper;
+using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using FluentValidation;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
+using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class UpdateDistrictMasterHandler(
     IDistrictMasterService service,
-    IValidator<UpdateDistrictMasterCommand> validator, 
-    IMapper mapper,
+    IValidator<UpdateDistrictMasterCommand> validator,
     ICurrentUserService currentUser,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMapper mapper,
+    IMessageHelper messageHelper)
     : IRequestHandler<UpdateDistrictMasterCommand, ApiResponse<int>>
-{   
-    public async Task<ApiResponse<int>> Handle(UpdateDistrictMasterCommand request, 
+{
+    public async Task<ApiResponse<int>> Handle(
+        UpdateDistrictMasterCommand request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.District.ToString());
-
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
-        if(!validationResult.IsValid)
+        if (!validationResult.IsValid)
         {
-            var message = string.Join(" | ", validationResult.Errors.Select(e => e. ErrorMessage));
             return ApiResponse<int>.FailureResponse
             (
-                message,
+                string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage)),
                 (int)HttpStatusCode.BadRequest
             );
         }
 
-        var existing = await service.GetByIdAsync(request.DistrictId,cancellationToken);
-        if(existing is null)
+        var entity = await service.GetForUpdateAsync(request.DistrictId,cancellationToken);
+
+        if (entity is null)
         {
             return ApiResponse<int>.FailureResponse
             (
@@ -47,25 +45,57 @@ public class UpdateDistrictMasterHandler(
             );
         }
 
-        var exists = await service.IsExistsAsync
+        var isExist = await service.IsExistsAsync
         (
-            request.DistrictName ?? string.Empty,
+            request.DistrictName,
             OperationType.Update,
-            request.DistrictId, cancellationToken
+            request.DistrictId,
+            cancellationToken
         );
 
-        if (exists)
+        if (isExist)
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.District.ToString()),
+                messageHelper.AlreadyExistsEntity(
+                    "Masters",
+                    EntityDescription.District.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
 
-        var entity = mapper.Map(request, existing);
+        // Update master
+        mapper.Map(request, entity);
+
+        entity.ModifyBy = currentUser.UserId;
         entity.ModifyDate = DateTime.UtcNow;
-        entity.ModifyBy = currentUser.UserId ?? null;
+
+        // Synchronize translations
+        foreach (var dto in request.Translations)
+        {
+            var translation = entity.Translations
+                .FirstOrDefault(x => x.LanguageCode == dto.LanguageCode);
+
+            if (translation == null)
+            {
+                entity.Translations.Add(new DistrictTranslation
+                {
+                    LanguageCode = dto.LanguageCode,
+                    DistrictName = dto.DistrictName
+                });
+            }
+            else
+                translation.DistrictName = dto.DistrictName;
+        }
+
+        // Remove deleted translations
+        var removedTranslations = entity.Translations
+            .Where(x => !request.Translations
+            .Any(t => t.LanguageCode == x.LanguageCode))
+            .ToList();
+
+        foreach (var translation in removedTranslations)
+            entity.Translations.Remove(translation);
 
         await service.UpdateAsync(entity, cancellationToken);
 
@@ -74,8 +104,6 @@ public class UpdateDistrictMasterHandler(
             entity.DistrictId,
             messageHelper.UpdatedEntity("Masters",EntityDescription.District.ToString()),
             (int)HttpStatusCode.OK
-
         );
     }
-    
 }

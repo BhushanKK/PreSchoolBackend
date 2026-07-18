@@ -11,4 +11,5 @@ public interface IDesignationMasterService
     Task UpdateAsync(DesignationMaster designationMaster,CancellationToken cancellationToken);
     Task DeleteAsync(DesignationMaster designationMaster, CancellationToken cancellationToken);
     Task<bool> IsExistsAsync(string designation,OperationType operation,int? designationId,CancellationToken cancellationToken);
+    Task<DesignationMaster?> GetForUpdateAsync(int id,CancellationToken cancellationToken);
 }

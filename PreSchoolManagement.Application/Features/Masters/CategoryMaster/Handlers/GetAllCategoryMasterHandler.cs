@@ -5,23 +5,19 @@ using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class GetAllCategoryMasterHandler(
     ICategoryMasterService service,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<GetAllCategoryMasterQuery, ApiResponse<List<CategoryMaster>>>
 {
     public async Task<ApiResponse<List<CategoryMaster>>> Handle(
         GetAllCategoryMasterQuery request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Category.ToString());
-
         var data = await service.GetAllAsync(request.filter,cancellationToken);
 
         if (data != null)

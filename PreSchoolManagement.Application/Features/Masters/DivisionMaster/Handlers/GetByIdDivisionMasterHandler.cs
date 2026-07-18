@@ -6,22 +6,18 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class GetByIdDivisionMasterHandler(
     IDivisionMasterService service,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<GetByIdDivisionMasterQuery, ApiResponse<DivisionMaster?>>
 {
     public async Task<ApiResponse<DivisionMaster?>> Handle(
         GetByIdDivisionMasterQuery request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Division.ToString());
-
         var Division = await service.GetByIdAsync(request.DivisionId, cancellationToken);
 
         if (Division is null)

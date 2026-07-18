@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Infrastructure.Data.Configurations;

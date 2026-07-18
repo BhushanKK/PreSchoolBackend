@@ -4,30 +4,60 @@ using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
-public class DistrictMasterServices(ApplicationDbContext context) : IDistrictMasterService
+public class DistrictMasterServices(
+    ApplicationDbContext context,
+    ILanguageService languageService) : IDistrictMasterService
 {
-    public async Task<List<DistrictMasterQueryDto>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<List<DistrictMasterQueryDto>> GetAllAsync(
+    CancellationToken cancellationToken)
     {
-        return await(
+        var language = languageService.CurrentLanguage;
+
+        return await (
             from district in context.DistrictMasters.AsNoTracking()
-            join State in context.StateMasters.AsNoTracking()
-            on district.StateId equals State.StateId
-            orderby State.StateId
+
+            join state in context.StateMasters.AsNoTracking()
+                on district.StateId equals state.StateId
+
+            join districtTranslation in context.DistrictTranslations
+                .AsNoTracking()
+                .Where(x => x.LanguageCode == language)
+                on district.DistrictId equals districtTranslation.DistrictId into dt
+            from districtTranslation in dt.DefaultIfEmpty()
+
+            orderby state.StateId
+
             select new DistrictMasterQueryDto
             {
                 DistrictId = district.DistrictId,
-                StateId = State.StateId,
-                DistrictName = district.DistrictName,
+                StateId = state.StateId,
+                StateName = state.StateName,
+                DistrictName = districtTranslation != null
+                    ? districtTranslation.DistrictName
+                    : district.DistrictName,
+
                 IsActive = district.IsActive
-            }).ToListAsync(cancellationToken);
-        
+            })
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<DistrictMaster?> GetByIdAsync(int id,CancellationToken cancellationToken)
-        => await context.DistrictMasters.FindAsync([id], cancellationToken);
+    public async Task<DistrictMaster?> GetByIdAsync(
+        int id,
+        CancellationToken cancellationToken)
+    {
+        var districts = await context.DistrictMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .FirstOrDefaultAsync(x => x.DistrictId == id, cancellationToken);
+
+        return districts is null
+            ? null
+            : MapDistrict(districts, languageService.CurrentLanguage);
+    }
 
     public async Task AddAsync(DistrictMaster district, CancellationToken cancellationToken)
     {
@@ -35,12 +65,12 @@ public class DistrictMasterServices(ApplicationDbContext context) : IDistrictMas
 
         try
         {
-            await context.DistrictMasters.AddAsync(district,cancellationToken);
+            await context.DistrictMasters.AddAsync(district, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
         }
 
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
             Log.Error(ex, "An error occurred while adding a district master record.");
@@ -48,7 +78,7 @@ public class DistrictMasterServices(ApplicationDbContext context) : IDistrictMas
         }
     }
 
-    public async Task UpdateAsync(DistrictMaster district,CancellationToken cancellationToken)
+    public async Task UpdateAsync(DistrictMaster district, CancellationToken cancellationToken)
     {
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
 
@@ -76,7 +106,7 @@ public class DistrictMasterServices(ApplicationDbContext context) : IDistrictMas
             await context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
             Log.Error(ex, "An error occurred while deleting a district master record.");
@@ -85,5 +115,28 @@ public class DistrictMasterServices(ApplicationDbContext context) : IDistrictMas
     }
 
     public Task<bool> IsExistsAsync(string district, OperationType operation, int? districtId, CancellationToken cancellationToken)
-        => context.DistrictMasters.AnyAsync(x =>x.DistrictName == district && (districtId == null || x.DistrictId != districtId), cancellationToken);
+        => context.DistrictMasters.AnyAsync(x => x.DistrictName == district && (districtId == null || x.DistrictId != districtId), cancellationToken);
+
+    public async Task<DistrictMaster?> GetForUpdateAsync(int id,
+    CancellationToken cancellationToken)
+    => await context.DistrictMasters
+        .Include(x => x.Translations)
+        .FirstOrDefaultAsync(x => x.DistrictId == id, cancellationToken);
+
+    private DistrictMaster MapDistrict(DistrictMaster district, string language)
+    {
+        return new DistrictMaster
+        {
+            DistrictId = district.DistrictId,
+            StateId = district.StateId,
+            DistrictName = TranslationHelper.GetTranslatedValue(
+                district.Translations,
+                language,
+                x => x.LanguageCode,
+                x => x.DistrictName,
+                district.DistrictName),
+
+            IsActive = district.IsActive
+        };
+    }
 }

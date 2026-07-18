@@ -12,4 +12,5 @@ public interface IAcademicYearMasterService
     Task DeleteAsync(AcademicYearMaster academicYear, CancellationToken cancellationToken);
     Task<bool> IsExistsAsync(string academicYear, OperationType operation, int? academicYearId,
         CancellationToken cancellationToken);
+    Task<AcademicYearMaster?> GetForUpdateAsync(int id,CancellationToken cancellationToken);
 }

@@ -1,47 +1,42 @@
-using AutoMapper;
-using FluentValidation;
 using MediatR;
+using AutoMapper;
 using System.Net;
+using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
+using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class UpdateCategoryMasterHandler(
     ICategoryMasterService service,
     IValidator<UpdateCategoryMasterCommand> validator,
-    IMapper mapper,
     ICurrentUserService currentUser,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMapper mapper,
+    IMessageHelper messageHelper)
     : IRequestHandler<UpdateCategoryMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
         UpdateCategoryMasterCommand request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Category.ToString());
-
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
-            var message = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
-
             return ApiResponse<int>.FailureResponse
             (
-                message,
+                string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage)),
                 (int)HttpStatusCode.BadRequest
             );
         }
 
-        var existing = await service.GetByIdAsync(request.CategoryId, cancellationToken);
+        var entity = await service.GetForUpdateAsync(request.CategoryId,cancellationToken);
 
-        if (existing is null)
+        if (entity is null)
         {
             return ApiResponse<int>.FailureResponse
             (
@@ -50,15 +45,13 @@ public class UpdateCategoryMasterHandler(
             );
         }
 
-        var exists = await service.IsExistsAsync
-        (
-            request.CategoryName ?? string.Empty,
+        var isExist = await service.IsExistsAsync(
+            request.CategoryName,
             OperationType.Update,
             request.CategoryId,
-            cancellationToken
-        );
+            cancellationToken);
 
-        if (exists)
+        if (isExist)
         {
             return ApiResponse<int>.FailureResponse
             (
@@ -67,9 +60,41 @@ public class UpdateCategoryMasterHandler(
             );
         }
 
-        var entity = mapper.Map(request, existing);
-        entity.ModifyDate = DateTime.UtcNow;
-        entity.ModifyBy = currentUser.UserId;
+        // Update master
+        mapper.Map(request, entity);
+
+        var userId = currentUser.UserId;
+        var currentDate = DateTime.UtcNow;
+
+        entity.ModifyBy = userId;
+        entity.ModifyDate = currentDate;
+
+        // Synchronize translations
+        foreach (var dto in request.Translations)
+        {
+            var translation = entity.Translations
+                .FirstOrDefault(x => x.LanguageCode == dto.LanguageCode);
+
+            if (translation == null)
+            {
+                entity.Translations.Add(new CategoryTranslation
+                {
+                    LanguageCode = dto.LanguageCode,
+                    CategoryName = dto.CategoryName
+                });
+            }
+            else
+                translation.CategoryName = dto.CategoryName;
+        }
+
+        // Remove deleted translations
+        var removedTranslations = entity.Translations
+            .Where(x => !request.Translations
+            .Any(t => t.LanguageCode == x.LanguageCode))
+            .ToList();
+
+        foreach (var translation in removedTranslations)
+            entity.Translations.Remove(translation);
 
         await service.UpdateAsync(entity, cancellationToken);
 

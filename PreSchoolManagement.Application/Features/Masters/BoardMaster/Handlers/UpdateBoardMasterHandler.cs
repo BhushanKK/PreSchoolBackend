@@ -1,4 +1,3 @@
-using System.Net;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
@@ -7,45 +6,54 @@ using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
+using SchoolManagement.Domain.Entities;
+using System.Net;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class UpdateBoardMasterHandler(
     IBoardMasterService service,
-    IValidator<UpdateBoardMasterCommand>validator,
+    IValidator<UpdateBoardMasterCommand> validator,
+    ICurrentUserService currentUser,
     IMapper mapper,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
-: IRequestHandler<UpdateBoardMasterCommand,ApiResponse<int>>
+    IMessageHelper messageHelper)
+    : IRequestHandler<UpdateBoardMasterCommand, ApiResponse<int>>
 {
-    public async Task<ApiResponse<int>> Handle(UpdateBoardMasterCommand request,CancellationToken cancellationToken)
+    public async Task<ApiResponse<int>> Handle(
+        UpdateBoardMasterCommand request,
+        CancellationToken cancellationToken)
     {
-        
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
-        var validationResult = await validator.ValidateAsync(request,cancellationToken);
-
-        if(!validationResult.IsValid)
+        if (!validationResult.IsValid)
         {
-            var message = string.Join(" | ",validationResult.Errors.Select(e => e.ErrorMessage));
-
-            return ApiResponse<int>.FailureResponse(message,(int)HttpStatusCode.BadRequest);
+            return ApiResponse<int>.FailureResponse
+            (
+                string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage)),
+                (int)HttpStatusCode.BadRequest
+            );
         }
-        
-        var entity = await service.GetByIdAsync(request.BoardId,cancellationToken);
 
-        if(entity is null)
+        var entity = await service.GetForUpdateAsync(request.BoardId,cancellationToken);
+
+        if (entity is null)
         {
-            return ApiResponse<int>.FailureResponse(
+            return ApiResponse<int>.FailureResponse
+            (
                 messageHelper.NotFoundEntity("Masters",EntityDescription.Board.ToString()),
-                (int)HttpStatusCode.NotFound);
-            
+                (int)HttpStatusCode.NotFound
+            );
         }
 
-        var exists = await service.IsExistsAsync(request.BoardName ?? string.Empty,
-        OperationType.Update,request.BoardId,cancellationToken);
+        var isExist = await service.IsExistsAsync
+        (
+            request.BoardName,
+            OperationType.Update,
+            request.BoardId,
+            cancellationToken
+        );
 
-        if(exists)
+        if (isExist)
         {
             return ApiResponse<int>.FailureResponse
             (
@@ -53,9 +61,44 @@ public class UpdateBoardMasterHandler(
                 (int)HttpStatusCode.Conflict
             );
         }
+
+        // Update master
         mapper.Map(request, entity);
 
-        await service.UpdateAsync(entity,cancellationToken);
+        var userId = currentUser.UserId;
+        var currentDate = DateTime.UtcNow;
+
+        entity.ModifyBy = userId;
+        entity.ModifyDate = currentDate;
+
+        // Synchronize translations
+        foreach (var dto in request.Translations)
+        {
+            var translation = entity.Translations
+            .FirstOrDefault(x => x.LanguageCode == dto.LanguageCode);
+
+            if (translation == null)
+            {
+                entity.Translations.Add(new BoardTranslation
+                {
+                    LanguageCode = dto.LanguageCode,
+                    BoardName = dto.BoardName
+                });
+            }
+            else
+                translation.BoardName = dto.BoardName;
+        }
+
+        // Remove deleted translations
+        var removedTranslations = entity.Translations
+            .Where(x => !request.Translations
+            .Any(t => t.LanguageCode == x.LanguageCode))
+            .ToList();
+
+        foreach (var translation in removedTranslations)
+            entity.Translations.Remove(translation);
+
+        await service.UpdateAsync(entity, cancellationToken);
 
         return ApiResponse<int>.SuccessResponse
         (

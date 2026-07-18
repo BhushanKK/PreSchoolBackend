@@ -6,9 +6,7 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Localization;
 using PreSchoolManagement.Shared.Common;
-using Org.BouncyCastle.Ocsp;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
@@ -37,9 +35,9 @@ public class UpdateStateMasterHandler(
             );
         }
 
-        var existing = await service.GetByIdAsync(request.StateId, cancellationToken);
+        var entity = await service.GetForUpdateAsync(request.StateId, cancellationToken);
 
-        if (existing is null)
+        if (entity is null)
         {
             return ApiResponse<int>.FailureResponse
             (
@@ -48,15 +46,15 @@ public class UpdateStateMasterHandler(
             );
         }
 
-        var exists = await service.IsExistsAsync
+        var isExists = await service.IsExistsAsync
         (
-            request.StateName ?? string.Empty,
+            request.StateName ,
             OperationType.Update,
             request.StateId,
             cancellationToken
         );
 
-        if (exists)
+        if (isExists)
         {
             return ApiResponse<int>.FailureResponse
             (
@@ -66,25 +64,22 @@ public class UpdateStateMasterHandler(
         }
 
         //updata master
-        mapper.Map(request, existing);
-        
-        var userId = currentUser.UserId;
-        var currentDate = DateTime.UtcNow;
-
-        existing.ModifyBy = userId;
-        existing.ModifyDate = currentDate;
+        mapper.Map(request, entity);
+    
+        entity.ModifyBy = currentUser.UserId;
+        entity.ModifyDate = DateTime.UtcNow;
 
         //Synchronize translations
         foreach (var dto in request.Translations)
         {
-            var translation = existing.Translations
-                .FirstOrDefault(x => x.LanguageCode == dto.LangauageCode);
+            var translation = entity.Translations
+                .FirstOrDefault(x => x.LanguageCode == dto.LanguageCode);
             
             if (translation == null)
             {
-                existing.Translations.Add(new StateTranslation
+                entity.Translations.Add(new StateTranslation
                 {
-                    LanguageCode = dto.LangauageCode,
+                    LanguageCode = dto.LanguageCode,
                     StateName = dto.StateName
                 });
             }
@@ -93,19 +88,19 @@ public class UpdateStateMasterHandler(
         }
 
         //Remove deleted translations
-        var removedTranslations = existing.Translations
+        var removedTranslations = entity.Translations
             .Where(x => !request.Translations
-            .Any(t => t.LangauageCode == x.LanguageCode))
+            .Any(t => t.LanguageCode == x.LanguageCode))
             .ToList();
         
         foreach (var translation in removedTranslations)
-            existing.Translations.Remove(translation);
+            entity.Translations.Remove(translation);
 
-        await service.UpdateAsync(existing, cancellationToken);
+        await service.UpdateAsync(entity, cancellationToken);
 
         return ApiResponse<int>.SuccessResponse
         (
-            existing.StateId,
+            entity.StateId,
             messageHelper.UpdatedEntity("Masters",EntityDescription.State.ToString()),
             (int)HttpStatusCode.OK
         );

@@ -104,6 +104,10 @@
       <value>Division Name</value>
     </data>
 
+    <data name="Division" xml:space="preserve">
+      <value>Division Name</value>
+    </data>
+
     <!-- Start : EmployeeType Master Fields -->
     <data name="EmployeeTypeId" xml:space="preserve">
       <value>Employee Type</value>

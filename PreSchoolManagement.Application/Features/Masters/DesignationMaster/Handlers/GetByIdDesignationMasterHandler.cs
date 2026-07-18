@@ -6,21 +6,17 @@ using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class GetByIdDesignationMasterHandler(
     IDesignationMasterService service,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<GetByIdDesignationMasterQuery, ApiResponse<DesignationMaster?>>
 {
     public async Task<ApiResponse<DesignationMaster?>> Handle(GetByIdDesignationMasterQuery request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.designation.ToString());
-
         if (request.DesignationId <= 0)
         {
             return ApiResponse<DesignationMaster?>.FailureResponse
@@ -40,7 +36,6 @@ public class GetByIdDesignationMasterHandler(
                 (int)HttpStatusCode.NotFound
             );
         }
-
 
         return ApiResponse<DesignationMaster?>.SuccessResponse
         (

@@ -5,21 +5,17 @@ using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class DeleteBoardMasterHandler(
     IBoardMasterService service,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
 : IRequestHandler<DeleteBoardMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(DeleteBoardMasterCommand request,
     CancellationToken cancellationToken)
     {
-        
-
         var entity = await service.GetByIdAsync(request.BoardId,cancellationToken);
         
         if(entity is null)

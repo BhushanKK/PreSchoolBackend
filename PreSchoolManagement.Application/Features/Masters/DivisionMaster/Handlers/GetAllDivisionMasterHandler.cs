@@ -23,10 +23,21 @@ public class GetAllDivisionMasterHandler(
         localization.Get("Masters",EntityDescription.Division.ToString());
 
         var Divisions = await service.GetAllAsync(request.filter, cancellationToken);
-
-        return ApiResponse<List<DivisionMaster>>.SuccessResponse(
+        
+        if(Divisions is null)
+        {
+            return ApiResponse<List<DivisionMaster>>.SuccessResponse
+            (
+                Divisions,
+                messageHelper.NotFoundEntity("Masters",EntityDescription.Division.ToString()),
+                (int)HttpStatusCode.OK
+            );    
+        }
+        return ApiResponse<List<DivisionMaster>>.SuccessResponse
+        (
             Divisions,
             messageHelper.RetrievedEntity("Masters",EntityDescription.Division.ToString()),
-            (int)HttpStatusCode.OK);
+            (int)HttpStatusCode.OK
+        );
     }
 }

@@ -1,42 +1,44 @@
-using AutoMapper;
-using FluentValidation;
 using MediatR;
 using System.Net;
+using AutoMapper;
+using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
+using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class UpdateDesignationMasterHandler(
     IDesignationMasterService service,
-    IValidator<UpdateDesignationMasterCommand>validator,
-    IMapper mapper,ICurrentUserService currentUser,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
-    : IRequestHandler<UpdateDesignationMasterCommand,ApiResponse<int>>
+    IValidator<UpdateDesignationMasterCommand> validator,
+    ICurrentUserService currentUser,
+    IMapper mapper,
+    IMessageHelper messageHelper)
+    : IRequestHandler<UpdateDesignationMasterCommand, ApiResponse<int>>
 {
-    public async Task<ApiResponse<int>> Handle(UpdateDesignationMasterCommand request,CancellationToken cancellationToken)
+    public async Task<ApiResponse<int>> Handle(
+        UpdateDesignationMasterCommand request,
+        CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.designation);
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
-        var validationResult = await validator.ValidateAsync(request,cancellationToken);
-
-        if(!validationResult.IsValid)
+        if (!validationResult.IsValid)
         {
-            var message = string.Join("|",validationResult.Errors.Select(e => e.ErrorMessage));
             return ApiResponse<int>.FailureResponse
             (
-                message,
+                string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage)),
                 (int)HttpStatusCode.BadRequest
             );
         }
-        var existing = await service.GetByIdAsync(request.DesignationId,cancellationToken);
 
-        if(existing is null)
+        var entity = await service.GetForUpdateAsync(
+            request.DesignationId,
+            cancellationToken);
+
+        if (entity is null)
         {
             return ApiResponse<int>.FailureResponse
             (
@@ -45,28 +47,59 @@ public class UpdateDesignationMasterHandler(
             );
         }
 
-        var exists = await service.IsExistsAsync
+        var isExist = await service.IsExistsAsync
         (
-            request.Designation ?? string.Empty,
+            request.Designation,
             OperationType.Update,
             request.DesignationId,
             cancellationToken
         );
 
-        if(exists)
+        if (isExist)
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.designation.ToString()),
+                messageHelper.AlreadyExistsEntity(
+                    "Masters",
+                    EntityDescription.designation.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
-        
-        var entity = mapper.Map(request,existing);
-        entity.ModifyDate = DateTime.UtcNow;
-        entity.ModifyBy = currentUser.UserId;
 
-        await service.UpdateAsync(entity,cancellationToken);
+        // Update master
+        mapper.Map(request, entity);
+
+        entity.ModifyBy = currentUser.UserId;
+        entity.ModifyDate = DateTime.UtcNow;
+
+        // Synchronize translations
+        foreach (var dto in request.Translations)
+        {
+            var translation = entity.Translations
+                .FirstOrDefault(x => x.LanguageCode == dto.LanguageCode);
+
+            if (translation == null)
+            {
+                entity.Translations.Add(new DesignationTranslation
+                {
+                    LanguageCode = dto.LanguageCode,
+                    Designation = dto.Designation
+                });
+            }
+            else
+                translation.Designation = dto.Designation;
+        }
+
+        // Remove deleted translations
+        var removedTranslations = entity.Translations
+            .Where(x => !request.Translations
+                .Any(t => t.LanguageCode == x.LanguageCode))
+            .ToList();
+
+        foreach (var translation in removedTranslations)
+            entity.Translations.Remove(translation);
+
+        await service.UpdateAsync(entity, cancellationToken);
 
         return ApiResponse<int>.SuccessResponse
         (

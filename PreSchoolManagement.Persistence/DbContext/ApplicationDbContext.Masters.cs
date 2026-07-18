@@ -9,7 +9,7 @@ public partial class ApplicationDbContext
     public DbSet<CategoryMaster> CategoryMasters => Set<CategoryMaster>();
     public DbSet<CategoryTranslation> CategoryTranslations => Set<CategoryTranslation>();
     public DbSet<CasteMaster> CasteMasters => Set<CasteMaster>();
-    public DbSet<CasteTranslation> CasteCasteTranslations => Set<CasteTranslation>();
+    public DbSet<CasteTranslation> CasteTranslations => Set<CasteTranslation>();
     public DbSet<StandardMaster> StandardMasters => Set<StandardMaster>();
     public DbSet<DivisionMaster> DivisionMasters => Set<DivisionMaster>();
     public DbSet<DivisionTranslation> DivisionTranslations => Set<DivisionTranslation>();

@@ -4,22 +4,42 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using Serilog;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
-public class DivisionMasterService(ApplicationDbContext context) : IDivisionMasterService
+public class DivisionMasterService(
+    ApplicationDbContext context,
+    ILanguageService languageService) : IDivisionMasterService
 {
-    public async Task<List<DivisionMaster>> GetAllAsync(bool isFilter = false, CancellationToken cancellationToken = default)
-    => await context.DivisionMasters
-        .AsNoTracking()
-        .Where(x => !isFilter || x.IsActive)
-        .ToListAsync(cancellationToken);
+    public async Task<List<DivisionMaster>> GetAllAsync(
+    bool filter = false,
+    CancellationToken cancellationToken = default)
+    {
+        var divisions = await context.DivisionMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .Where(x => !filter || x.IsActive)
+            .ToListAsync(cancellationToken);
 
-    public Task<DivisionMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => context.DivisionMasters
-        .AsNoTracking()
-        .FirstOrDefaultAsync
-        (x => x.DivisionId == id, cancellationToken);
+        return divisions
+            .Select(x => MapDivision(x, languageService.CurrentLanguage))
+            .ToList();
+    }
+
+    public async Task<DivisionMaster?> GetByIdAsync(
+        int id,
+        CancellationToken cancellationToken)
+    {
+        var division = await context.DivisionMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .FirstOrDefaultAsync(x => x.DivisionId == id, cancellationToken);
+
+        return division is null
+            ? null
+            : MapDivision(division, languageService.CurrentLanguage);
+    }
 
     public async Task AddAsync(DivisionMaster Division, CancellationToken cancellationToken)
     {
@@ -84,4 +104,26 @@ public class DivisionMasterService(ApplicationDbContext context) : IDivisionMast
             x => x.DivisionName == DivisionName &&
                  (DivisionId == null || x.DivisionId != DivisionId),
             cancellationToken);
+
+    public async Task<DivisionMaster?> GetForUpdateAsync(int id,
+    CancellationToken cancellationToken)
+    => await context.DivisionMasters
+        .Include(x => x.Translations)
+        .FirstOrDefaultAsync(x => x.DivisionId == id, cancellationToken);
+
+    private DivisionMaster MapDivision(DivisionMaster division, string language)
+    {
+        return new DivisionMaster
+        {
+            DivisionId = division.DivisionId,
+            DivisionName = TranslationHelper.GetTranslatedValue(
+                division.Translations,
+                language,
+                x => x.LanguageCode,
+                x => x.DivisionName,
+                division.DivisionName),
+
+            IsActive = division.IsActive
+        };
+    }
 }

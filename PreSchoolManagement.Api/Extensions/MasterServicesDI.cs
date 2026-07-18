@@ -37,7 +37,6 @@ public static class MasterServicesDI
         services.AddScoped<IMediumMasterService,MediumMasterService>();
         services.AddScoped<IFileStorageService, FileStorageService>();
 
-        
         return services;
     }
 }

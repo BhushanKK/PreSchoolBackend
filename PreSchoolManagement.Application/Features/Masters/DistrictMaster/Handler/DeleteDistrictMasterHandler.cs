@@ -5,22 +5,18 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Handlers;
 
 public class DeleteDistrictMasterHandler(
     IDistrictMasterService service,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<DeleteDistrictMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
         DeleteDistrictMasterCommand request, 
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.District.ToString());
-
         if ( request.DistrictId <=0)
         {
             return ApiResponse<int>.FailureResponse
@@ -33,11 +29,13 @@ public class DeleteDistrictMasterHandler(
         var existing = await service.GetByIdAsync(request.DistrictId, cancellationToken);
 
         if ( existing is null)
+        {
             return ApiResponse<int>.FailureResponse
             (
                 messageHelper.NotFoundEntity("Masters",EntityDescription.District.ToString()),
                 (int)HttpStatusCode.NotFound
             );
+        }
         
         await service.DeleteAsync(existing, cancellationToken);
 

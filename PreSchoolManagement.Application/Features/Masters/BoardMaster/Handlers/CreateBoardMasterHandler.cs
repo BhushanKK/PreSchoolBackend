@@ -7,7 +7,6 @@ using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
@@ -17,14 +16,11 @@ public class CreateBoardMasterHandler(
     IValidator<CreateBoardMasterCommand> validator,
     IMapper mapper,
     ICurrentUserService currentUser,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
 : IRequestHandler<CreateBoardMasterCommand,ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(CreateBoardMasterCommand request,CancellationToken cancellationToken)
     {
-        
-        
         var validationResult = await validator.ValidateAsync(request,cancellationToken);
         if(!validationResult.IsValid)
         {

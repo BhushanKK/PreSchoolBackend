@@ -15,4 +15,5 @@ public interface ICategoryMasterService
         OperationType operation,
         int? categoryId,
         CancellationToken cancellationToken);
+    Task<CategoryMaster?> GetForUpdateAsync(int id,CancellationToken cancellationToken);
 }

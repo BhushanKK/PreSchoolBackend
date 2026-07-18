@@ -9,9 +9,11 @@ public class CasteMasterDto
 
     public int? CategoryId { get; set; }
 
-    public string Caste { get; set; }=string.Empty;
+    public string Caste { get; set; } = string.Empty;
 
     public bool IsActive { get; set; }
+    public ICollection<CasteTranslationDto> Translations { get; set; } 
+    = new List<CasteTranslationDto>();
 }
 
 public class CasteMasterQueryDto : CasteMasterDto
@@ -22,6 +24,11 @@ public class CasteMasterQueryDto : CasteMasterDto
         get => CasteId;
         set => CasteId = value;
     }
-
     public string CategoryName { get; set; } = string.Empty;
+}
+
+public class CasteTranslationDto
+{
+    public string LanguageCode { get; set; } = string.Empty;
+    public string Caste { get; set; } = string.Empty;
 }

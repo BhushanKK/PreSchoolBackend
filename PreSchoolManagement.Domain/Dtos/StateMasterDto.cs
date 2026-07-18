@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Domain.Dtos;
 
@@ -16,7 +15,7 @@ public class StateMasterDto
 
 public class StateTranslationDto
 {
-    public string LangauageCode {get; set;} = string.Empty;
+    public string LanguageCode {get; set;} = string.Empty;
 
     public string StateName {get;set;}= string.Empty;
 }
