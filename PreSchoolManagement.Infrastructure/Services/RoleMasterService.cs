@@ -4,16 +4,35 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using Serilog;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
-public class RoleMasterService(ApplicationDbContext context) : IRoleMasterService
+public class RoleMasterService(
+    ApplicationDbContext context,
+    ILanguageService languageService) : IRoleMasterService
 {
-    public Task<List<RoleMaster>> GetAllAsync(CancellationToken cancellationToken)
-        => context.RoleMasters.AsNoTracking().ToListAsync(cancellationToken);
+    public async Task<List<RoleMaster>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        var roles = await context.RoleMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .ToListAsync(cancellationToken);
 
-    public async Task<RoleMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => await context.RoleMasters.FindAsync([id], cancellationToken);
+        return roles.Select(x => MapRole(x, languageService.CurrentLanguage)).ToList();
+    }
+
+    public async Task<RoleMaster?> GetByIdAsync(int id,CancellationToken cancellationToken)
+    {
+        var role = await context.RoleMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .FirstOrDefaultAsync(x => x.RoleId == id, cancellationToken);
+
+        return role is null
+            ? null
+            : MapRole(role, languageService.CurrentLanguage);
+    }
 
     public async Task AddAsync(RoleMaster role, CancellationToken cancellationToken)
     {
@@ -78,4 +97,27 @@ public class RoleMasterService(ApplicationDbContext context) : IRoleMasterServic
             x => x.RoleName == roleName &&
                  (roleId == null || x.RoleId != roleId),
             cancellationToken);
+
+    public async Task<RoleMaster?> GetForUpdateAsync(
+    int id,
+    CancellationToken cancellationToken)
+    => await context.RoleMasters
+        .Include(x => x.Translations)
+        .FirstOrDefaultAsync(x => x.RoleId == id, cancellationToken);
+
+    private RoleMaster MapRole(RoleMaster role, string language)
+    {
+        return new RoleMaster
+        {
+            RoleId = role.RoleId,
+            RoleName = TranslationHelper.GetTranslatedValue(
+                role.Translations,
+                language,
+                x => x.LanguageCode,
+                x => x.RoleName,
+                role.RoleName),
+
+            IsActive = role.IsActive
+        };
+    }
 }

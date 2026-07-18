@@ -1,14 +1,14 @@
 using MediatR;
-using AutoMapper;
 using System.Net;
+using AutoMapper;
 using FluentValidation;
-using SchoolManagement.Domain.Entities;
+using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
-using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
+using SchoolManagement.Domain.Entities;
+
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
@@ -17,57 +17,50 @@ public class CreateRoleMasterHandler(
     IValidator<CreateRoleMasterCommand> validator,
     IMapper mapper,
     ICurrentUserService currentUser,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<CreateRoleMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
         CreateRoleMasterCommand request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Role.ToString());
-
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
-            var message = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
-
             return ApiResponse<int>.FailureResponse
             (
-                message,
+                string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage)),
                 (int)HttpStatusCode.BadRequest
             );
         }
-
-        var exists = await service.IsExistsAsync
-        (
-            request.RoleName ?? string.Empty,
-            OperationType.Add,
-            null,
-            cancellationToken
-        );
-
-        if (exists)
+        
+        bool isExist = await service.IsExistsAsync(request.RoleName,OperationType.Add,null,cancellationToken);
+        
+        if (isExist)
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Role.ToString()),
+                messageHelper.AlreadyExistsEntity(
+                    "Masters",
+                    EntityDescription.Role.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
 
         var entity = mapper.Map<RoleMaster>(request);
 
-        entity.EntryDate = DateTime.UtcNow;
         entity.EntryBy = currentUser.UserId;
+        entity.EntryDate = DateTime.UtcNow;
 
         await service.AddAsync(entity, cancellationToken);
 
         return ApiResponse<int>.SuccessResponse
         (
             entity.RoleId,
-            messageHelper.AddedEntity("Masters",EntityDescription.Role.ToString()),
+            messageHelper.AddedEntity(
+                "Masters",
+                EntityDescription.Role.ToString()),
             (int)HttpStatusCode.Created
         );
     }

@@ -8,8 +8,7 @@ public class RoleMasterProfile : Profile
 {
     public RoleMasterProfile()
     {
-        CreateMap<RoleMasterDto, RoleMaster>()
-            .ForMember(d => d.RoleId, opt => opt.MapFrom(s => s.RoleId))
-            .ForMember(d => d.RoleName, opt => opt.MapFrom(s => s.RoleName ?? string.Empty));
+        CreateMap<RoleTranslationDto, RoleTranslation>();
+        CreateMap<RoleMasterDto, RoleMaster>();
     }
 }

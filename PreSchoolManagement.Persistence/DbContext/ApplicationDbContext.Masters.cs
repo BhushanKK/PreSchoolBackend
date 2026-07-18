@@ -14,11 +14,13 @@ public partial class ApplicationDbContext
     public DbSet<AcademicYearMaster> AcademicYearMasters => Set<AcademicYearMaster>();
     public DbSet<FinancialYearMaster> FinancialYearMasters => Set<FinancialYearMaster>();
     public DbSet<SectionMaster> SectionMasters => Set<SectionMaster>();
+    public DbSet<SectionTranslation> SectionTranslations => Set<SectionTranslation>();
     public DbSet<DistrictMaster> DistrictMasters => Set<DistrictMaster>();
     public DbSet<StateMaster> StateMasters => Set<StateMaster>();
     public DbSet<EmployeeTypeMaster> EmployeeTypeMasters => Set<EmployeeTypeMaster>();
     public DbSet<DesignationMaster> DesignationMasters => Set<DesignationMaster>();
     public DbSet<BoardMaster> BoardMasters => Set<BoardMaster>();
     public DbSet<RoleMaster> RoleMasters => Set<RoleMaster>();
+    public DbSet<RoleTranslation> RoleTranslations => Set<RoleTranslation>();
     public DbSet<MediumMaster> MediumMasters => Set<MediumMaster>();
 }

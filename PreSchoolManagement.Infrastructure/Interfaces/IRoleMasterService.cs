@@ -16,4 +16,5 @@ public interface IRoleMasterService
     Task DeleteAsync(RoleMaster role, CancellationToken cancellationToken);
 
     Task<bool> IsExistsAsync(string RoleName, OperationType operation, int? RoleId, CancellationToken cancellationToken);
+    Task<RoleMaster?> GetForUpdateAsync(int id,CancellationToken cancellationToken);
 }

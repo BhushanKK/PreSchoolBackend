@@ -15,5 +15,4 @@ public abstract class BaseEntity
 
     [JsonIgnore]
     public DateTime? ModifyDate { get; set; }
-    public bool IsActive { get; set; } = false;
 }

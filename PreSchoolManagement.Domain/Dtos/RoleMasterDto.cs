@@ -8,8 +8,14 @@ public class RoleMasterDto
     public int RoleId { get; set; }
     public string RoleName { get; set; } = string.Empty;
     public bool IsActive { get; set; } = false;
+    public List<RoleTranslationDto> Translations { get; set; } = new();
 }
 
+public class RoleTranslationDto
+{
+    public string LanguageCode { get; set; } = string.Empty;
+    public string RoleName { get; set; } = string.Empty;
+}
 
 
 

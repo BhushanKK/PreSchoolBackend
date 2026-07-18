@@ -20,7 +20,7 @@ public class RoleMenuPermissionService(
             from menu in context.MenuMasters.AsNoTracking()
 
             join permission in context.RoleMenuPermissions
-                    .Where(x => x.RoleId == roleId && x.IsActive)
+                    .Where(x => x.RoleId == roleId)
                 on menu.MenuId equals permission.MenuId
                 into permissionMenus
 
