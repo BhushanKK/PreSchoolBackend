@@ -8,6 +8,7 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Localization;
 using PreSchoolManagement.Shared.Common;
+using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
@@ -35,8 +36,8 @@ public class updateReligionMasterHandler(IReligionMasterService service,
             );
         }
 
-        var existing = await service.GetByIdAsync(request.ReligionId, cancellationToken);
-        if (existing is null)
+        var entity = await service.GetForUpdateAsync(request.ReligionId, cancellationToken);
+        if(entity is null)
         {
             return ApiResponse<int>.FailureResponse
             (
@@ -45,14 +46,15 @@ public class updateReligionMasterHandler(IReligionMasterService service,
             );
         }
 
-        var exists = await service.IsExistsAsync
+        var isExists = await service.IsExistsAsync
         (
             request.Religion ?? string.Empty,
             OperationType.Update,
-            request.ReligionId, cancellationToken
+            request.ReligionId, 
+            cancellationToken
         );
 
-        if (exists)
+        if (isExists)
         {
             return ApiResponse<int>.FailureResponse
             (
@@ -61,15 +63,51 @@ public class updateReligionMasterHandler(IReligionMasterService service,
             );
         }
 
-        var entity = mapper.Map(request, existing);
-        entity.ModifyDate = DateTime.UtcNow;
-        entity.ModifyBy = currentUser.UserId ?? null;
+        //Update master
+        mapper.Map(request, entity);
+
+        var userId = currentUser.UserId;
+        var currentDate= DateTime.UtcNow;
+
+        entity.ModifyBy = userId;
+        entity.ModifyDate = currentDate;
+
+        //Synchronize Translations
+        foreach(var dto in request.Translations)
+        {
+            var translation = entity.Translations
+                .FirstOrDefault(x => x.LanguageCode == dto.LanguageCode);
+            
+            if (translation == null)
+            {
+                entity.Translations.Add(new ReligionTranslation
+                {
+                    LanguageCode = dto.LanguageCode,
+                    ReligionName = dto.ReligionName
+                });
+            }
+            else
+                translation.ReligionName = dto.ReligionName;      
+        }
+
+        //Remove deleted Translations
+
+        var removedTranslations = entity.Translations
+            .Where(x => !request.Translations
+            .Any(t => t.LanguageCode == x.LanguageCode))
+            .ToList();
+
+        foreach(var translation in removedTranslations)
+            entity.Translations.Remove(translation);
 
         await service.UpdateAsync(entity, cancellationToken);
+
         return ApiResponse<int>.SuccessResponse
         (
             entity.ReligionId,
-            messageHelper.UpdatedEntity("Masters", EntityDescription.Religion.ToString())
-        );
+            messageHelper.UpdatedEntity("Masters",EntityDescription.Religion.ToString()),
+            (int)HttpStatusCode.OK
+        );    
+        
     }
 }
