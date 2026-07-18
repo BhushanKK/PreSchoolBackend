@@ -116,8 +116,6 @@ public class DesignationMasterService(
                 x => x.LanguageCode,
                 x => x.Designation,
                 designation.Designation),
-
-            Status = designation.Status,
             IsActive = designation.IsActive
         };
     }

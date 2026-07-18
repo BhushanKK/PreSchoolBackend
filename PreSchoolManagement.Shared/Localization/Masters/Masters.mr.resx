@@ -52,6 +52,18 @@
     <value>तुकडी</value>
   </data>
 
+  <data name="District" xml:space="preserve">
+    <value>जिल्हा</value>
+  </data>
+
+  <data name="State" xml:space="preserve">
+    <value>राज्य</value>
+  </data>
+
+  <data name="Designation" xml:space="preserve">
+    <value>हुद्दा</value>
+  </data>
+
   <data name="Standard" xml:space="preserve">
     <value>इयत्ता</value>
   </data>
