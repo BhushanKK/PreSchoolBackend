@@ -16,14 +16,12 @@ public class CreateStateMasterHandler(
     IStateMasterService service,
     IValidator<CreateStateMasterCommand> validator, IMapper mapper,
     ICurrentUserService currentUser,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<CreateStateMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(CreateStateMasterCommand request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.State.ToString());
-
+        
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)

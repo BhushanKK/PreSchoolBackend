@@ -12,16 +12,14 @@ namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class GetByIdStateMasterHandler(
     IStateMasterService service,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<GetByIdStateMasterQuery, ApiResponse<StateMaster?>>
 {
     public async Task<ApiResponse<StateMaster?>> Handle(
         GetByIdStateMasterQuery request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.State.ToString());
-
+        
         if (request.StateId <= 0)
         {
             return ApiResponse<StateMaster?>.FailureResponse

@@ -8,6 +8,8 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Localization;
 using PreSchoolManagement.Shared.Common;
+using Org.BouncyCastle.Ocsp;
+using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
@@ -16,20 +18,18 @@ public class UpdateStateMasterHandler(
     IValidator<UpdateStateMasterCommand> validator,
     IMapper mapper,
     ICurrentUserService currentUser,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<UpdateStateMasterCommand, ApiResponse<int>>
 {
-    public async Task<ApiResponse<int>> Handle(UpdateStateMasterCommand request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<int>> Handle(
+    UpdateStateMasterCommand request, 
+    CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.State.ToString());
-
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
             var message = string.Join("|", validationResult.Errors.Select(e => e.ErrorMessage));
-
             return ApiResponse<int>.FailureResponse
             (
                 message,
@@ -65,16 +65,48 @@ public class UpdateStateMasterHandler(
             );
         }
 
-        var entity = mapper.Map(request, existing);
-        entity.ModifyDate = DateTime.UtcNow;
-        entity.ModifyBy = currentUser.UserId;
+        //updata master
+        mapper.Map(request, existing);
+        
+        var userId = currentUser.UserId;
+        var currentDate = DateTime.UtcNow;
 
-        await service.UpdateAsync(entity, cancellationToken);
+        existing.ModifyBy = userId;
+        existing.ModifyDate = currentDate;
+
+        //Synchronize translations
+        foreach (var dto in request.Translations)
+        {
+            var translation = existing.Translations
+                .FirstOrDefault(x => x.LanguageCode == dto.LangauageCode);
+            
+            if (translation == null)
+            {
+                existing.Translations.Add(new StateTranslation
+                {
+                    LanguageCode = dto.LangauageCode,
+                    StateName = dto.StateName
+                });
+            }
+            else
+                translation.StateName = dto.StateName;
+        }
+
+        //Remove deleted translations
+        var removedTranslations = existing.Translations
+            .Where(x => !request.Translations
+            .Any(t => t.LangauageCode == x.LanguageCode))
+            .ToList();
+        
+        foreach (var translation in removedTranslations)
+            existing.Translations.Remove(translation);
+
+        await service.UpdateAsync(existing, cancellationToken);
 
         return ApiResponse<int>.SuccessResponse
         (
-            entity.StateId,
-            messageHelper.UpdatedEntity("Masters", EntityDescription.State.ToString()),
+            existing.StateId,
+            messageHelper.UpdatedEntity("Masters",EntityDescription.State.ToString()),
             (int)HttpStatusCode.OK
         );
     }
