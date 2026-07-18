@@ -10,18 +10,16 @@ using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetAllHolidayMasterHandler(IHolidayMasterService service,
-    IMessageHelper messageHelper,
+public class GetAllHolidayMasterHandler(IHolidayMasterService service,IMessageHelper messageHelper,
     ILocalizationService localization)
     : IRequestHandler<GetAllHolidayMasterQuery, ApiResponse<List<HolidayMaster>>>
 {
     public async Task<ApiResponse<List<HolidayMaster>>> Handle(
-        GetAllHolidayMasterQuery request,
-        CancellationToken cancellationToken)
+        GetAllHolidayMasterQuery request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.Holiday.ToString());
 
-        var Holidays = await service.GetAllAsync(cancellationToken);
+        var Holidays = await service.GetAllAsync(request.filter, cancellationToken);
+        localization.Get("Masters", EntityDescription.Holiday.ToString());
 
         return ApiResponse<List<HolidayMaster>>.SuccessResponse
         (
