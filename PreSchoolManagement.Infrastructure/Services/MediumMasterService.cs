@@ -2,19 +2,36 @@ using Microsoft.EntityFrameworkCore;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
 using SchoolManagement.Domain.Entities;
 using Serilog;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
-public  class MediumMasterService(ApplicationDbContext context)
+public  class MediumMasterService(ApplicationDbContext context,ILanguageService languageService)
 :IMediumMasterService
 {
-    public Task<List<MediumMaster>>GetAllAsync(CancellationToken cancellationToken)
-    => context.MediumMasters.AsNoTracking().ToListAsync(cancellationToken);
+    public async Task<List<MediumMaster>>GetAllAsync(CancellationToken cancellationToken)
+    {
+        var mediums = await context.MediumMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .ToListAsync(cancellationToken);
+
+        return mediums.Select(x => MapMedium(x,languageService.CurrentLanguage)).ToList();
+    }
 
     public async Task<MediumMaster?> GetByIdAsync(int id,CancellationToken cancellationToken)
-    => await context.MediumMasters.FindAsync([id],cancellationToken);
+    {
+        var medium = await context.MediumMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .FirstOrDefaultAsync(x => x.MediumId == id, cancellationToken);
+
+        return medium is null
+            ? null
+            : MapMedium(medium, languageService.CurrentLanguage);
+    }
 
     public async Task AddAsync (MediumMaster medium,CancellationToken cancellationToken)
     {
@@ -70,5 +87,28 @@ public  class MediumMasterService(ApplicationDbContext context)
     public Task<bool>IsExistsAsync(string medium,OperationType operation,int? mediumId,CancellationToken cancellationToken)
     => context.MediumMasters.AnyAsync(x => x.Medium == medium &&
     (mediumId == null || x.MediumId != mediumId),cancellationToken);
+
+    public async Task<MediumMaster?> GetForUpdateAsync(int id,
+    CancellationToken cancellationToken)
+    => await context.MediumMasters
+        .Include(x => x.Translations)
+        .FirstOrDefaultAsync(x => x.MediumId == id, cancellationToken);
+
+    private MediumMaster MapMedium(MediumMaster medium,string language)
+    {
+        return new MediumMaster
+        {
+            MediumId = medium.MediumId,
+            Medium = TranslationHelper.GetTranslatedValue(
+                medium.Translations,
+                language,
+                x => x.LanguageCode,
+                x => x.MediumName,
+                medium.Medium),
+            
+            IsActive = medium.IsActive
+
+        };
+    }
 
 }

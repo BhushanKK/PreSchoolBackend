@@ -8,6 +8,7 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
 using PreSchoolManagement.Shared.Localization;
+using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
@@ -16,7 +17,8 @@ public class UpdateMediumMasterHandler(
     IValidator<UpdateMediumMasterCommand> validator,
     IMapper mapper,
     IMessageHelper messageHelper,
-    ILocalizationService localization)
+    ILocalizationService localization,
+    ICurrentUserService currentUser)
     : IRequestHandler<UpdateMediumMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(UpdateMediumMasterCommand request, CancellationToken cancellationToken)
@@ -32,7 +34,7 @@ public class UpdateMediumMasterHandler(
             (int)HttpStatusCode.BadRequest);
         }
 
-        var entity = await service.GetByIdAsync(request.MediumId, cancellationToken);
+        var entity = await service.GetForUpdateAsync(request.MediumId, cancellationToken);
         if (entity is null)
         {
             return ApiResponse<int>.FailureResponse
@@ -42,10 +44,10 @@ public class UpdateMediumMasterHandler(
             );
         }
 
-        var exists = await service.IsExistsAsync(request.Medium ?? string.Empty,
+        var isExists = await service.IsExistsAsync(request.Medium ?? string.Empty,
         OperationType.Update, request.MediumId, cancellationToken);
 
-        if (exists)
+        if (isExists)
         {
             return ApiResponse<int>.FailureResponse
             (
@@ -53,14 +55,49 @@ public class UpdateMediumMasterHandler(
                 (int)HttpStatusCode.Conflict
             );
         }
-        mapper.Map(request, entity);
+        
+        //update master
+        mapper.Map(request,entity);
 
-        await service.UpdateAsync(entity, cancellationToken);
+        var userId = currentUser.UserId;
+        var currentDate = DateTime.UtcNow;
+
+        entity.ModifyBy = userId;
+        entity.ModifyDate = currentDate;
+
+        //synchronize translations
+        foreach( var dto in request.Translations)
+        {
+            var translation = entity.Translations
+                .FirstOrDefault(x => x.LanguageCode == dto.LanguageCode);
+
+            if(translation == null)
+            {
+                entity.Translations.Add(new MediumTranslation
+                {
+                    LanguageCode = dto.LanguageCode,
+                    MediumName = dto.MediumName
+                });
+            }
+            else
+                translation.MediumName = dto.MediumName;
+        }
+
+        //Remove Deleted Translations
+        var removedTranslations = entity.Translations
+            .Where(x => !request.Translations
+            .Any(x => x.LanguageCode == x.LanguageCode))
+            .ToList();
+
+        foreach (var translation in removedTranslations)
+            entity.Translations.Remove(translation);
+
+        await service.UpdateAsync(entity,cancellationToken);
 
         return ApiResponse<int>.SuccessResponse
         (
             entity.MediumId,
-            messageHelper.UpdatedEntity("Masters", EntityDescription.Medium.ToString()),
+            messageHelper.UpdatedEntity("Masters",EntityDescription.Medium.ToString()),
             (int)HttpStatusCode.OK
         );
     }

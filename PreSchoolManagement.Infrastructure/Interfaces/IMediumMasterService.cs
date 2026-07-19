@@ -16,4 +16,6 @@ public interface IMediumMasterService
     Task DeleteAsync(MediumMaster medium,CancellationToken cancellationToken);
 
     Task<bool> IsExistsAsync(string medium,OperationType operation,int? MediumId,CancellationToken cancellationToken);
+
+    Task<MediumMaster?> GetForUpdateAsync (int id,CancellationToken cancellationToken);
 }
