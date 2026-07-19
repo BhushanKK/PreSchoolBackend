@@ -6,7 +6,6 @@ using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 

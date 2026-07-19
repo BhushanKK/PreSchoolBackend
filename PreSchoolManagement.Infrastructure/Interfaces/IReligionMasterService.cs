@@ -16,4 +16,6 @@ public interface IReligionMasterService
     Task DeleteAsync(ReligionMaster religion, CancellationToken cancellationToken);
 
     Task<bool> IsExistsAsync(string Religion, OperationType operation, int? ReligionId, CancellationToken cancellationToken);
+
+    Task<ReligionMaster?> GetForUpdateAsync (int id,CancellationToken cancellationToken);
 }

@@ -8,8 +8,7 @@ public class StateMasterProfile : Profile
 {
     public StateMasterProfile()
     {
-        CreateMap<StateMasterDto ,StateMaster>()
-            .ForMember(d => d.StateId, opt => opt.MapFrom(s => s.StateId))
-            .ForMember(d => d.StateName, opt => opt.MapFrom(s => s.StateName ?? string.Empty));
+        CreateMap<StateTranslationDto, StateTranslation>();
+        CreateMap<StateMasterDto ,StateMaster>();
     }
 }

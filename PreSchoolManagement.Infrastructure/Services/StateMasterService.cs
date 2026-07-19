@@ -4,23 +4,35 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using SchoolManagement.Domain.Entities;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
-public class StateMasterService(ApplicationDbContext context):IStateMasterService
+public class StateMasterService(ApplicationDbContext context,
+ILanguageService languageService):IStateMasterService
 {
-    public Task<List<StateMaster>> GetAllAsync(
-        bool applyFilter = false,
-        CancellationToken cancellationToken = default) =>
-        context.StateMasters
+    public async Task<List<StateMaster>> GetAllAsync(
+        CancellationToken cancellationToken )
+    {
+        var states = await context.StateMasters
             .AsNoTracking()
-            .Where(x => !applyFilter || x.IsActive)
+            .Include(x => x.Translations)
             .ToListAsync(cancellationToken);
+        
+        return states.Select(x => MapState(x, languageService.CurrentLanguage)).ToList();
+    }
 
     public async Task<StateMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => await context.StateMasters
-        .AsNoTracking()
-        .FirstOrDefaultAsync(x => x.StateId == id, cancellationToken);
+    { 
+        var state = await context.StateMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .FirstOrDefaultAsync(x => x.StateId == id, cancellationToken);
+
+        return state is null 
+            ? null
+            : MapState(state, languageService.CurrentLanguage);
+    }
 
     public async Task AddAsync (StateMaster state,CancellationToken cancellationToken)
     {
@@ -83,4 +95,26 @@ public class StateMasterService(ApplicationDbContext context):IStateMasterServic
            x => x.StateName == state &&
            (stateId == null || x.StateId != stateId),
            cancellationToken);
+
+    public async Task<StateMaster?> GetForUpdateAsync(int id,
+    CancellationToken cancellationToken)
+    => await context.StateMasters
+        .Include(x =>x.Translations)
+        .FirstOrDefaultAsync(x => x.StateId == id,cancellationToken);
+
+    private StateMaster MapState(StateMaster state, string language)
+    {
+        return new StateMaster
+        {
+            StateId = state.StateId,
+            StateName = TranslationHelper.GetTranslatedValue(
+                state.Translations,
+                language,
+                x => x.LanguageCode,
+                x => x.StateName,
+                state.StateName),
+            
+            IsActive = state.IsActive
+        };
+    }
 }

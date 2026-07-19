@@ -6,8 +6,8 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Localization;
 using PreSchoolManagement.Shared.Common;
+using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
@@ -16,20 +16,18 @@ public class UpdateStateMasterHandler(
     IValidator<UpdateStateMasterCommand> validator,
     IMapper mapper,
     ICurrentUserService currentUser,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<UpdateStateMasterCommand, ApiResponse<int>>
 {
-    public async Task<ApiResponse<int>> Handle(UpdateStateMasterCommand request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<int>> Handle(
+    UpdateStateMasterCommand request, 
+    CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.State.ToString());
-
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
             var message = string.Join("|", validationResult.Errors.Select(e => e.ErrorMessage));
-
             return ApiResponse<int>.FailureResponse
             (
                 message,
@@ -37,9 +35,9 @@ public class UpdateStateMasterHandler(
             );
         }
 
-        var existing = await service.GetByIdAsync(request.StateId, cancellationToken);
+        var entity = await service.GetForUpdateAsync(request.StateId, cancellationToken);
 
-        if (existing is null)
+        if (entity is null)
         {
             return ApiResponse<int>.FailureResponse
             (
@@ -48,15 +46,15 @@ public class UpdateStateMasterHandler(
             );
         }
 
-        var exists = await service.IsExistsAsync
+        var isExists = await service.IsExistsAsync
         (
-            request.StateName ?? string.Empty,
+            request.StateName ,
             OperationType.Update,
             request.StateId,
             cancellationToken
         );
 
-        if (exists)
+        if (isExists)
         {
             return ApiResponse<int>.FailureResponse
             (
@@ -65,16 +63,45 @@ public class UpdateStateMasterHandler(
             );
         }
 
-        var entity = mapper.Map(request, existing);
-        entity.ModifyDate = DateTime.UtcNow;
+        //updata master
+        mapper.Map(request, entity);
+    
         entity.ModifyBy = currentUser.UserId;
+        entity.ModifyDate = DateTime.UtcNow;
+
+        //Synchronize translations
+        foreach (var dto in request.Translations)
+        {
+            var translation = entity.Translations
+                .FirstOrDefault(x => x.LanguageCode == dto.LanguageCode);
+            
+            if (translation == null)
+            {
+                entity.Translations.Add(new StateTranslation
+                {
+                    LanguageCode = dto.LanguageCode,
+                    StateName = dto.StateName
+                });
+            }
+            else
+                translation.StateName = dto.StateName;
+        }
+
+        //Remove deleted translations
+        var removedTranslations = entity.Translations
+            .Where(x => !request.Translations
+            .Any(t => t.LanguageCode == x.LanguageCode))
+            .ToList();
+        
+        foreach (var translation in removedTranslations)
+            entity.Translations.Remove(translation);
 
         await service.UpdateAsync(entity, cancellationToken);
 
         return ApiResponse<int>.SuccessResponse
         (
             entity.StateId,
-            messageHelper.UpdatedEntity("Masters", EntityDescription.State.ToString()),
+            messageHelper.UpdatedEntity("Masters",EntityDescription.State.ToString()),
             (int)HttpStatusCode.OK
         );
     }

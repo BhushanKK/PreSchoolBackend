@@ -4,21 +4,38 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using Serilog;
+using PreSchoolManagement.Domain.Dtos;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
-public class ReligionMasterService(ApplicationDbContext context) : IReligionMasterService
+public class ReligionMasterService(ApplicationDbContext context,ILanguageService languageService) : IReligionMasterService
 {
-    public Task<List<ReligionMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken = default)
-        => context.ReligionMasters
-        .Where(x => !filter|| x.IsActive)
-        .AsNoTracking()
-        .ToListAsync(cancellationToken);
+    public async Task<List<ReligionMaster>> GetAllAsync(bool filter = false, 
+    CancellationToken cancellationToken = default)
+    {
+        var religions = await context.ReligionMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .Where(x => !filter || x.IsActive)
+            .ToListAsync(cancellationToken);
+
+        return religions
+            .Select(x => MapReligion(x,languageService.CurrentLanguage))
+            .ToList();
+    }
 
     public async Task<ReligionMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => await context.ReligionMasters
-        .AsNoTracking()
-        .FirstOrDefaultAsync(x => x.ReligionId == id, cancellationToken);
+    {
+        var religions = await context.ReligionMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .FirstOrDefaultAsync(x => x.ReligionId == id,cancellationToken);
+
+        return religions is null
+            ? null
+            : MapReligion (religions, languageService.CurrentLanguage);
+    }
 
     public async Task AddAsync(ReligionMaster religion, CancellationToken cancellationToken)
     {
@@ -75,4 +92,26 @@ public class ReligionMasterService(ApplicationDbContext context) : IReligionMast
     }
     public Task<bool> IsExistsAsync(string religion, OperationType operation, int? religionId, CancellationToken cancellationToken)
     => context.ReligionMasters.AnyAsync(x => x.Religion == religion && (religionId == null || x.ReligionId != religionId), cancellationToken);
+
+    public async Task<ReligionMaster?> GetForUpdateAsync(int id,
+    CancellationToken cancellationToken)
+    => await context.ReligionMasters
+        .Include(x => x.Translations)
+        .FirstOrDefaultAsync(x => x.ReligionId == id,cancellationToken);
+
+    private ReligionMaster MapReligion(ReligionMaster religion, string language)
+    {
+        return new ReligionMaster
+        {
+            ReligionId = religion.ReligionId,
+            Religion = TranslationHelper.GetTranslatedValue(
+                religion.Translations,
+                language,
+                x => x.LanguageCode,
+                x => x.ReligionName,
+                religion.Religion),
+            
+            IsActive = religion.IsActive
+        };
+    }
 }

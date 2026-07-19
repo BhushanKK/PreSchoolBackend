@@ -30,4 +30,6 @@ public partial class ApplicationDbContext
     public DbSet<RoleMaster> RoleMasters => Set<RoleMaster>();
     public DbSet<RoleTranslation> RoleTranslations => Set<RoleTranslation>();
     public DbSet<MediumMaster> MediumMasters => Set<MediumMaster>();
+    public DbSet<StateTranslation> StateTranslations => Set<StateTranslation>();
+    public DbSet<ReligionTranslation> ReligionTranslations => Set<ReligionTranslation>();
 }

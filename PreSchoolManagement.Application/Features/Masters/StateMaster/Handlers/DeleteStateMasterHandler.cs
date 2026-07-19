@@ -5,19 +5,17 @@ using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Masters.Handlers;
 
 public class DeleteStateMasterHandler(
     IStateMasterService service,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     :IRequestHandler<DeleteStateMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(DeleteStateMasterCommand request,CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.State.ToString());
+        
         
         if (request.StateId <=0)
         {
