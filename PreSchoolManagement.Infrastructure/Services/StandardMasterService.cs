@@ -4,21 +4,34 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using Serilog;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
-public class StandardMasterService(ApplicationDbContext context) : IStandardMasterService
+public class StandardMasterService(ApplicationDbContext context,
+ILanguageService languageService) : IStandardMasterService
 {
-    public Task<List<StandardMaster>> GetAllAsync(bool filter, CancellationToken cancellationToken = default)
-        => context.StandardMasters
-        .AsNoTracking()
-        .Where(x => !filter || x.IsActive)
-        .ToListAsync(cancellationToken);
+    public async Task<List<StandardMaster>> GetAllAsync(bool filter, CancellationToken cancellationToken = default)
+    {
+        var standards = await context.StandardMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .ToListAsync(cancellationToken);
+
+        return standards.Select(x =>MapStandard(x,languageService.CurrentLanguage)).ToList();
+    }
 
     public async Task<StandardMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => await context.StandardMasters
-        .AsNoTracking()
-        .FirstOrDefaultAsync(x => x.StandardId == id, cancellationToken);
+    {
+        var standard =await context.StandardMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .FirstOrDefaultAsync(x => x.StandardId == id,cancellationToken);
+
+        return standard is null 
+            ? null
+            : MapStandard(standard,languageService.CurrentLanguage);
+    }
 
     public async Task AddAsync(StandardMaster Standard, CancellationToken cancellationToken)
     {
@@ -83,4 +96,26 @@ public class StandardMasterService(ApplicationDbContext context) : IStandardMast
             x => x.StandardName == StandardName &&
                  (StandardId == null || x.StandardId != StandardId),
             cancellationToken);
+
+    public async Task<StandardMaster?> GetForUpdateAsync(int id,
+    CancellationToken cancellationToken)
+    => await context.StandardMasters
+        .Include(x => x.Translations)
+        .FirstOrDefaultAsync(x => x.StandardId == id,cancellationToken);
+
+    private StandardMaster MapStandard(StandardMaster standard, string language)
+    {
+        return new StandardMaster
+        {
+            StandardId = standard.StandardId,
+            StandardName = TranslationHelper.GetTranslatedValue(
+                standard.Translations,
+                language,
+                x => x.LanguageCode,
+                x => x.StandardName,
+                standard.StandardName),
+            
+            IsActive = standard.IsActive
+        };
+    }
 }

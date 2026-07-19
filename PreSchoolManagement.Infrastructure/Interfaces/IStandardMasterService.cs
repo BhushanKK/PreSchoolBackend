@@ -16,4 +16,6 @@ public interface IStandardMasterService
     Task DeleteAsync(StandardMaster Standard, CancellationToken cancellationToken);
 
     Task<bool> IsExistsAsync(string StandardName, OperationType operation, int? StandardId, CancellationToken cancellationToken);
+
+    Task<StandardMaster?> GetForUpdateAsync (int id,CancellationToken cancellationToken);
 }
