@@ -28,15 +28,17 @@ public class CategoryMasterService(
     }
 
     public async Task<CategoryMaster?> GetByIdAsync(
-        int id,
-        CancellationToken cancellationToken)
+    int id,
+    CancellationToken cancellationToken)
     {
         var category = await context.CategoryMasters
             .AsNoTracking()
             .Include(x => x.Translations)
-            .FirstOrDefaultAsync(x => x.CategoryId == id, cancellationToken);
+            .FirstOrDefaultAsync(
+                x => x.CategoryId == id,
+                cancellationToken);
 
-        return category is null
+        return category == null
             ? null
             : MapCategory(category, languageService.CurrentLanguage);
     }
@@ -123,7 +125,9 @@ public class CategoryMasterService(
                 x => x.CategoryName,
                 category.CategoryName),
 
-            IsActive = category.IsActive
+            IsActive = category.IsActive,
+
+            Translations = category.Translations.ToList()
         };
     }
 }

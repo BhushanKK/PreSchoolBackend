@@ -23,7 +23,7 @@ public class DivisionMasterService(
             .ToListAsync(cancellationToken);
 
         return divisions
-            .Select(x => MapDivision(x, languageService.CurrentLanguage))
+            .Select(division => MapDivision(division, languageService.CurrentLanguage))
             .ToList();
     }
 
@@ -123,7 +123,9 @@ public class DivisionMasterService(
                 x => x.DivisionName,
                 division.DivisionName),
 
-            IsActive = division.IsActive
+            IsActive = division.IsActive,
+
+            Translations = division.Translations.ToList()
         };
     }
 }

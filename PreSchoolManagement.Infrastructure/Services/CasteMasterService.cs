@@ -16,48 +16,47 @@ public class CasteMasterService(
     public async Task<List<CasteMasterQueryDto>> GetAllAsync(
     bool applyFilter = false,
     CancellationToken cancellationToken = default)
-    {
-        var language = languageService.CurrentLanguage;
+{
+    var language = languageService.CurrentLanguage;
 
-        var query =
-            from caste in context.CasteMasters.AsNoTracking()
+    var query =
+        from caste in context.CasteMasters.AsNoTracking()
 
-            join category in context.CategoryMasters.AsNoTracking()
-                on caste.CategoryID equals category.CategoryId
+        join category in context.CategoryMasters.AsNoTracking()
+            on caste.CategoryID equals category.CategoryId
 
-            join casteTranslation in context.CasteTranslations.AsNoTracking()
-                .Where(x => x.LanguageCode == language)
-                on caste.CasteID equals casteTranslation.CasteID into ct
-            from casteTranslation in ct.DefaultIfEmpty()
+        join casteTranslation in context.CasteTranslations.AsNoTracking()
+            .Where(x => x.LanguageCode == language)
+            on caste.CasteID equals casteTranslation.CasteID into ct
+        from casteTranslation in ct.DefaultIfEmpty()
 
-            join categoryTranslation in context.CategoryTranslations.AsNoTracking()
-                .Where(x => x.LanguageCode == language)
-                on category.CategoryId equals categoryTranslation.CategoryId into cat
-            from categoryTranslation in cat.DefaultIfEmpty()
+        join categoryTranslation in context.CategoryTranslations.AsNoTracking()
+            .Where(x => x.LanguageCode == language)
+            on category.CategoryId equals categoryTranslation.CategoryId into cat
+        from categoryTranslation in cat.DefaultIfEmpty()
 
-            select new CasteMasterQueryDto
-            {
-                CasteId = caste.CasteID,
-                CategoryId = category.CategoryId,
+        where !applyFilter || caste.IsActive
 
-                CategoryName = categoryTranslation != null
-                    ? categoryTranslation.CategoryName
-                    : category.CategoryName,
+        orderby caste.CategoryID
 
-                Caste = casteTranslation != null
-                    ? casteTranslation.CasteName
-                    : caste.CasteName,
+        select new CasteMasterQueryDto
+        {
+            CasteId = caste.CasteID,
+            CategoryId = category.CategoryId,
 
-                IsActive = caste.IsActive
-            };
+            CategoryName = categoryTranslation != null
+                ? categoryTranslation.CategoryName
+                : category.CategoryName,
 
-        if (applyFilter)
-            query = query.Where(x => x.IsActive);
+            CasteName = casteTranslation != null
+                ? casteTranslation.CasteName
+                : caste.CasteName,
 
-        return await query
-            .OrderBy(x => x.CategoryId)
-            .ToListAsync(cancellationToken);
-    }
+            IsActive = caste.IsActive
+        };
+
+    return await query.ToListAsync(cancellationToken);
+}
 
     public async Task<CasteMaster?> GetByIdAsync(
         int id,
@@ -141,7 +140,6 @@ public class CasteMasterService(
         return new CasteMaster
         {
             CasteID = caste.CasteID,
-            CategoryID = caste.CategoryID,
             CasteName = TranslationHelper.GetTranslatedValue(
                 caste.Translations,
                 language,
@@ -149,7 +147,9 @@ public class CasteMasterService(
                 x => x.CasteName,
                 caste.CasteName),
 
-            IsActive = caste.IsActive
+            IsActive = caste.IsActive,
+
+            Translations = caste.Translations.ToList()
         };
     }
 }

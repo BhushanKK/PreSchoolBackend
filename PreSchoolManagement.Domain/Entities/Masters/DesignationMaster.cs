@@ -7,8 +7,6 @@ public class DesignationMaster : BaseEntity
     public int DesignationId { get; set; }
     public string Designation { get; set; } = string.Empty;
     public bool IsActive { get; set; } = false;
-
-    [JsonIgnore]
     public virtual ICollection<DesignationTranslation> Translations { get; set; }
         = new List<DesignationTranslation>();
 }
@@ -19,5 +17,6 @@ public class DesignationTranslation
     public int DesignationId { get; set; }
     public string LanguageCode { get; set; } = string.Empty;
     public string Designation { get; set; } = string.Empty;
+    [JsonIgnore]
     public virtual DesignationMaster DesignationMaster { get; set; } = null!;
 }

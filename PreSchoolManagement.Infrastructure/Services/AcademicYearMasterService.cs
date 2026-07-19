@@ -12,27 +12,30 @@ public class AcademicYearMasterService(
     ApplicationDbContext context,
     ILanguageService languageService) : IAcademicYearMasterService
 {
-    public async Task<List<AcademicYearMaster>> GetAllAsync(bool filter = false,CancellationToken cancellationToken=default)
+    public async Task<List<AcademicYearMaster>> GetAllAsync(bool filter,
+        CancellationToken cancellationToken)
     {
-        var years = await context.AcademicYearMasters
+        var academicYear = await context.AcademicYearMasters
             .AsNoTracking()
-            .Include(x => x.Translations)
             .Where(x => !filter || x.IsActive)
+            .Include(x => x.Translations)
             .ToListAsync(cancellationToken);
 
-        return years.Select(x => MapAcademicYear(x, languageService.CurrentLanguage)).ToList();
-    }
+        return academicYear
+            .Select(year => MapAcademicYear(year, languageService.CurrentLanguage))
+            .ToList();
+    }   
 
     public async Task<AcademicYearMaster?> GetByIdAsync(int id,CancellationToken cancellationToken)
     {
-        var role = await context.AcademicYearMasters
+        var academicYear = await context.AcademicYearMasters
             .AsNoTracking()
             .Include(x => x.Translations)
-            .FirstOrDefaultAsync(x => x.AcademicYearId == id, cancellationToken);
+            .FirstOrDefaultAsync(x => x.AcademicYearId == id,cancellationToken);
 
-        return role is null
+        return academicYear is null
             ? null
-            : MapAcademicYear(role, languageService.CurrentLanguage);
+            : MapAcademicYear(academicYear,languageService.CurrentLanguage);
     }
 
     public async Task AddAsync(AcademicYearMaster academicYear, CancellationToken cancellationToken)
@@ -100,20 +103,23 @@ public class AcademicYearMasterService(
         .FirstOrDefaultAsync(x => x.AcademicYearId == id, cancellationToken);
 
     private AcademicYearMaster MapAcademicYear(AcademicYearMaster academicYear, string language)
-{
-    return new AcademicYearMaster
     {
-        AcademicYearId = academicYear.AcademicYearId,
-        AcademicYearName = TranslationHelper.GetTranslatedValue(
-            academicYear.Translations,
-            language,
-            x => x.LanguageCode,
-            x => x.AcademicYearName,
-            academicYear.AcademicYearName),
+        return new AcademicYearMaster
+        {
+            AcademicYearId = academicYear.AcademicYearId,
 
-        FromDate = academicYear.FromDate,
-        ToDate = academicYear.ToDate,
-        IsActive = academicYear.IsActive
-    };
-}
+            AcademicYearName = TranslationHelper.GetTranslatedValue(
+                academicYear.Translations,
+                language,
+                x => x.LanguageCode,
+                x => x.AcademicYearName,
+                academicYear.AcademicYearName),
+
+            FromDate = academicYear.FromDate,
+            ToDate = academicYear.ToDate,
+            IsActive = academicYear.IsActive,
+
+            Translations = academicYear.Translations.ToList()
+        };
+    }
 }

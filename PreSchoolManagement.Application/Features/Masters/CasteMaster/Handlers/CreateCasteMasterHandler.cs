@@ -17,14 +17,11 @@ public class CreateCasteMasterHandler(
     IValidator<CreateCasteMasterCommand> validator, 
     IMapper mapper,
     ICurrentUserService currentUser,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
 : IRequestHandler<CreateCasteMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(CreateCasteMasterCommand request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters" ,EntityDescription.Caste.ToString());
-        
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
         {
@@ -32,7 +29,7 @@ public class CreateCasteMasterHandler(
             return ApiResponse<int>.FailureResponse(message, (int)HttpStatusCode.BadRequest);
         }
 
-        var exists = await service.IsExistsAsync(request.Caste ?? string.Empty, OperationType.Add, null, cancellationToken);
+        var exists = await service.IsExistsAsync(request.CasteName ?? string.Empty, OperationType.Add, null, cancellationToken);
         if (exists)
             return ApiResponse<int>.FailureResponse(messageHelper.AlreadyExistsEntity("Masters" ,EntityDescription.Caste.ToString()), (int)HttpStatusCode.Conflict);
 

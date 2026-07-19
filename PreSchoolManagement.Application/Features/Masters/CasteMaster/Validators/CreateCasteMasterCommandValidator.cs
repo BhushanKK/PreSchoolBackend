@@ -11,9 +11,9 @@ public class CreateCasteMasterCommandValidator
     public CreateCasteMasterCommandValidator(
         ILocalizationService localizer)
     {
-        RuleFor(x => x.Caste)
-            .Required(localizer, "Caste")
-            .MaxLengthLocalized(localizer, "Caste", 100);
+        RuleFor(x => x.CasteName)
+            .Required(localizer, "CasteName")
+            .MaxLengthLocalized(localizer, "CasteName", 30);
 
         RuleFor(x => x.CategoryId)
             .GreaterThan(0)
@@ -36,9 +36,9 @@ public class UpdateCasteMasterCommandValidator
         RuleFor(x => x.CasteId)
             .RequiredId(localizer, "CasteId");
 
-        RuleFor(x => x.Caste)
-            .Required(localizer, "Caste")
-            .MaxLengthLocalized(localizer, "Caste", 20);
+        RuleFor(x => x.CasteName)
+            .Required(localizer, "CasteName")
+            .MaxLengthLocalized(localizer, "CasteName", 20);
 
         RuleFor(x => x.CategoryId)
             .GreaterThan(0)

@@ -7,7 +7,6 @@ public class RoleMaster : BaseEntity
     public int RoleId { get; set; }
     public string RoleName { get; set; } = string.Empty;
     public bool IsActive { get; set; } = false;
-    [JsonIgnore]
     public virtual ICollection<RoleTranslation> Translations { get;set;} 
     = new List<RoleTranslation>();
 }
@@ -18,5 +17,6 @@ public class RoleTranslation
     public int RoleId { get; set; }
     public string LanguageCode { get; set; } = string.Empty;
     public string RoleName { get; set; } = string.Empty;
+    [JsonIgnore]
     public virtual RoleMaster Role { get; set; } = null!; 
 }

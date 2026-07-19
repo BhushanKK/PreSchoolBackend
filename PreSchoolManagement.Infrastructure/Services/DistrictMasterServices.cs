@@ -128,7 +128,7 @@ public class DistrictMasterServices(
         return new DistrictMaster
         {
             DistrictId = district.DistrictId,
-            StateId = district.StateId,
+
             DistrictName = TranslationHelper.GetTranslatedValue(
                 district.Translations,
                 language,
@@ -136,7 +136,9 @@ public class DistrictMasterServices(
                 x => x.DistrictName,
                 district.DistrictName),
 
-            IsActive = district.IsActive
+            IsActive = district.IsActive,
+
+            Translations = district.Translations.ToList()
         };
     }
 }

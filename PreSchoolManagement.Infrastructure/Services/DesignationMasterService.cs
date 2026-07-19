@@ -19,24 +19,25 @@ public class DesignationMasterService(
         var designations = await context.DesignationMasters
             .AsNoTracking()
             .Include(x => x.Translations)
-            .Where(x => !filter || x.IsActive)
             .ToListAsync(cancellationToken);
 
         return designations
-            .Select(x => MapDesignation(x, languageService.CurrentLanguage))
+            .Select(designation => MapDesignation(designation, languageService.CurrentLanguage))
             .ToList();
     }
 
     public async Task<DesignationMaster?> GetByIdAsync(
-        int id,
-        CancellationToken cancellationToken)
+    int id,
+    CancellationToken cancellationToken)
     {
         var designation = await context.DesignationMasters
             .AsNoTracking()
             .Include(x => x.Translations)
-            .FirstOrDefaultAsync(x => x.DesignationId == id, cancellationToken);
+            .FirstOrDefaultAsync(
+                x => x.DesignationId == id,
+                cancellationToken);
 
-        return designation is null
+        return designation == null
             ? null
             : MapDesignation(designation, languageService.CurrentLanguage);
     }
@@ -105,7 +106,9 @@ public class DesignationMasterService(
         .Include(x => x.Translations)
         .FirstOrDefaultAsync(x => x.DesignationId == id, cancellationToken);
 
-    private DesignationMaster MapDesignation(DesignationMaster designation, string language)
+    private DesignationMaster MapDesignation(
+    DesignationMaster designation,
+    string language)
     {
         return new DesignationMaster
         {
@@ -116,7 +119,10 @@ public class DesignationMasterService(
                 x => x.LanguageCode,
                 x => x.Designation,
                 designation.Designation),
-            IsActive = designation.IsActive
+
+            IsActive = designation.IsActive,
+
+            Translations = designation.Translations.ToList()
         };
     }
 }

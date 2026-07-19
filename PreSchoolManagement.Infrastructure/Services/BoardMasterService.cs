@@ -12,7 +12,8 @@ public class BoardMasterService(
     ApplicationDbContext context,
     ILanguageService languageService) : IBoardMasterService
 {
-    public async Task<List<BoardMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken = default)
+    public async Task<List<BoardMaster>> GetAllAsync(bool filter = false,
+    CancellationToken cancellationToken = default)
     {
         var boards = await context.BoardMasters
             .AsNoTracking()
@@ -20,19 +21,22 @@ public class BoardMasterService(
             .Where(x => !filter || x.IsActive)
             .ToListAsync(cancellationToken);
 
-        return boards.Select(x => MapBoard(x, languageService.CurrentLanguage)).ToList();
+        return boards
+            .Select(x => MapBoard(x, languageService.CurrentLanguage))
+            .ToList();
     }
 
-    public async Task<BoardMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
+public async Task<BoardMaster?> GetByIdAsync(int id,
+    CancellationToken cancellationToken)
     {
-        var role = await context.BoardMasters
+        var board = await context.BoardMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(x => x.BoardId == id, cancellationToken);
 
-        return role is null
+        return board is null
             ? null
-            : MapBoard(role, languageService.CurrentLanguage);
+            : MapBoard(board, languageService.CurrentLanguage);
     }
 
     public async Task AddAsync(BoardMaster board, CancellationToken cancellationToken)
@@ -111,8 +115,8 @@ public class BoardMasterService(
                 x => x.LanguageCode,
                 x => x.BoardName,
                 board.BoardName),
-
-            IsActive = board.IsActive
+            IsActive = board.IsActive,
+            Translations = board.Translations.ToList()
         };
     }
 }

@@ -47,7 +47,7 @@ public class UpdateCasteMasterHandler(
 
         var isExist = await service.IsExistsAsync
         (
-            request.Caste,
+            request.CasteName,
             OperationType.Update,
             request.CasteId,
             cancellationToken
@@ -82,11 +82,11 @@ public class UpdateCasteMasterHandler(
                 entity.Translations.Add(new CasteTranslation
                 {
                     LanguageCode = dto.LanguageCode,
-                    CasteName = dto.Caste
+                    CasteName = dto.CasteName
                 });
             }
             else
-                translation.CasteName = dto.Caste;
+                translation.CasteName = dto.CasteName;
         }
 
         // Remove deleted translations

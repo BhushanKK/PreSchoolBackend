@@ -1,42 +1,64 @@
 using Microsoft.EntityFrameworkCore;
-using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
+using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
 using SchoolManagement.Domain.Entities;
 using Serilog;
-using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
 public class RoleMasterService(
     ApplicationDbContext context,
-    ILanguageService languageService) : IRoleMasterService
+    ILanguageService languageService)
+    : IRoleMasterService
 {
-    public async Task<List<RoleMaster>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<List<RoleMaster>> GetAllAsync(
+        CancellationToken cancellationToken)
     {
         var roles = await context.RoleMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .ToListAsync(cancellationToken);
 
-        return roles.Select(x => MapRole(x, languageService.CurrentLanguage)).ToList();
+        return roles
+            .Select(role => MapRole(role, languageService.CurrentLanguage))
+            .ToList();
     }
 
-    public async Task<RoleMaster?> GetByIdAsync(int id,CancellationToken cancellationToken)
+    public async Task<RoleMaster?> GetByIdAsync(
+        int id,
+        CancellationToken cancellationToken)
     {
         var role = await context.RoleMasters
             .AsNoTracking()
             .Include(x => x.Translations)
-            .FirstOrDefaultAsync(x => x.RoleId == id, cancellationToken);
+            .FirstOrDefaultAsync(
+                x => x.RoleId == id,
+                cancellationToken);
 
-        return role is null
+        return role == null
             ? null
             : MapRole(role, languageService.CurrentLanguage);
     }
 
-    public async Task AddAsync(RoleMaster role, CancellationToken cancellationToken)
+    public async Task<RoleMaster?> GetForUpdateAsync(
+        int id,
+        CancellationToken cancellationToken)
     {
-        await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+        return await context.RoleMasters
+            .Include(x => x.Translations)
+            .FirstOrDefaultAsync(
+                x => x.RoleId == id,
+                cancellationToken);
+    }
+
+    public async Task AddAsync(
+        RoleMaster role,
+        CancellationToken cancellationToken)
+    {
+        await using var transaction =
+            await context.Database.BeginTransactionAsync(cancellationToken);
 
         try
         {
@@ -47,14 +69,20 @@ public class RoleMasterService(
         catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
-            Log.Error(ex, "An error occurred while adding role master record.");
+
+            Log.Error(ex,
+                "An error occurred while adding Role Master.");
+
             throw;
         }
     }
 
-    public async Task UpdateAsync(RoleMaster role, CancellationToken cancellationToken)
+    public async Task UpdateAsync(
+        RoleMaster role,
+        CancellationToken cancellationToken)
     {
-        await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+        await using var transaction =
+            await context.Database.BeginTransactionAsync(cancellationToken);
 
         try
         {
@@ -65,14 +93,20 @@ public class RoleMasterService(
         catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
-            Log.Error(ex, "An error occurred while updating role master record.");
+
+            Log.Error(ex,
+                "An error occurred while updating Role Master.");
+
             throw;
         }
     }
 
-    public async Task DeleteAsync(RoleMaster role, CancellationToken cancellationToken)
+    public async Task DeleteAsync(
+        RoleMaster role,
+        CancellationToken cancellationToken)
     {
-        await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+        await using var transaction =
+            await context.Database.BeginTransactionAsync(cancellationToken);
 
         try
         {
@@ -83,7 +117,10 @@ public class RoleMasterService(
         catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
-            Log.Error(ex, "An error occurred while deleting role master record.");
+
+            Log.Error(ex,
+                "An error occurred while deleting Role Master.");
+
             throw;
         }
     }
@@ -93,19 +130,14 @@ public class RoleMasterService(
         OperationType operation,
         int? roleId,
         CancellationToken cancellationToken)
-        => context.RoleMasters.AnyAsync(
+    {
+        return context.RoleMasters.AnyAsync(
             x => x.RoleName == roleName &&
-                 (roleId == null || x.RoleId != roleId),
+            (roleId == null || x.RoleId != roleId),
             cancellationToken);
+    }
 
-    public async Task<RoleMaster?> GetForUpdateAsync(
-    int id,
-    CancellationToken cancellationToken)
-    => await context.RoleMasters
-        .Include(x => x.Translations)
-        .FirstOrDefaultAsync(x => x.RoleId == id, cancellationToken);
-
-    private RoleMaster MapRole(RoleMaster role, string language)
+    private RoleMaster MapRole(RoleMaster role,string language)
     {
         return new RoleMaster
         {
@@ -117,7 +149,9 @@ public class RoleMasterService(
                 x => x.RoleName,
                 role.RoleName),
 
-            IsActive = role.IsActive
+            IsActive = role.IsActive,
+
+            Translations = role.Translations.ToList()
         };
     }
 }

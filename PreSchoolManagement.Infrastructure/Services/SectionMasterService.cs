@@ -123,8 +123,8 @@ public class SectionMasterService(
                 x => x.LanguageCode,
                 x => x.SectionName,
                 section.SectionName),
-
-            IsActive = section.IsActive
+            IsActive = section.IsActive,
+            Translations = section.Translations.ToList()
         };
     }
 }

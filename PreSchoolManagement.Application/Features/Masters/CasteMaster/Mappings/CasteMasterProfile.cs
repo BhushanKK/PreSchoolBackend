@@ -8,17 +8,7 @@ public class CasteMasterProfile : Profile
 {
     public CasteMasterProfile()
     {
-        CreateMap<CasteTranslationDto, CasteTranslation>()
-            .ForMember(
-                d => d.CasteName,
-                opt => opt.MapFrom(s => s.Caste));
-
-        CreateMap<CasteMasterDto, CasteMaster>()
-            .ForMember(
-                d => d.CasteName,
-                opt => opt.MapFrom(s => s.Caste))
-            .ForMember(
-                d => d.Translations,
-                opt => opt.Ignore());
+        CreateMap<CasteMasterDto, CasteMaster>();
+        CreateMap<CasteTranslationDto, CasteTranslation>();
     }
 }
