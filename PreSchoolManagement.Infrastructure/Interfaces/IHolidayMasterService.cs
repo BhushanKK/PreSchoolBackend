@@ -16,4 +16,6 @@ public interface IHolidayMasterService
     Task DeleteAsync(HolidayMaster Holiday, CancellationToken cancellationToken);
 
     Task<bool> IsExistsAsync(string HolidayName, OperationType operation, int? HolidayId, CancellationToken cancellationToken);
+
+    Task<HolidayMaster?> GetForUpdateAsync (int id,CancellationToken cancellationToken);
 }

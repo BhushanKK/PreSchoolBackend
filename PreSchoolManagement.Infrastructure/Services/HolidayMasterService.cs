@@ -4,17 +4,40 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using Serilog;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
-public class HolidayMasterService(ApplicationDbContext context) : IHolidayMasterService
+public class HolidayMasterService(ApplicationDbContext context,ILanguageService languageService) : IHolidayMasterService
 {
-        public Task<List<HolidayMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken = default)
-            => context.HolidayMasters.ToListAsync(cancellationToken);
+    public async Task<List<HolidayMaster>> GetAllAsync(bool filter = false, 
+    CancellationToken cancellationToken = default)
+    {
+        var holidays = await context.HolidayMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .Where(x => !filter || x.IsActive)
+            .ToListAsync(cancellationToken);
+        
+        return  holidays
+            .Select(x => MapHoliday(x , languageService.CurrentLanguage))
+            .ToList();
+    }
 
     public async Task<HolidayMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => await context.HolidayMasters.FindAsync([id], cancellationToken);
-
+    {
+        var holiday = await context.HolidayMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .FirstOrDefaultAsync(
+                x => x.HolidayId == id,
+                cancellationToken
+            );
+        
+        return holiday == null 
+            ? null
+            : MapHoliday ( holiday, languageService.CurrentLanguage);
+    }
     public async Task AddAsync(HolidayMaster Holiday, CancellationToken cancellationToken)
     {
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
@@ -78,4 +101,26 @@ public class HolidayMasterService(ApplicationDbContext context) : IHolidayMaster
             x => x.HolidayName == HolidayName &&
                  (HolidayId == null || x.HolidayId != HolidayId),
             cancellationToken);
+    
+    private HolidayMaster MapHoliday (HolidayMaster holiday, string language)
+    {
+        return new HolidayMaster
+        {
+            HolidayId = holiday.HolidayId,
+            HolidayName = TranslationHelper.GetTranslatedValue(
+                holiday.Translations,
+                language,
+                x => x.LanguageCode,
+                x => x.HolidayName,
+                holiday.HolidayName),
+            
+            IsActive = holiday.IsActive,
+           
+        };
+    }
+
+    public async Task<HolidayMaster?> GetForUpdateAsync(int id, CancellationToken cancellationToken)
+    => await context.HolidayMasters
+        .Include(x => x.Translations)
+        .FirstOrDefaultAsync(x => x.HolidayId == id, cancellationToken);
 }
