@@ -12,3 +12,28 @@ public class FinancialYearMasterConfiguration : IEntityTypeConfiguration<Financi
         entity.HasKey(e => e.FinancialYearId);
     }
 }
+
+public class FinancialYearTranslationConfigure : IEntityTypeConfiguration<FinancialYearTranslation>
+{
+    public void Configure(EntityTypeBuilder<FinancialYearTranslation> entity)
+    {
+        entity.ToTable("FinancialYearTranslation");
+        entity.HasKey(x => x.FinancialYearTranslationId);
+        entity.Property(x => x.LanguageCode)
+            .HasMaxLength(5)
+            .IsRequired();
+        entity.Property(x => x.FinancialYearName)
+            .HasMaxLength(100)
+            .IsRequired();
+        entity.HasIndex(x => new
+        {
+            x.FinancialYearId,
+            x.LanguageCode
+        }).IsUnique();
+
+        entity.HasOne(x => x.FinancialYear)
+            .WithMany(x => x.Translations)
+            .HasForeignKey(x => x.FinancialYearId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}

@@ -35,4 +35,5 @@ public partial class ApplicationDbContext
     public DbSet<HolidayTranslation> holidayTranslations => Set<HolidayTranslation>();
     public DbSet<MediumTranslation> MediumTranslations => Set<MediumTranslation>();
     public DbSet<StandardTranslation> StandardTranslations => Set<StandardTranslation>();
+    public DbSet<FinancialYearTranslation> financialYearTranslations => Set<FinancialYearTranslation>();
 }
