@@ -8,8 +8,8 @@ public class StandardMasterProfile : Profile
 {
     public StandardMasterProfile()
     {
-        CreateMap<StandardMasterDto, StandardMaster>()
-            .ForMember(d => d.StandardId, opt => opt.MapFrom(s => s.StandardId))
-            .ForMember(d => d.StandardName, opt => opt.MapFrom(s => s.StandardName ?? string.Empty));
+        CreateMap<StandardMasterDto, StandardMaster>();
+        CreateMap<StandardTranslationDto ,StandardTranslation>();
+        
     }
 }

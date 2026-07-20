@@ -8,6 +8,7 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
 using PreSchoolManagement.Shared.Localization;
+using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
@@ -16,7 +17,8 @@ public class UpdateHolidayMasterHandler(
     IValidator<UpdateHolidayMasterCommand> validator,
     IMapper mapper,
     IMessageHelper messageHelper,
-    ILocalizationService localization)
+    ILocalizationService localization,
+    ICurrentUserService currentUser)
     : IRequestHandler<UpdateHolidayMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
@@ -36,7 +38,7 @@ public class UpdateHolidayMasterHandler(
                 (int)HttpStatusCode.BadRequest);
         }
 
-        var entity = await service.GetByIdAsync(request.HolidayId, cancellationToken);
+        var entity = await service.GetForUpdateAsync(request.HolidayId, cancellationToken);
 
         if (entity is null)
         {
@@ -47,13 +49,13 @@ public class UpdateHolidayMasterHandler(
             );
         }
 
-        var exists = await service.IsExistsAsync(
+        var isExists = await service.IsExistsAsync(
             request.HolidayName ?? string.Empty,
             OperationType.Update,
             request.HolidayId,
             cancellationToken);
 
-        if (exists)
+        if (isExists)
         {
             return ApiResponse<int>.FailureResponse
             (
@@ -62,14 +64,47 @@ public class UpdateHolidayMasterHandler(
             );
         }
 
+        //Update Master
         mapper.Map(request, entity);
 
-        await service.UpdateAsync(entity, cancellationToken);
+        var userId = currentUser.UserId;
+        var currentDate = DateTime.UtcNow;
+
+        entity.ModifyBy = userId;
+        entity.ModifyDate = currentDate;
+
+        //Synchronize translations
+        foreach (var dto in request.Translations)
+        {
+            var translation = entity.Translations
+                .FirstOrDefault(x => x.LanguageCode == dto.LanguageCode);
+            
+            if(translation == null)
+            {
+                entity.Translations.Add(new HolidayTranslation
+                {
+                    LanguageCode = dto.LanguageCode,
+                    HolidayName = dto.HolidayName
+                });
+            }
+            else 
+                translation.HolidayName = dto.HolidayName;  
+        }
+        //Remove Deleted translations
+        var removedTranslations = entity.Translations
+            .Where(x => !request.Translations
+            .Any(t => t.LanguageCode == x.LanguageCode)) 
+            .ToList();
+
+        foreach(var translation in removedTranslations)
+            entity.Translations.Remove(translation);
+
+        await service.UpdateAsync(entity,cancellationToken);
 
         return ApiResponse<int>.SuccessResponse
         (
             entity.HolidayId,
-            messageHelper.UpdatedEntity("Masters", EntityDescription.Holiday.ToString()),
+            messageHelper.UpdatedEntity("Masters",EntityDescription.Holiday.ToString()),
             (int)HttpStatusCode.OK
         );
     }

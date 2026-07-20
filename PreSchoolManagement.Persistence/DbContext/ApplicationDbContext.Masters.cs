@@ -32,4 +32,7 @@ public partial class ApplicationDbContext
     public DbSet<MediumMaster> MediumMasters => Set<MediumMaster>();
     public DbSet<StateTranslation> StateTranslations => Set<StateTranslation>();
     public DbSet<ReligionTranslation> ReligionTranslations => Set<ReligionTranslation>();
+    public DbSet<HolidayTranslation> holidayTranslations => Set<HolidayTranslation>();
+    public DbSet<MediumTranslation> MediumTranslations => Set<MediumTranslation>();
+    public DbSet<StandardTranslation> StandardTranslations => Set<StandardTranslation>();
 }

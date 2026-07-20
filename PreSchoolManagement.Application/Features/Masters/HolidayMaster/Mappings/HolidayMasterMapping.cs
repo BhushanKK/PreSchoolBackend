@@ -8,8 +8,8 @@ public class HolidayMasterProfile : Profile
 {
     public HolidayMasterProfile()
     {
-        CreateMap<HolidayMasterDto, HolidayMaster>()
-            .ForMember(d => d.HolidayId, opt => opt.MapFrom(s => s.HolidayId))
-            .ForMember(d => d.HolidayName, opt => opt.MapFrom(s => s.HolidayName ?? string.Empty));
+        CreateMap<HolidayMasterDto, HolidayMaster>();
+        CreateMap<HolidayTranslationDto, HolidayTranslation>();
+        
     }
 }
