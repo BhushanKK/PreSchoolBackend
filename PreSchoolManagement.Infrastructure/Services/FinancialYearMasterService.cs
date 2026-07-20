@@ -12,7 +12,8 @@ public class FinancialYearMasterService(
     ApplicationDbContext context,
     ILanguageService languageService) : IFinancialYearMasterService
 {
-    public async Task<List<FinancialYearMaster>> GetAllAsync(bool filter,
+    public async Task<List<FinancialYearMaster>> GetAllAsync(
+        bool filter,
         CancellationToken cancellationToken)
     {
         var financialYears = await context.FinancialYearMasters
@@ -24,9 +25,11 @@ public class FinancialYearMasterService(
         return financialYears
             .Select(year => MapFinancialYear(year, languageService.CurrentLanguage))
             .ToList();
-    }   
+    }
 
-    public async Task<FinancialYearMaster?> GetByIdAsync(int id,CancellationToken cancellationToken)
+    public async Task<FinancialYearMaster?> GetByIdAsync(
+        int id,
+        CancellationToken cancellationToken)
     {
         return await context.FinancialYearMasters
             .AsNoTracking()
@@ -36,71 +39,111 @@ public class FinancialYearMasterService(
                 cancellationToken);
     }
 
-    public async Task AddAsync(FinancialYearMaster financialYear, CancellationToken cancellationToken)
+    public async Task AddAsync(
+        FinancialYearMaster financialYear,
+        CancellationToken cancellationToken)
     {
-        await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+        await using var transaction =
+            await context.Database.BeginTransactionAsync(cancellationToken);
 
         try
         {
-            await context.FinancialYearMasters.AddAsync(financialYear, cancellationToken);
+            await context.FinancialYearMasters.AddAsync(
+                financialYear,
+                cancellationToken);
+
             await context.SaveChangesAsync(cancellationToken);
+
             await transaction.CommitAsync(cancellationToken);
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
-            Log.Error(ex, "An error occurred while adding financialear master record.");
+
+            Log.Error(
+                ex,
+                "An error occurred while adding Financial Year master record.");
+
             throw;
         }
     }
 
-    public async Task UpdateAsync(FinancialYearMaster financialYear, CancellationToken cancellationToken)
+    public async Task UpdateAsync(
+        FinancialYearMaster financialYear,
+        CancellationToken cancellationToken)
     {
-        await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+        await using var transaction =
+            await context.Database.BeginTransactionAsync(cancellationToken);
 
         try
         {
             context.FinancialYearMasters.Update(financialYear);
+
             await context.SaveChangesAsync(cancellationToken);
+
             await transaction.CommitAsync(cancellationToken);
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
-            Log.Error(ex, "An error occurred while updating financial Year master record.");
+
+            Log.Error(
+                ex,
+                "An error occurred while updating Financial Year master record.");
+
             throw;
         }
     }
 
-    public async Task DeleteAsync(FinancialYearMaster financialYear, CancellationToken cancellationToken)
+    public async Task DeleteAsync(
+        FinancialYearMaster financialYear,
+        CancellationToken cancellationToken)
     {
-        await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+        await using var transaction =
+            await context.Database.BeginTransactionAsync(cancellationToken);
 
         try
         {
             context.FinancialYearMasters.Remove(financialYear);
+
             await context.SaveChangesAsync(cancellationToken);
+
             await transaction.CommitAsync(cancellationToken);
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
-            Log.Error(ex, "An error occurred while deleting a Financial Year master record.");
+
+            Log.Error(
+                ex,
+                "An error occurred while deleting Financial Year master record.");
+
             throw;
         }
     }
 
-    public Task<bool> IsExistsAsync(string financialYear, OperationType operation, int? financialYearId, CancellationToken cancellationToken)
-        => context.FinancialYearMasters.AnyAsync(x => x.FinancialYearName == financialYear && (financialYearId == null || x.FinancialYearId != financialYearId), cancellationToken);
+    public Task<bool> IsExistsAsync(
+        string financialYearName,
+        OperationType operation,
+        int? financialYearId,
+        CancellationToken cancellationToken)
+        => context.FinancialYearMasters.AnyAsync(
+            x => x.FinancialYearName == financialYearName &&
+            (financialYearId == null || x.FinancialYearId != financialYearId),
+            cancellationToken);
 
     public async Task<FinancialYearMaster?> GetForUpdateAsync(
-    int id,
-    CancellationToken cancellationToken)
-    => await context.FinancialYearMasters
-        .Include(x => x.Translations)
-        .FirstOrDefaultAsync(x => x.FinancialYearId == id, cancellationToken);
+        int id,
+        CancellationToken cancellationToken)
+        => await context.FinancialYearMasters
+            .Include(x => x.Translations)
+            .FirstOrDefaultAsync(
+                x => x.FinancialYearId == id,
+                cancellationToken);
 
-    private FinancialYearMaster MapFinancialYear(FinancialYearMaster financialYear, string language)
+    private FinancialYearMaster MapFinancialYear(
+        FinancialYearMaster financialYear,
+        string language)
     {
         return new FinancialYearMaster
         {

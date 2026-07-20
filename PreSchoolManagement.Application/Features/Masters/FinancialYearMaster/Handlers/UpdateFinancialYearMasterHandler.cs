@@ -14,8 +14,8 @@ namespace PreSchoolManagement.Application.Features.Handlers;
 public class UpdateFinancialYearMasterHandler(
     IFinancialYearMasterService service,
     IValidator<UpdateFinancialYearMasterCommand> validator,
-    IMapper mapper,
     ICurrentUserService currentUser,
+    IMapper mapper,
     IMessageHelper messageHelper)
     : IRequestHandler<UpdateFinancialYearMasterCommand, ApiResponse<int>>
 {
@@ -23,15 +23,14 @@ public class UpdateFinancialYearMasterHandler(
         UpdateFinancialYearMasterCommand request,
         CancellationToken cancellationToken)
     {
-        var validationResult = await validator.ValidateAsync(
-            request,
-            cancellationToken);
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
             return ApiResponse<int>.FailureResponse(
-                string.Join(" | ", validationResult.Errors.Select(x => x.ErrorMessage)),
-                (int)HttpStatusCode.BadRequest);
+                string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage)),
+                (int)HttpStatusCode.BadRequest
+            );
         }
 
         var entity = await service.GetForUpdateAsync(
@@ -44,22 +43,24 @@ public class UpdateFinancialYearMasterHandler(
                 messageHelper.NotFoundEntity(
                     "Masters",
                     EntityDescription.FinancialYear.ToString()),
-                (int)HttpStatusCode.NotFound);
+                (int)HttpStatusCode.NotFound
+            );
         }
 
-        var exists = await service.IsExistsAsync(
+        var isExist = await service.IsExistsAsync(
             request.FinancialYearName,
             OperationType.Update,
             request.FinancialYearId,
             cancellationToken);
 
-        if (exists)
+        if (isExist)
         {
             return ApiResponse<int>.FailureResponse(
                 messageHelper.AlreadyExistsEntity(
                     "Masters",
                     EntityDescription.FinancialYear.ToString()),
-                (int)HttpStatusCode.Conflict);
+                (int)HttpStatusCode.Conflict
+            );
         }
 
         // Update master
@@ -106,6 +107,7 @@ public class UpdateFinancialYearMasterHandler(
             messageHelper.UpdatedEntity(
                 "Masters",
                 EntityDescription.FinancialYear.ToString()),
-            (int)HttpStatusCode.OK);
+            (int)HttpStatusCode.OK
+        );
     }
 }

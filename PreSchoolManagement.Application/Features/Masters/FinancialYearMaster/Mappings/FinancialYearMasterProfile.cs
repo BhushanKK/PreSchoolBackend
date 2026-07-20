@@ -9,6 +9,6 @@ public class FinancialYearMasterProfile : Profile
     public FinancialYearMasterProfile()
     {
         CreateMap<FinancialYearMasterDto, FinancialYearMaster>();
-        CreateMap<FinancialYearTranslationDto, FinancialYearTranslation>();
+        CreateMap<FinancialYearTranslationDto , FinancialYearTranslation>();
     }
 }

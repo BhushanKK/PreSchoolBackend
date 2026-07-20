@@ -12,5 +12,5 @@ public interface IFinancialYearMasterService
     Task DeleteAsync(FinancialYearMaster financialYear, CancellationToken cancellationToken);
     Task<bool> IsExistsAsync(string financialYear, OperationType operation, int? financialYearId,
         CancellationToken cancellationToken);
-    Task<FinancialYearMaster?> GetForUpdateAsync(int id,CancellationToken cancellationToken);
+    Task<FinancialYearMaster?> GetForUpdateAsync(int id,CancellationToken cancellationToken);    
 }

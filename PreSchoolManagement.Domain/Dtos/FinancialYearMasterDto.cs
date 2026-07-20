@@ -10,8 +10,8 @@ public class FinancialYearMasterDto
     public DateTime FromDate { get; set; }
     public DateTime ToDate { get; set; }
     public bool IsActive { get; set; } = false;
-public ICollection<FinancialYearTranslationDto> Translations { get; set; } 
-    = new List<FinancialYearTranslationDto>();
+    public ICollection<FinancialYearTranslationDto> Translations { get; set; }
+        = new List<FinancialYearTranslationDto>();
 }
 
 public class FinancialYearTranslationDto
