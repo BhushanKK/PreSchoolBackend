@@ -31,16 +31,12 @@ public class CategoryMasterService(
     int id,
     CancellationToken cancellationToken)
     {
-        var category = await context.CategoryMasters
+        return await context.CategoryMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(
                 x => x.CategoryId == id,
                 cancellationToken);
-
-        return category == null
-            ? null
-            : MapCategory(category, languageService.CurrentLanguage);
     }
 
     public async Task AddAsync(CategoryMaster category, CancellationToken cancellationToken)

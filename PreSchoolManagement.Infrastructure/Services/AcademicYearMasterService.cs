@@ -28,14 +28,12 @@ public class AcademicYearMasterService(
 
     public async Task<AcademicYearMaster?> GetByIdAsync(int id,CancellationToken cancellationToken)
     {
-        var academicYear = await context.AcademicYearMasters
+        return await context.AcademicYearMasters
             .AsNoTracking()
             .Include(x => x.Translations)
-            .FirstOrDefaultAsync(x => x.AcademicYearId == id,cancellationToken);
-
-        return academicYear is null
-            ? null
-            : MapAcademicYear(academicYear,languageService.CurrentLanguage);
+            .FirstOrDefaultAsync(
+                x => x.AcademicYearId == id,
+                cancellationToken);
     }
 
     public async Task AddAsync(AcademicYearMaster academicYear, CancellationToken cancellationToken)
