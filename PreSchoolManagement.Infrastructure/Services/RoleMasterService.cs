@@ -30,16 +30,12 @@ public class RoleMasterService(
         int id,
         CancellationToken cancellationToken)
     {
-        var role = await context.RoleMasters
+        return await context.RoleMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(
                 x => x.RoleId == id,
-                cancellationToken);
-
-        return role == null
-            ? null
-            : MapRole(role, languageService.CurrentLanguage);
+                cancellationToken);            
     }
 
     public async Task<RoleMaster?> GetForUpdateAsync(

@@ -29,14 +29,10 @@ public class BoardMasterService(
 public async Task<BoardMaster?> GetByIdAsync(int id,
     CancellationToken cancellationToken)
     {
-        var board = await context.BoardMasters
+        return await context.BoardMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(x => x.BoardId == id, cancellationToken);
-
-        return board is null
-            ? null
-            : MapBoard(board, languageService.CurrentLanguage);
     }
 
     public async Task AddAsync(BoardMaster board, CancellationToken cancellationToken)

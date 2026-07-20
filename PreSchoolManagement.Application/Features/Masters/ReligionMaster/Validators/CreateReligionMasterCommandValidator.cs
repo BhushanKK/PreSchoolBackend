@@ -11,7 +11,7 @@ public class CreateReligionMasterCommandValidator
     public CreateReligionMasterCommandValidator(
         ILocalizationService localizer)
     {
-        RuleFor(x => x.Religion!)
+        RuleFor(x => x.ReligionName!)
             .Required(localizer, "Religion")
             .MaxLengthLocalized(localizer, "Religion", 50);
     }
@@ -26,7 +26,7 @@ public class UpdateReligionMasterCommandValidator
         RuleFor(x => x.ReligionId)
             .RequiredId(localizer, "ReligionId");
 
-        RuleFor(x => x.Religion!)
+        RuleFor(x => x.ReligionName!)
             .Required(localizer, "Religion")
             .MaxLengthLocalized(localizer, "Religion", 50);
     }

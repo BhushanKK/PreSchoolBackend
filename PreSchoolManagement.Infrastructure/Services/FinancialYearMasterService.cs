@@ -4,22 +4,37 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using Serilog;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
-public class FinancialYearMasterService(ApplicationDbContext context) : IFinancialYearMasterService
+public class FinancialYearMasterService(
+    ApplicationDbContext context,
+    ILanguageService languageService) : IFinancialYearMasterService
 {
-    public async Task<List<FinancialYearMaster>> GetAllAsync(bool filter = false,
-    CancellationToken cancellationToken = default)
-        => await context.FinancialYearMasters
-        .AsNoTracking()
-        .Where(x => !filter || x.IsActive)
-        .ToListAsync();
+    public async Task<List<FinancialYearMaster>> GetAllAsync(bool filter,
+        CancellationToken cancellationToken)
+    {
+        var financialYears = await context.FinancialYearMasters
+            .AsNoTracking()
+            .Where(x => !filter || x.IsActive)
+            .Include(x => x.Translations)
+            .ToListAsync(cancellationToken);
 
-    public async Task<FinancialYearMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
-        => await context.FinancialYearMasters
-        .AsNoTracking()
-        .FirstOrDefaultAsync(x => x.FinancialYearId == id, cancellationToken);
+        return financialYears
+            .Select(year => MapFinancialYear(year, languageService.CurrentLanguage))
+            .ToList();
+    }   
+
+    public async Task<FinancialYearMaster?> GetByIdAsync(int id,CancellationToken cancellationToken)
+    {
+        return await context.FinancialYearMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .FirstOrDefaultAsync(
+                x => x.FinancialYearId == id,
+                cancellationToken);
+    }
 
     public async Task AddAsync(FinancialYearMaster financialYear, CancellationToken cancellationToken)
     {
@@ -77,4 +92,32 @@ public class FinancialYearMasterService(ApplicationDbContext context) : IFinanci
 
     public Task<bool> IsExistsAsync(string financialYear, OperationType operation, int? financialYearId, CancellationToken cancellationToken)
         => context.FinancialYearMasters.AnyAsync(x => x.FinancialYearName == financialYear && (financialYearId == null || x.FinancialYearId != financialYearId), cancellationToken);
+
+    public async Task<FinancialYearMaster?> GetForUpdateAsync(
+    int id,
+    CancellationToken cancellationToken)
+    => await context.FinancialYearMasters
+        .Include(x => x.Translations)
+        .FirstOrDefaultAsync(x => x.FinancialYearId == id, cancellationToken);
+
+    private FinancialYearMaster MapFinancialYear(FinancialYearMaster financialYear, string language)
+    {
+        return new FinancialYearMaster
+        {
+            FinancialYearId = financialYear.FinancialYearId,
+
+            FinancialYearName = TranslationHelper.GetTranslatedValue(
+                financialYear.Translations,
+                language,
+                x => x.LanguageCode,
+                x => x.FinancialYearName,
+                financialYear.FinancialYearName),
+
+            FromDate = financialYear.FromDate,
+            ToDate = financialYear.ToDate,
+            IsActive = financialYear.IsActive,
+
+            Translations = financialYear.Translations.ToList()
+        };
+    }
 }

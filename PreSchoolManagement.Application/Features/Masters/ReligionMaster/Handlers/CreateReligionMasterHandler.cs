@@ -33,7 +33,7 @@ public class CreateReligionMasterHandler(
             return ApiResponse<int>.FailureResponse(message, (int)HttpStatusCode.BadRequest);
         }
 
-        var exists = await service.IsExistsAsync(request.Religion ?? string.Empty, OperationType.Add, null, cancellationToken);
+        var exists = await service.IsExistsAsync(request.ReligionName ?? string.Empty, OperationType.Add, null, cancellationToken);
 
         if (exists)
         {

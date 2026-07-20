@@ -19,27 +19,21 @@ public class SectionMasterService(
     {
         var sections = await context.SectionMasters
             .AsNoTracking()
-            .Include(x => x.Translations)
             .Where(x => !filter || x.IsActive)
+            .Include(x => x.Translations)
             .ToListAsync(cancellationToken);
 
         return sections
-            .Select(x => MapSection(x, languageService.CurrentLanguage))
+            .Select(section => MapSection(section, languageService.CurrentLanguage))
             .ToList();
     }
 
     public async Task<SectionMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        var language = languageService.CurrentLanguage;
-
-        var section = await context.SectionMasters
+        return await context.SectionMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(x => x.SectionId == id, cancellationToken);
-
-        return section is null 
-            ? null 
-            : MapSection(section, languageService.CurrentLanguage);
     }
 
     public async Task AddAsync(SectionMaster Section, CancellationToken cancellationToken)

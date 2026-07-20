@@ -1,13 +1,13 @@
-using MediatR;
-using System.Net;
 using AutoMapper;
 using FluentValidation;
+using MediatR;
+using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
-using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
+using SchoolManagement.Domain.Entities;
+using System.Net;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
@@ -16,63 +16,96 @@ public class UpdateFinancialYearMasterHandler(
     IValidator<UpdateFinancialYearMasterCommand> validator,
     IMapper mapper,
     ICurrentUserService currentUser,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<UpdateFinancialYearMasterCommand, ApiResponse<int>>
 {
-    public async Task<ApiResponse<int>> Handle(UpdateFinancialYearMasterCommand request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<int>> Handle(
+        UpdateFinancialYearMasterCommand request,
+        CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.FinancialYear.ToString());
-        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        var validationResult = await validator.ValidateAsync(
+            request,
+            cancellationToken);
 
         if (!validationResult.IsValid)
         {
-            var message = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
-            return ApiResponse<int>.FailureResponse
-            (
-                message,
-                (int)HttpStatusCode.BadRequest
-            );
+            return ApiResponse<int>.FailureResponse(
+                string.Join(" | ", validationResult.Errors.Select(x => x.ErrorMessage)),
+                (int)HttpStatusCode.BadRequest);
         }
 
-        var existing = await service.GetByIdAsync(request.FinancialYearId, cancellationToken);
-        if (existing is null)
+        var entity = await service.GetForUpdateAsync(
+            request.FinancialYearId,
+            cancellationToken);
+
+        if (entity is null)
         {
-            return ApiResponse<int>.FailureResponse
-            (
-                messageHelper.NotFoundEntity("Masters", EntityDescription.FinancialYear.ToString()),
-                (int)HttpStatusCode.NotFound
-            );
+            return ApiResponse<int>.FailureResponse(
+                messageHelper.NotFoundEntity(
+                    "Masters",
+                    EntityDescription.FinancialYear.ToString()),
+                (int)HttpStatusCode.NotFound);
         }
 
-        var exists = await service.IsExistsAsync
-        (
-            request.FinancialYearName ?? string.Empty,
+        var exists = await service.IsExistsAsync(
+            request.FinancialYearName,
             OperationType.Update,
-            request.FinancialYearId, cancellationToken
-        );
+            request.FinancialYearId,
+            cancellationToken);
 
         if (exists)
         {
-            return ApiResponse<int>.FailureResponse
-            (
-                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.FinancialYear.ToString()),
-                (int)HttpStatusCode.Conflict
-            );
+            return ApiResponse<int>.FailureResponse(
+                messageHelper.AlreadyExistsEntity(
+                    "Masters",
+                    EntityDescription.FinancialYear.ToString()),
+                (int)HttpStatusCode.Conflict);
         }
 
-        var entity = mapper.Map(request, existing);
+        // Update master
+        mapper.Map(request, entity);
+
+        entity.ModifyBy = currentUser.UserId;
         entity.ModifyDate = DateTime.UtcNow;
-        entity.ModifyBy = currentUser.UserId ?? null;
+
+        // Synchronize translations
+        foreach (var dto in request.Translations)
+        {
+            var translation = entity.Translations
+                .FirstOrDefault(x => x.LanguageCode == dto.LanguageCode);
+
+            if (translation == null)
+            {
+                entity.Translations.Add(new FinancialYearTranslation
+                {
+                    LanguageCode = dto.LanguageCode,
+                    FinancialYearName = dto.FinancialYearName
+                });
+            }
+            else
+            {
+                translation.FinancialYearName = dto.FinancialYearName;
+            }
+        }
+
+        // Remove deleted translations
+        var removedTranslations = entity.Translations
+            .Where(x => !request.Translations
+                .Any(t => t.LanguageCode == x.LanguageCode))
+            .ToList();
+
+        foreach (var translation in removedTranslations)
+        {
+            entity.Translations.Remove(translation);
+        }
 
         await service.UpdateAsync(entity, cancellationToken);
 
-
-        return ApiResponse<int>.SuccessResponse
-        (
+        return ApiResponse<int>.SuccessResponse(
             entity.FinancialYearId,
-            messageHelper.UpdatedEntity("Masters", EntityDescription.FinancialYear.ToString()),
-            (int)HttpStatusCode.OK
-        );
+            messageHelper.UpdatedEntity(
+                "Masters",
+                EntityDescription.FinancialYear.ToString()),
+            (int)HttpStatusCode.OK);
     }
 }

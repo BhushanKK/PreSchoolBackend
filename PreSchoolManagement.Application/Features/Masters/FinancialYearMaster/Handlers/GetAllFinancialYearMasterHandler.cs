@@ -6,20 +6,16 @@ using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Common;
-using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class GetAllFinancialYearMasterHandler(
     IFinancialYearMasterService service,
-    IMessageHelper messageHelper,
-    ILocalizationService localization)
+    IMessageHelper messageHelper)
     : IRequestHandler<GetAllFinancialYearMasterQuery, ApiResponse<List<FinancialYearMaster>>>
 {
     public async Task<ApiResponse<List<FinancialYearMaster>>> Handle(GetAllFinancialYearMasterQuery request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.FinancialYear.ToString());
-
         var data = await service.GetAllAsync(request.filter, cancellationToken);
 
         if (data != null)

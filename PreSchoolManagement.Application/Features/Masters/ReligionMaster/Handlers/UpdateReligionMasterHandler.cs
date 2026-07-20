@@ -48,7 +48,7 @@ public class updateReligionMasterHandler(IReligionMasterService service,
 
         var isExists = await service.IsExistsAsync
         (
-            request.Religion ?? string.Empty,
+            request.ReligionName ?? string.Empty,
             OperationType.Update,
             request.ReligionId, 
             cancellationToken

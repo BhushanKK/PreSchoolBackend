@@ -1,6 +1,5 @@
 
 using System.Text.Json.Serialization;
-using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Domain.Dtos;
 
