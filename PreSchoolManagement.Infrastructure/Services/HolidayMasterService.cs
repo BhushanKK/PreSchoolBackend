@@ -26,17 +26,13 @@ public class HolidayMasterService(ApplicationDbContext context,ILanguageService 
 
     public async Task<HolidayMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        var holiday = await context.HolidayMasters
+        return await context.HolidayMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(
                 x => x.HolidayId == id,
                 cancellationToken
             );
-        
-        return holiday == null 
-            ? null
-            : MapHoliday ( holiday, languageService.CurrentLanguage);
     }
     public async Task AddAsync(HolidayMaster Holiday, CancellationToken cancellationToken)
     {
@@ -102,7 +98,7 @@ public class HolidayMasterService(ApplicationDbContext context,ILanguageService 
                  (HolidayId == null || x.HolidayId != HolidayId),
             cancellationToken);
     
-    private HolidayMaster MapHoliday (HolidayMaster holiday, string language)
+    private HolidayMaster MapHoliday(HolidayMaster holiday, string language)
     {
         return new HolidayMaster
         {
@@ -113,9 +109,11 @@ public class HolidayMasterService(ApplicationDbContext context,ILanguageService 
                 x => x.LanguageCode,
                 x => x.HolidayName,
                 holiday.HolidayName),
-            
+            HolidayType=holiday.HolidayType,
+            HolidayFromDate=holiday.HolidayFromDate,
+            HolidayToDate=holiday.HolidayToDate,
+            Description=holiday.Description,
             IsActive = holiday.IsActive,
-           
         };
     }
 

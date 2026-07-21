@@ -18,19 +18,17 @@ public  class MediumMasterService(ApplicationDbContext context,ILanguageService 
             .Include(x => x.Translations)
             .ToListAsync(cancellationToken);
 
-        return mediums.Select(x => MapMedium(x,languageService.CurrentLanguage)).ToList();
+        return mediums
+            .Select(medium => MapMedium(medium, languageService.CurrentLanguage))
+            .ToList();
     }
 
     public async Task<MediumMaster?> GetByIdAsync(int id,CancellationToken cancellationToken)
     {
-        var medium = await context.MediumMasters
+        return await context.MediumMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(x => x.MediumId == id, cancellationToken);
-
-        return medium is null
-            ? null
-            : MapMedium(medium, languageService.CurrentLanguage);
     }
 
     public async Task AddAsync (MediumMaster medium,CancellationToken cancellationToken)
@@ -85,7 +83,7 @@ public  class MediumMasterService(ApplicationDbContext context,ILanguageService 
     }
 
     public Task<bool>IsExistsAsync(string medium,OperationType operation,int? mediumId,CancellationToken cancellationToken)
-    => context.MediumMasters.AnyAsync(x => x.Medium == medium &&
+    => context.MediumMasters.AnyAsync(x => x.MediumName == medium &&
     (mediumId == null || x.MediumId != mediumId),cancellationToken);
 
     public async Task<MediumMaster?> GetForUpdateAsync(int id,
@@ -94,21 +92,22 @@ public  class MediumMasterService(ApplicationDbContext context,ILanguageService 
         .Include(x => x.Translations)
         .FirstOrDefaultAsync(x => x.MediumId == id, cancellationToken);
 
-    private MediumMaster MapMedium(MediumMaster medium,string language)
+    private MediumMaster MapMedium(MediumMaster mediumMaster, string language)
     {
         return new MediumMaster
         {
-            MediumId = medium.MediumId,
-            Medium = TranslationHelper.GetTranslatedValue(
-                medium.Translations,
+            MediumId = mediumMaster.MediumId,
+
+            MediumName = TranslationHelper.GetTranslatedValue(
+                mediumMaster.Translations,
                 language,
                 x => x.LanguageCode,
                 x => x.MediumName,
-                medium.Medium),
-            
-            IsActive = medium.IsActive
+                mediumMaster.MediumName),
 
+            IsActive = mediumMaster.IsActive,
+
+            Translations = mediumMaster.Translations.ToList()
         };
     }
-
 }

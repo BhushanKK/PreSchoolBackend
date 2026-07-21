@@ -11,7 +11,7 @@ public class CreateMediumMasterCommandValidator
     public CreateMediumMasterCommandValidator(
         ILocalizationService localizer)
     {
-        RuleFor(x => x.Medium)
+        RuleFor(x => x.MediumName)
             .Required(localizer, "Medium")
             .MaxLengthLocalized(localizer, "Medium", 20);
     }
@@ -26,7 +26,7 @@ public class UpdateMediumMasterCommandValidator
         RuleFor(x => x.MediumId)
             .RequiredId(localizer, "MediumId");
 
-        RuleFor(x => x.Medium)
+        RuleFor(x => x.MediumName)
             .Required(localizer, "Medium")
             .MaxLengthLocalized(localizer, "Medium", 20);
     }

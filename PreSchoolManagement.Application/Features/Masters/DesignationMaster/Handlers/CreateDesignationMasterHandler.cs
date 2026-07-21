@@ -33,7 +33,7 @@ public class CreateDesignationMasterHanler(
 
         var exists = await service.IsExistsAsync
         (
-            request.Designation ?? string.Empty,
+            request.DesignationName ?? string.Empty,
             OperationType.Add,
             null,
             cancellationToken

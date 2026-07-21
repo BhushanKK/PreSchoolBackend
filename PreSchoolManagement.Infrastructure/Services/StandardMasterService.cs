@@ -1,9 +1,9 @@
+using Serilog;
 using Microsoft.EntityFrameworkCore;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
-using Serilog;
 using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Infrastructure.Services;
@@ -16,21 +16,20 @@ ILanguageService languageService) : IStandardMasterService
         var standards = await context.StandardMasters
             .AsNoTracking()
             .Include(x => x.Translations)
+            .Where(x => !filter || x.IsActive)
             .ToListAsync(cancellationToken);
 
-        return standards.Select(x =>MapStandard(x,languageService.CurrentLanguage)).ToList();
+        return standards
+            .Select(standard => MapStandard(standard, languageService.CurrentLanguage))
+            .ToList();
     }
 
     public async Task<StandardMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        var standard =await context.StandardMasters
+        return await context.StandardMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(x => x.StandardId == id,cancellationToken);
-
-        return standard is null 
-            ? null
-            : MapStandard(standard,languageService.CurrentLanguage);
     }
 
     public async Task AddAsync(StandardMaster Standard, CancellationToken cancellationToken)
@@ -114,8 +113,10 @@ ILanguageService languageService) : IStandardMasterService
                 x => x.LanguageCode,
                 x => x.StandardName,
                 standard.StandardName),
-            
-            IsActive = standard.IsActive
+
+            IsActive = standard.IsActive,
+
+            Translations = standard.Translations.ToList()
         };
     }
 }

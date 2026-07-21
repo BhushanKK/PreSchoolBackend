@@ -9,7 +9,6 @@ public class HolidayMasterProfile : Profile
     public HolidayMasterProfile()
     {
         CreateMap<HolidayMasterDto, HolidayMaster>();
-        CreateMap<HolidayTranslationDto, HolidayTranslation>();
-        
+        CreateMap<HolidayTranslationDto, HolidayTranslation>();        
     }
 }

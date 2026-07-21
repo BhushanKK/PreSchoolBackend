@@ -30,16 +30,12 @@ public class DesignationMasterService(
     int id,
     CancellationToken cancellationToken)
     {
-        var designation = await context.DesignationMasters
+        return await context.DesignationMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(
                 x => x.DesignationId == id,
                 cancellationToken);
-
-        return designation == null
-            ? null
-            : MapDesignation(designation, languageService.CurrentLanguage);
     }
 
     public async Task AddAsync(DesignationMaster designationMaster, CancellationToken cancellationToken)
@@ -51,7 +47,6 @@ public class DesignationMasterService(
             await context.DesignationMasters.AddAsync(designationMaster, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
-
         }
         catch (Exception ex)
         {
@@ -97,7 +92,7 @@ public class DesignationMasterService(
 
     public Task<bool> IsExistsAsync(string designation, OperationType operation, int? designationId, CancellationToken cancellationToken)
     => context.DesignationMasters.AnyAsync(
-        x => x.Designation == designation && (designationId == null || x.DesignationId != designationId),
+        x => x.DesignationName == designation && (designationId == null || x.DesignationId != designationId),
         cancellationToken);
 
     public async Task<DesignationMaster?> GetForUpdateAsync(int id,
@@ -113,12 +108,12 @@ public class DesignationMasterService(
         return new DesignationMaster
         {
             DesignationId = designation.DesignationId,
-            Designation = TranslationHelper.GetTranslatedValue(
+            DesignationName = TranslationHelper.GetTranslatedValue(
                 designation.Translations,
                 language,
                 x => x.LanguageCode,
-                x => x.Designation,
-                designation.Designation),
+                x => x.DesignationName,
+                designation.DesignationName),
 
             IsActive = designation.IsActive,
 

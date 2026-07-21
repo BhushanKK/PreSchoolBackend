@@ -49,7 +49,7 @@ public class UpdateDesignationMasterHandler(
 
         var isExist = await service.IsExistsAsync
         (
-            request.Designation,
+            request.DesignationName,
             OperationType.Update,
             request.DesignationId,
             cancellationToken
@@ -83,11 +83,11 @@ public class UpdateDesignationMasterHandler(
                 entity.Translations.Add(new DesignationTranslation
                 {
                     LanguageCode = dto.LanguageCode,
-                    Designation = dto.Designation
+                    DesignationName = dto.DesignationName
                 });
             }
             else
-                translation.Designation = dto.Designation;
+                translation.DesignationName = dto.DesignationName;
         }
 
         // Remove deleted translations

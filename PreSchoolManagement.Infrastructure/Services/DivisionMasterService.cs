@@ -31,14 +31,10 @@ public class DivisionMasterService(
         int id,
         CancellationToken cancellationToken)
     {
-        var division = await context.DivisionMasters
+        return await context.DivisionMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(x => x.DivisionId == id, cancellationToken);
-
-        return division is null
-            ? null
-            : MapDivision(division, languageService.CurrentLanguage);
     }
 
     public async Task AddAsync(DivisionMaster Division, CancellationToken cancellationToken)
@@ -116,6 +112,7 @@ public class DivisionMasterService(
         return new DivisionMaster
         {
             DivisionId = division.DivisionId,
+
             DivisionName = TranslationHelper.GetTranslatedValue(
                 division.Translations,
                 language,
@@ -124,7 +121,6 @@ public class DivisionMasterService(
                 division.DivisionName),
 
             IsActive = division.IsActive,
-
             Translations = division.Translations.ToList()
         };
     }

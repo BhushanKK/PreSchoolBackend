@@ -26,7 +26,7 @@ public class DesignationTranslationConfiguration : IEntityTypeConfiguration<Desi
             .HasMaxLength(5)
             .IsRequired();
 
-        entity.Property(x => x.Designation)
+        entity.Property(x => x.DesignationName)
             .HasMaxLength(100)
             .IsRequired();
 

@@ -44,7 +44,7 @@ public class UpdateMediumMasterHandler(
             );
         }
 
-        var isExists = await service.IsExistsAsync(request.Medium ?? string.Empty,
+        var isExists = await service.IsExistsAsync(request.MediumName ?? string.Empty,
         OperationType.Update, request.MediumId, cancellationToken);
 
         if (isExists)

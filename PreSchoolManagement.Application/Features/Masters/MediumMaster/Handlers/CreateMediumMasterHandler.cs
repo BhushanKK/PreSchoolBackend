@@ -34,7 +34,7 @@ public class CreateMediumMasterHandler(
             (int)HttpStatusCode.BadRequest);
         }
 
-        var exists = await service.IsExistsAsync(request.Medium ?? string.Empty,
+        var exists = await service.IsExistsAsync(request.MediumName ?? string.Empty,
         OperationType.Add, null, cancellationToken);
 
         if (exists)
