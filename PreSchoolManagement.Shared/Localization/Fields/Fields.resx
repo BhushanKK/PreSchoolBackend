@@ -174,4 +174,17 @@
     <data name="Medium" xml:space="preserve">
       <value>Medium Name</value>
     </data>
+
+    <!-- Start : Committee Fields -->
+    <data name="CommitteeId" xml:space="preserve">
+      <value>समिती</value>
+    </data>
+
+    <data name="Committee" xml:space="preserve">
+      <value>समिती</value>
+    </data>
+
+    <data name="Logo" xml:space="preserve">
+      <value>लोगो</value>
+    </data>
 </root>

@@ -3,7 +3,6 @@ using System.Net;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
 using PreSchoolManagement.Domain.Dtos;
 using PreSchoolManagement.Shared.Common;
 

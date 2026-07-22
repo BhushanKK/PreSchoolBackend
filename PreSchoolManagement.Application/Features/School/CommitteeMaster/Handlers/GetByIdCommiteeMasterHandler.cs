@@ -4,12 +4,15 @@ using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
 using PreSchoolManagement.Shared.Utils;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetByIdCommitteeMasterHandler(ICommitteeMasterService service)
+public class GetByIdCommitteeMasterHandler(
+    ICommitteeMasterService service,
+    IMessageHelper messageHelper)
     : IRequestHandler<GetByIdCommitteeMasterQuery, ApiResponse<CommitteeMaster>>
 {
     public async Task<ApiResponse<CommitteeMaster>> Handle(
@@ -19,7 +22,7 @@ public class GetByIdCommitteeMasterHandler(ICommitteeMasterService service)
         if (request.CommitteeId == Guid.Empty)
         {
             return ApiResponse<CommitteeMaster>.FailureResponse(
-                MessageHelper.InvalidId(EntityDescription.committee.ToString()),
+                messageHelper.InvalidIdEntity("Masters",EntityDescription.committee.ToString()),
                 (int)HttpStatusCode.BadRequest);
         }
 
@@ -27,14 +30,18 @@ public class GetByIdCommitteeMasterHandler(ICommitteeMasterService service)
 
         if (data is null)
         {
-            return ApiResponse<CommitteeMaster>.FailureResponse(
-                MessageHelper.NotFound(EntityDescription.committee.ToString()),
-                (int)HttpStatusCode.NotFound);
+            return ApiResponse<CommitteeMaster>.FailureResponse
+            (
+                messageHelper.NotFoundEntity("Masters",EntityDescription.committee.ToString()),
+                (int)HttpStatusCode.NotFound
+            );
         }
 
-        return ApiResponse<CommitteeMaster>.SuccessResponse(
+        return ApiResponse<CommitteeMaster>.SuccessResponse
+        (
             data,
-            MessageHelper.Retrieved(EntityDescription.committee.ToString()),
-            (int)HttpStatusCode.OK);
+            messageHelper.RetrievedEntity("Masters",EntityDescription.committee.ToString()),
+            (int)HttpStatusCode.OK
+        );
     }
 }

@@ -4,15 +4,17 @@ using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Shared.Common;
 using PreSchoolManagement.Shared.Utils;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class GetAllCommitteeMasterHandler(ICommitteeMasterService service)
+public class GetAllCommitteeMasterHandler(
+    ICommitteeMasterService service,
+    IMessageHelper messageHelper)
     : IRequestHandler<GetAllCommitteeMasterQuery, ApiResponse<List<CommitteeMaster>>>
 {
-
     public async Task<ApiResponse<List<CommitteeMaster>>>Handle(GetAllCommitteeMasterQuery request,
     CancellationToken cancellationToken)
     {
@@ -23,7 +25,7 @@ public class GetAllCommitteeMasterHandler(ICommitteeMasterService service)
             return ApiResponse<List<CommitteeMaster>>.SuccessResponse
             (
                 data,
-                MessageHelper.Retrieved(EntityDescription.committee.ToString()),
+                messageHelper.RetrievedEntity("Masters",EntityDescription.committee.ToString()),
                 (int)HttpStatusCode.OK
             );
         }
@@ -31,7 +33,7 @@ public class GetAllCommitteeMasterHandler(ICommitteeMasterService service)
         {
             return ApiResponse<List<CommitteeMaster>>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.committee.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.committee.ToString()),
                 (int)HttpStatusCode.OK
             );
         }

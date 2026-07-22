@@ -6,14 +6,17 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Common;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class CreateCommitteeMasterHandler(ICommitteeMasterService service,
-    IValidator<CreateCommitteeMasterCommand> validator,IMapper mapper,
-    ICurrentUserService currentUser)
+public class CreateCommitteeMasterHandler(
+    ICommitteeMasterService service,
+    IValidator<CreateCommitteeMasterCommand> validator,
+    IMapper mapper,
+    ICurrentUserService currentUser,
+    IMessageHelper messageHelper)
     : IRequestHandler<CreateCommitteeMasterCommand, ApiResponse<Guid>>
 {
     public async Task<ApiResponse<Guid>> Handle(CreateCommitteeMasterCommand request,CancellationToken cancellationToken)
@@ -36,9 +39,10 @@ public class CreateCommitteeMasterHandler(ICommitteeMasterService service,
 
         if (exists)
         {
-            return ApiResponse<Guid>.FailureResponse(MessageHelper.AlreadyExists
+            return ApiResponse<Guid>.FailureResponse
             (
-                EntityDescription.committee.ToString()),(int)HttpStatusCode.Conflict
+                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.committee.ToString()),
+                (int)HttpStatusCode.Conflict
             );
         }
 
@@ -51,8 +55,7 @@ public class CreateCommitteeMasterHandler(ICommitteeMasterService service,
         return ApiResponse<Guid>.SuccessResponse
         (
             entity.CommitteeId,
-            MessageHelper.Added(
-            EntityDescription.committee.ToString()),
+            messageHelper.AddedEntity("Masters",EntityDescription.committee.ToString()),
             (int)HttpStatusCode.Created
         );
     }

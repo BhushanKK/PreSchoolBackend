@@ -6,7 +6,6 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Common;
 
