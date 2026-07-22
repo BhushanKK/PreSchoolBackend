@@ -12,3 +12,32 @@ public class MenuMasterConfiguration : IEntityTypeConfiguration<MenuMaster>
         entity.HasKey(e => e.MenuId);
     }
 }
+
+public class MenuTranslationConfiguration : IEntityTypeConfiguration<MenuTranslation>
+{
+    public void Configure(EntityTypeBuilder<MenuTranslation> entity)
+    {
+        entity.ToTable("MenuTranslation");
+
+        entity.HasKey(x => x.MenuTranslationId);
+
+        entity.Property(x => x.LanguageCode)
+            .HasMaxLength(5)
+            .IsRequired();
+
+        entity.Property(x => x.MenuName)
+            .HasMaxLength(100)
+            .IsRequired();
+
+        entity.HasIndex(x => new
+        {
+            x.MenuId,
+            x.LanguageCode
+        }).IsUnique();
+
+        entity.HasOne(x => x.MenuMaster)
+            .WithMany(x => x.Translations)
+            .HasForeignKey(x => x.MenuId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}

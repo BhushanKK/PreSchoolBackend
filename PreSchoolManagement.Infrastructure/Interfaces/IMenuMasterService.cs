@@ -1,3 +1,4 @@
+using PreSchoolManagement.Domain.Dtos;
 using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
 
@@ -13,4 +14,5 @@ public interface IMenuMasterService
     Task<bool> IsExistsAsync(string menuName, int? parentMenuId, OperationType operationType, int? menuId,
     CancellationToken cancellationToken);
     Task<List<ParentMenuDto>> GetParentMenusAsync(CancellationToken cancellationToken);
+    Task<MenuMaster?> GetForUpdateAsync (int id,CancellationToken cancellationToken);
 }

@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
 
+namespace PreSchoolManagement.Domain.Dtos;
+
 public class MenuMasterDto
 {
     [JsonIgnore]
@@ -11,7 +13,16 @@ public class MenuMasterDto
     public int DisplayOrder { get; set; }
     public bool IsPublic { get; set; }
     public bool IsActive { get; set; }
-    public string? RoleIds { get; set; }   // NEW
+
+    public string? RoleIds { get; set; }
+    public ICollection<MenuTranslationDto> Translations { get; set; }
+        = new List<MenuTranslationDto>();
+}
+
+public class MenuTranslationDto
+{
+    public string LanguageCode { get; set; } = string.Empty;
+    public string MenuName { get; set; } = string.Empty;
 }
 
 public class MenuMasterQueryDto : MenuMasterDto
@@ -22,8 +33,10 @@ public class MenuMasterQueryDto : MenuMasterDto
         get => MenuId;
         set => MenuId = value;
     }
+
     public string? ParentMenuName { get; set; }
 }
+
 public class ParentMenuDto
 {
     public int MenuId { get; set; }

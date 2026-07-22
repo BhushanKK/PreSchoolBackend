@@ -32,4 +32,7 @@
   <data name="AlreadyExists" xml:space="preserve">
     <value>{0} already exists.</value>
   </data>
+  <data name="Retrieved" xml:space="preserve">
+    <value>{0} retrieved successfully.</value>
+  </data>
 </root>

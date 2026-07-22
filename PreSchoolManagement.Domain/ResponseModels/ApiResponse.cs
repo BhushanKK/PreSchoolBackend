@@ -23,4 +23,9 @@ public class ApiResponse<T>
         StatusCode = statusCode,
         Data = data
     };
+
+    public static ApiResponse<int> SuccessResponse(object menuId, object value, int oK)
+    {
+        throw new NotImplementedException();
+    }
 }

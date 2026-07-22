@@ -32,4 +32,9 @@
   <data name="AlreadyExists" xml:space="preserve">
     <value>{0} आधीपासून अस्तित्वात आहे.</value>
   </data>
+  
+  <data name="Retrieved" xml:space="preserve">
+    <value>{0} यशस्वीरित्या प्राप्त करण्यात आले.</value>
+  </data>
+
 </root>
