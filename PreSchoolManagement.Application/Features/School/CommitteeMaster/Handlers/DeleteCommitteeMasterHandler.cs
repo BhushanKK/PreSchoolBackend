@@ -21,7 +21,7 @@ public class DeleteCommitteeMasterHandler(
         {
             return ApiResponse<Guid>.FailureResponse
             (
-                messageHelper.InvalidIdEntity("Masters",EntityDescription.committee.ToString()),
+                messageHelper.InvalidIdEntity("Masters",EntityDescription.Committee.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -32,7 +32,7 @@ public class DeleteCommitteeMasterHandler(
         {
             return ApiResponse<Guid>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.committee.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.Committee.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -47,7 +47,7 @@ public class DeleteCommitteeMasterHandler(
         return ApiResponse<Guid>.SuccessResponse
         (
             entity.CommitteeId,
-            messageHelper.DeletedEntity("Masters",EntityDescription.committee.ToString()),
+            messageHelper.DeletedEntity("Masters",EntityDescription.Committee.ToString()),
             (int)HttpStatusCode.OK
         );
     }

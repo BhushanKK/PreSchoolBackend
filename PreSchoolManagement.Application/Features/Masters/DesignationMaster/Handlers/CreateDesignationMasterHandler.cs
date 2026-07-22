@@ -43,7 +43,7 @@ public class CreateDesignationMasterHanler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.designation.ToString()),
+                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.Designation.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -57,7 +57,7 @@ public class CreateDesignationMasterHanler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.DesignationId,
-            messageHelper.AddedEntity("Masters", EntityDescription.designation.ToString()),
+            messageHelper.AddedEntity("Masters", EntityDescription.Designation.ToString()),
             (int)HttpStatusCode.Created
         );
     }

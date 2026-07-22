@@ -43,7 +43,7 @@ public class UpdateCommitteeMasterHandler(
         {
             return ApiResponse<Guid>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.committee.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.Committee.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -58,7 +58,7 @@ public class UpdateCommitteeMasterHandler(
         {
             return ApiResponse<Guid>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.committee.ToString()),
+                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Committee.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -93,7 +93,7 @@ public class UpdateCommitteeMasterHandler(
         return ApiResponse<Guid>.SuccessResponse
         (
             existing.CommitteeId,
-            messageHelper.UpdatedEntity("Masters",EntityDescription.committee.ToString()),
+            messageHelper.UpdatedEntity("Masters",EntityDescription.Committee.ToString()),
             (int)HttpStatusCode.OK
         );
     }

@@ -77,7 +77,7 @@
       <value>पद</value>
     </data>
 
-    <data name="Designation" xml:space="preserve">
+    <data name="DesignationName" xml:space="preserve">
       <value>पदाचे नाव</value>
     </data>
 
@@ -178,7 +178,7 @@
       <value>समिती</value>
     </data>
 
-    <data name="Committee" xml:space="preserve">
+    <data name="CommitteeName" xml:space="preserve">
       <value>समिती</value>
     </data>
 

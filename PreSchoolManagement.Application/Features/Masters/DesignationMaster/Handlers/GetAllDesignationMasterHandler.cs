@@ -24,7 +24,7 @@ public class GetAllDesignationMasterHandler(
             return ApiResponse<List<DesignationMaster>>.SuccessResponse
             (
                 data,
-                messageHelper.RetrievedEntity("Masters",EntityDescription.designation.ToString()),
+                messageHelper.RetrievedEntity("Masters",EntityDescription.Designation.ToString()),
                 (int)HttpStatusCode.OK
             );
         }
@@ -33,7 +33,7 @@ public class GetAllDesignationMasterHandler(
         {
             return ApiResponse<List<DesignationMaster>>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.designation.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.Designation.ToString()),
                 (int)HttpStatusCode.OK
             );
         }

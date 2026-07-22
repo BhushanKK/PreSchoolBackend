@@ -19,7 +19,7 @@ public class DeleteDesignationMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.InvalidIdEntity("Masters",EntityDescription.designation.ToString()),
+                messageHelper.InvalidIdEntity("Masters",EntityDescription.Designation.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -29,7 +29,7 @@ public class DeleteDesignationMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.designation.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.Designation.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -39,7 +39,7 @@ public class DeleteDesignationMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             request.DesignationId,
-            messageHelper.DeletedEntity("Masters",EntityDescription.designation.ToString()),
+            messageHelper.DeletedEntity("Masters",EntityDescription.Designation.ToString()),
             (int)HttpStatusCode.OK
         );
     }

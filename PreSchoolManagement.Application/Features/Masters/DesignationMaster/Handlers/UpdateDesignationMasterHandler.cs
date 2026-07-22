@@ -42,7 +42,7 @@ public class UpdateDesignationMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.designation.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.Designation.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -61,7 +61,7 @@ public class UpdateDesignationMasterHandler(
             (
                 messageHelper.AlreadyExistsEntity(
                     "Masters",
-                    EntityDescription.designation.ToString()),
+                    EntityDescription.Designation.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -104,7 +104,7 @@ public class UpdateDesignationMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.DesignationId,
-            messageHelper.UpdatedEntity("Masters",EntityDescription.designation.ToString()),
+            messageHelper.UpdatedEntity("Masters",EntityDescription.Designation.ToString()),
             (int)HttpStatusCode.OK
         );
     }

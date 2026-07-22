@@ -25,7 +25,7 @@ public class GetAllCommitteeMasterHandler(
             return ApiResponse<List<CommitteeMaster>>.SuccessResponse
             (
                 data,
-                messageHelper.RetrievedEntity("Masters",EntityDescription.committee.ToString()),
+                messageHelper.RetrievedEntity("Masters",EntityDescription.Committee.ToString()),
                 (int)HttpStatusCode.OK
             );
         }
@@ -33,7 +33,7 @@ public class GetAllCommitteeMasterHandler(
         {
             return ApiResponse<List<CommitteeMaster>>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.committee.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.Committee.ToString()),
                 (int)HttpStatusCode.OK
             );
         }

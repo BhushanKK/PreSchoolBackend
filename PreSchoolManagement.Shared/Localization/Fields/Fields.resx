@@ -177,14 +177,14 @@
 
     <!-- Start : Committee Fields -->
     <data name="CommitteeId" xml:space="preserve">
-      <value>समिती</value>
+      <value>Committee</value>
     </data>
 
-    <data name="Committee" xml:space="preserve">
-      <value>समिती</value>
+    <data name="CommitteeName" xml:space="preserve">
+      <value>Committee</value>
     </data>
 
     <data name="Logo" xml:space="preserve">
-      <value>लोगो</value>
+      <value>Logo</value>
     </data>
 </root>
