@@ -20,64 +20,40 @@ public class CasteMasterService(
     {
         var language = languageService.CurrentLanguage;
 
-        var query =
-            from caste in context.CasteMasters.AsNoTracking()
+        IQueryable<CasteMaster> query = context.CasteMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .Include(x => x.Category)
+                .ThenInclude(x => x.Translations);
 
-            join category in context.CategoryMasters.AsNoTracking()
-                on caste.CategoryId equals category.CategoryId
+        if (request.Filter)
+        {
+            query = query.Where(x => x.IsActive);
+        }
 
-            join casteTranslation in context.CasteTranslations.AsNoTracking()
-                .Where(x => x.LanguageCode == language)
-                on caste.CasteId equals casteTranslation.CasteId into ct
-            from casteTranslation in ct.DefaultIfEmpty()
-
-            join categoryTranslation in context.CategoryTranslations.AsNoTracking()
-                .Where(x => x.LanguageCode == language)
-                on category.CategoryId equals categoryTranslation.CategoryId into cat
-            from categoryTranslation in cat.DefaultIfEmpty()
-
-            where !request.Filter || caste.IsActive
-
-            select new CasteMasterQueryDto
-            {
-                CasteId = caste.CasteId,
-                CategoryId = category.CategoryId,
-
-                CategoryName = categoryTranslation != null
-                    ? categoryTranslation.CategoryName
-                    : category.CategoryName,
-
-                CasteName = casteTranslation != null
-                    ? casteTranslation.CasteName
-                    : caste.CasteName,
-
-                IsActive = caste.IsActive
-            };
-
-        // Search
         if (!string.IsNullOrWhiteSpace(request.SearchText))
         {
             var search = request.SearchText.Trim().ToLower();
 
             query = query.Where(x =>
                 x.CasteName.ToLower().Contains(search) ||
-                x.CategoryName.ToLower().Contains(search));
+                x.Category.CategoryName.ToLower().Contains(search));
         }
 
-        // Total records
         var totalCount = await query.CountAsync(cancellationToken);
 
-        // Paging
         var items = await query
-            .OrderBy(x => x.CategoryName)
-            .ThenBy(x => x.CasteName)
-            .Skip((request.PageNumber - 1) * request.PageSize)
-            .Take(request.PageSize)
-            .ToListAsync(cancellationToken);
+    .OrderByDescending(x => x.CasteId)
+    .Skip((request.PageNumber - 1) * request.PageSize)
+    .Take(request.PageSize)
+    .ToListAsync(cancellationToken);
 
         return new PaginatedResult<CasteMasterQueryDto>
         {
-            Items = items,
+            Items = items
+                .Select(x => MapCaste(x, languageService.CurrentLanguage))
+                .ToList(),
+
             TotalCount = totalCount,
             PageNumber = request.PageNumber,
             PageSize = request.PageSize
@@ -157,11 +133,15 @@ public class CasteMasterService(
         .Include(x => x.Translations)
         .FirstOrDefaultAsync(x => x.CasteId == id, cancellationToken);
 
-    private CasteMaster MapCaste(CasteMaster caste, string language)
+    private CasteMasterQueryDto MapCaste(
+    CasteMaster caste,
+    string language)
     {
-        return new CasteMaster
+        return new CasteMasterQueryDto
         {
             CasteId = caste.CasteId,
+            CategoryId = caste.CategoryId,
+
             CasteName = TranslationHelper.GetTranslatedValue(
                 caste.Translations,
                 language,
@@ -171,7 +151,15 @@ public class CasteMasterService(
 
             IsActive = caste.IsActive,
 
-            Translations = caste.Translations.ToList()
+            Translations = caste.Translations
+                .Select(x => new CasteTranslationDto
+                {
+                    CasteTranslationId = x.CasteTranslationId,
+                    CasteId = x.CasteId,
+                    LanguageCode = x.LanguageCode,
+                    CasteName = x.CasteName
+                })
+                .ToList()
         };
     }
 }

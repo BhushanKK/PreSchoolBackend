@@ -53,7 +53,6 @@ public static class StateMasterApi
     CancellationToken cancellationToken)
     {
         var result = await sender.Send(new GetAllStateMasterQuery(request),cancellationToken);
-
         return TypedResults.Ok(result);
     }
 

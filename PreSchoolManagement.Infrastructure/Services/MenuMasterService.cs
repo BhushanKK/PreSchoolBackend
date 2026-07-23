@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PreSchoolManagement.Domain.Dtos;
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using PreSchoolManagement.Infrastructure.Interfaces;
@@ -15,23 +16,39 @@ public class MenuMasterService(
     ILanguageService languageService)
     : IMenuMasterService
 {
-    public async Task<List<MenuMasterQueryDto>> GetAllAsync(
-        bool applyRoleFilter,
-        CancellationToken cancellationToken)
+    public async Task<PaginatedResult<MenuMasterQueryDto>> GetAllAsync(
+    PaginationRequest request,
+    CancellationToken cancellationToken)
+{
+    var roleId = currentUser.RoleId.ToString();
+
+    IQueryable<MenuMaster> query = context.MenuMasters
+        .AsNoTracking()
+        .Include(x => x.Translations);
+
+    if (request.Filter)
+        query = query.Where(x => x.IsActive);
+
+    if (!string.IsNullOrWhiteSpace(request.SearchText))
     {
-        var roleId = currentUser.RoleId.ToString();
+        query = query.Where(x =>
+            x.MenuName.Contains(request.SearchText));
+    }
 
-        var menus = await context.MenuMasters
-            .AsNoTracking()
-            .Include(x => x.Translations)
-            .OrderBy(x => x.DisplayOrder)
-            .ToListAsync(cancellationToken);
+    var totalCount = await query.CountAsync(cancellationToken);
 
-        var mappedMenus = menus
-            .Select(x => MapMenu(x, languageService.CurrentLanguage))
-            .ToList();
+    var menus = await query
+        .OrderBy(x => x.DisplayOrder)
+        .Skip((request.PageNumber - 1) * request.PageSize)
+        .Take(request.PageSize)
+        .ToListAsync(cancellationToken);
 
-        var result = mappedMenus.Select(menu =>
+    var mappedMenus = menus
+        .Select(x => MapMenu(x, languageService.CurrentLanguage))
+        .ToList();
+
+    var result = mappedMenus
+        .Select(menu =>
         {
             var parent = mappedMenus.FirstOrDefault(x => x.MenuId == menu.ParentMenuId);
 
@@ -48,24 +65,17 @@ public class MenuMasterService(
                 IsActive = menu.IsActive,
                 RoleIds = menu.RoleIds
             };
-        }).ToList();
+        })
+        .ToList();
 
-        if (!applyRoleFilter)
-            return result;
-
-        return result
-            .Where(x =>
-                x.IsActive &&
-                (
-                    x.IsPublic ||
-                    (
-                        !string.IsNullOrWhiteSpace(x.RoleIds) &&
-                        x.RoleIds.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                            .Contains(roleId)
-                    )
-                ))
-            .ToList();
-    }
+    return new PaginatedResult<MenuMasterQueryDto>
+    {
+        Items = result,
+        TotalCount = totalCount,
+        PageNumber = request.PageNumber,
+        PageSize = request.PageSize
+    };
+}
 
     public async Task<MenuMaster?> GetByIdAsync(
         int menuId,

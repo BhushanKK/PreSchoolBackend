@@ -1,3 +1,4 @@
+using PreSchoolManagement.Domain.Dtos;
 using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
@@ -10,6 +11,7 @@ public interface IRoleMasterService
         PaginationRequest request, 
         CancellationToken cancellationToken);
     Task<RoleMaster?> GetByIdAsync(int id, CancellationToken cancellationToken);
+    Task<List<RoleDropdownDto>> GetActiveRolesAsync(CancellationToken cancellationToken); //for Dropdown
     Task AddAsync(RoleMaster role, CancellationToken cancellationToken);
     Task UpdateAsync(RoleMaster role, CancellationToken cancellationToken);
     Task DeleteAsync(RoleMaster role, CancellationToken cancellationToken);

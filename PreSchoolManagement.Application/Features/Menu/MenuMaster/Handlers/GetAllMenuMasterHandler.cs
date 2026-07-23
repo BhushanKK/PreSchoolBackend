@@ -2,6 +2,7 @@ using System.Net;
 using MediatR;
 using PreSchoolManagement.Application.Features.Queries;
 using PreSchoolManagement.Domain.Dtos;
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
@@ -12,18 +13,18 @@ namespace PreSchoolManagement.Application.Features.Handlers;
 public class GetAllMenuMasterQueryHandler(
     IMenuMasterService menuMasterService,
     IMessageHelper messageHelper)
-    : IRequestHandler<GetAllMenuMasterQuery, ApiResponse<List<MenuMasterQueryDto>>>
+    : IRequestHandler<GetAllMenuMasterQuery, ApiResponse<PaginatedResult<MenuMasterQueryDto>>>
 {
-    public async Task<ApiResponse<List<MenuMasterQueryDto>>> Handle(
+    public async Task<ApiResponse<PaginatedResult<MenuMasterQueryDto>>> Handle(
         GetAllMenuMasterQuery request,
         CancellationToken cancellationToken)
     {
-        var data = await menuMasterService.GetAllAsync(
-            request.filter,
+        var result = await menuMasterService.GetAllAsync(
+            request.Request,
             cancellationToken);
 
-        return ApiResponse<List<MenuMasterQueryDto>>.SuccessResponse(
-            data,
+        return ApiResponse<PaginatedResult<MenuMasterQueryDto>>.SuccessResponse(
+            result,
             messageHelper.RetrievedEntity(
                 LocaleEnums.Masters.ToString(),
                 EntityDescription.Menu.ToString()),

@@ -20,6 +20,14 @@ public static class RoleMasterApi
             .Produces(StatusCodes.Status500InternalServerError)
             .RequireAuthorization();
 
+        group.MapGet("/Dropdown", GetAllActiveRoles)
+            .WithName("GetAllActiveRoles")
+            .WithSummary("Get all active Roles for Dropdown")
+            .WithDescription("Returns all active Role master records.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization();
+
         group.MapGet("/{id:int}", GetById)
             .WithName("GetRoleById")
             .WithSummary("Get Role by Id")
@@ -59,6 +67,17 @@ public static class RoleMasterApi
         return TypedResults.Ok(result);
     }
 
+    private static async Task<IResult> GetAllActiveRoles(
+        ISender sender,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new GetRoleDropdownQuery(),
+            cancellationToken);
+
+        return TypedResults.Ok(result);
+    }
+
     private static async Task<IResult> GetById(
         int id,
         ISender sender,
@@ -70,7 +89,7 @@ public static class RoleMasterApi
 
         return TypedResults.Ok(result);
     }
-
+    
     private static async Task<IResult> Create(
         CreateRoleMasterCommand command,
         ISender sender,

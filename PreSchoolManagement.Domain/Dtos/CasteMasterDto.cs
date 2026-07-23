@@ -28,4 +28,6 @@ public class CasteTranslationDto
 {
     public string LanguageCode { get; set; } = string.Empty;
     public string CasteName { get; set; } = string.Empty;
+    public int? CasteTranslationId {get;set;}
+    public int? CasteId {get;set;}
 }

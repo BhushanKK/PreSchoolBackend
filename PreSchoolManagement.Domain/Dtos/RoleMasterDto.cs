@@ -18,6 +18,8 @@ public class RoleTranslationDto
     public string RoleName { get; set; } = string.Empty;
 }
 
-
-
-
+public class RoleDropdownDto
+{
+    public int RoleId { get; set; }
+    public string RoleName { get; set; } = string.Empty;
+}

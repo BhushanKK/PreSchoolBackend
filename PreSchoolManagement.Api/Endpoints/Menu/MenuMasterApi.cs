@@ -1,6 +1,7 @@
 using MediatR;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Api.Endpoints;
 
@@ -11,7 +12,7 @@ public static class MenuMasterApi
         var group = app.MapGroup("/api/MenuMaster")
                        .WithTags("Menu Master");
 
-        group.MapGet("/{filter:bool}", GetAll)
+        group.MapGet("/", GetAll)
             .WithName("GetAllMenus")
             .WithSummary("Get all Menu masters")
             .WithDescription("Returns all Menu master records.")
@@ -62,12 +63,13 @@ public static class MenuMasterApi
         return app;
     }
 
-    private static async Task<IResult> GetAll(bool filter,
+    private static async Task<IResult> GetAll(
+        [AsParameters] PaginationRequest request,
         ISender sender,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllMenuMasterQuery(filter),
+            new GetAllMenuMasterQuery(request),
             cancellationToken);
 
         return TypedResults.Ok(result);

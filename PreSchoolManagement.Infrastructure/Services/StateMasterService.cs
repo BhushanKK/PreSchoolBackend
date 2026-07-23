@@ -48,14 +48,10 @@ ILanguageService languageService):IStateMasterService
 
     public async Task<StateMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
     { 
-        var state = await context.StateMasters
+        return await context.StateMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(x => x.StateId == id, cancellationToken);
-
-        return state is null 
-            ? null
-            : MapState(state, languageService.CurrentLanguage);
     }
 
     public async Task AddAsync (StateMaster state,CancellationToken cancellationToken)
@@ -131,14 +127,16 @@ ILanguageService languageService):IStateMasterService
         return new StateMaster
         {
             StateId = state.StateId,
-            StateName = TranslationHelper.GetTranslatedValue(
+            StateName    = TranslationHelper.GetTranslatedValue(
                 state.Translations,
                 language,
                 x => x.LanguageCode,
                 x => x.StateName,
                 state.StateName),
-            
-            IsActive = state.IsActive
+
+            IsActive = state.IsActive,
+
+            Translations = state.Translations.ToList()
         };
     }
 }

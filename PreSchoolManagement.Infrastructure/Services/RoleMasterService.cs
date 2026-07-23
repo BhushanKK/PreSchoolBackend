@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PreSchoolManagement.Domain.Dtos;
 using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
@@ -57,9 +58,29 @@ public class RoleMasterService(
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(
                 x => x.RoleId == id,
-                cancellationToken);            
+                cancellationToken);
     }
+    public async Task<List<RoleDropdownDto>> GetActiveRolesAsync(
+    CancellationToken cancellationToken)
+    {
+        var roles = await context.RoleMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.RoleName)
+            .ToListAsync(cancellationToken);
 
+        return roles.Select(x => new RoleDropdownDto
+        {
+            RoleId = x.RoleId,
+            RoleName = TranslationHelper.GetTranslatedValue(
+                x.Translations,
+                languageService.CurrentLanguage,
+                t => t.LanguageCode,
+                t => t.RoleName,
+                x.RoleName)
+        }).ToList();
+    }
     public async Task<RoleMaster?> GetForUpdateAsync(
         int id,
         CancellationToken cancellationToken)
@@ -155,7 +176,7 @@ public class RoleMasterService(
             cancellationToken);
     }
 
-    private RoleMaster MapRole(RoleMaster role,string language)
+    private RoleMaster MapRole(RoleMaster role, string language)
     {
         return new RoleMaster
         {
