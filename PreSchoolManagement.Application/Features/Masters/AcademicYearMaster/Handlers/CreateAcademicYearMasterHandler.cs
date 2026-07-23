@@ -45,7 +45,7 @@ public class CreateAcademicYearMasterHandler(
             return ApiResponse<int>.FailureResponse
             (
                 messageHelper.AlreadyExistsEntity(
-                    "Masters",
+                    LocaleEnums.Masters.ToString(),
                     EntityDescription.AcademicYear.ToString()),
                 (int)HttpStatusCode.Conflict
             );
@@ -62,7 +62,7 @@ public class CreateAcademicYearMasterHandler(
         (
             entity.AcademicYearId,
             messageHelper.AddedEntity(
-                "Masters",
+                LocaleEnums.Masters.ToString(),
                 EntityDescription.AcademicYear.ToString()),
             (int)HttpStatusCode.Created
         );

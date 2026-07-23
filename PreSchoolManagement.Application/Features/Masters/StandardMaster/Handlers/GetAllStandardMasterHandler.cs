@@ -20,14 +20,14 @@ public class GetAllStandardMasterHandler(
         GetAllStandardMasterQuery request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Standard.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(),EntityDescription.Standard.ToString());
         
         var Standards = await service.GetAllAsync(request.filter,cancellationToken);
 
         return ApiResponse<List<StandardMaster>>.SuccessResponse
         (
             Standards,
-            messageHelper.RetrievedEntity("Masters",EntityDescription.Standard.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Standard.ToString()),
             (int)HttpStatusCode.OK
         );
     }

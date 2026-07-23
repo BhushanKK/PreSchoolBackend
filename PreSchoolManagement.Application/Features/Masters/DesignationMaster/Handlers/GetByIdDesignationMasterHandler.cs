@@ -21,7 +21,7 @@ public class GetByIdDesignationMasterHandler(
         {
             return ApiResponse<DesignationMaster?>.FailureResponse
             (
-                messageHelper.InvalidIdEntity("Masters",EntityDescription.Designation.ToString()),
+                messageHelper.InvalidIdEntity(LocaleEnums.Masters.ToString(),EntityDescription.Designation.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -32,7 +32,7 @@ public class GetByIdDesignationMasterHandler(
         {
             return ApiResponse<DesignationMaster?>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Designation.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Designation.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -40,7 +40,7 @@ public class GetByIdDesignationMasterHandler(
         return ApiResponse<DesignationMaster?>.SuccessResponse
         (
             data,
-            messageHelper.RetrievedEntity("Masters",EntityDescription.Designation.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Designation.ToString()),
             (int)HttpStatusCode.OK
         );
     }

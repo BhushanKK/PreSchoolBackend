@@ -19,7 +19,7 @@ public class DeleteStandardMasterHandler(
         DeleteStandardMasterCommand request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.Standard.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(), EntityDescription.Standard.ToString());
 
         var entity = await service.GetByIdAsync(request.StandardId, cancellationToken);
 
@@ -27,7 +27,7 @@ public class DeleteStandardMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters", EntityDescription.Standard.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.Standard.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -37,7 +37,7 @@ public class DeleteStandardMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.StandardId,
-            messageHelper.DeletedEntity("Masters", EntityDescription.Standard.ToString()),
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString(), EntityDescription.Standard.ToString()),
             (int)HttpStatusCode.OK
         );
     }

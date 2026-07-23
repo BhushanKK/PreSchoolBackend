@@ -23,7 +23,7 @@ public class GetAllAcademicYearMasterHandler(
         return ApiResponse<List<AcademicYearMaster>>.SuccessResponse
         (
             academicYears,
-            messageHelper.RetrievedEntity("Masters", EntityDescription.AcademicYear.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(), EntityDescription.AcademicYear.ToString()),
             (int)HttpStatusCode.OK
         );
     }

@@ -23,7 +23,7 @@ public class CreatEmployeeTypeMaster(
 {
     public  async Task<ApiResponse<int>> Handle(CreateEmployeeTypeMasterCommand request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.EmployeeType.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(),EntityDescription.EmployeeType.ToString());
 
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
@@ -43,7 +43,7 @@ public class CreatEmployeeTypeMaster(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.EmployeeType.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(),EntityDescription.EmployeeType.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -56,7 +56,7 @@ public class CreatEmployeeTypeMaster(
         return ApiResponse<int>.SuccessResponse
         (
             entity.EmployeeTypeId,
-            messageHelper.AddedEntity("Masters",EntityDescription.EmployeeType.ToString()),
+            messageHelper.AddedEntity(LocaleEnums.Masters.ToString(),EntityDescription.EmployeeType.ToString()),
             (int)HttpStatusCode.Created
         );
     }

@@ -23,7 +23,7 @@ public class GetAllSectionMasterHandler(
         return ApiResponse<List<SectionMaster>>.SuccessResponse
         (
             Sections,
-            messageHelper.RetrievedEntity("Masters",EntityDescription.Section.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Section.ToString()),
             (int)HttpStatusCode.OK
         );
     }

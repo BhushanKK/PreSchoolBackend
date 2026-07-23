@@ -25,7 +25,7 @@ public class GetAllCategoryMasterHandler(
             return ApiResponse<List<CategoryMaster>>.SuccessResponse
             (
                 data,
-                messageHelper.RetrievedEntity("Masters",EntityDescription.Category.ToString()),
+                messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Category.ToString()),
                 (int)HttpStatusCode.OK
             );
         }
@@ -33,7 +33,7 @@ public class GetAllCategoryMasterHandler(
         {
             return ApiResponse<List<CategoryMaster>>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Category.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Category.ToString()),
                 (int)HttpStatusCode.OK
             );
         }

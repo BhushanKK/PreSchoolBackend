@@ -22,7 +22,7 @@ public class GetAllDistrictMasterHandler(
             return ApiResponse<List<DistrictMasterQueryDto>>.SuccessResponse
             (
                 data,
-                messageHelper.RetrievedEntity("Masters",EntityDescription.District.ToString()),
+                messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.District.ToString()),
                 (int)HttpStatusCode.OK
             );
         }
@@ -30,7 +30,7 @@ public class GetAllDistrictMasterHandler(
         {
             return ApiResponse<List<DistrictMasterQueryDto>>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.District.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.District.ToString()),
                 (int)HttpStatusCode.OK
             );
         }

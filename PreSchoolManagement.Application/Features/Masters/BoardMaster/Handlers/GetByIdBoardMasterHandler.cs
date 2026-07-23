@@ -24,7 +24,7 @@ public class GetByIdBoardMasterHandler(
         {
             return ApiResponse<BoardMaster?>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Board.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Board.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -32,7 +32,7 @@ public class GetByIdBoardMasterHandler(
         return ApiResponse<BoardMaster?>.SuccessResponse
         (
             board,
-            messageHelper.RetrievedEntity("Masters",EntityDescription.Board.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Board.ToString()),
             (int)HttpStatusCode.OK
         );
     }

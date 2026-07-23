@@ -22,7 +22,7 @@ public class updateReligionMasterHandler(IReligionMasterService service,
 {
     public async Task<ApiResponse<int>> Handle(UpdateReligionMasterCommand request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.Religion.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString());
 
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
@@ -41,7 +41,7 @@ public class updateReligionMasterHandler(IReligionMasterService service,
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters", EntityDescription.Religion.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -58,7 +58,7 @@ public class updateReligionMasterHandler(IReligionMasterService service,
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.Religion.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -105,7 +105,7 @@ public class updateReligionMasterHandler(IReligionMasterService service,
         return ApiResponse<int>.SuccessResponse
         (
             entity.ReligionId,
-            messageHelper.UpdatedEntity("Masters",EntityDescription.Religion.ToString()),
+            messageHelper.UpdatedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Religion.ToString()),
             (int)HttpStatusCode.OK
         );    
         

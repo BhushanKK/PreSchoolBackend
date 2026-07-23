@@ -19,7 +19,7 @@ public class DeleteFinancialYearMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.InvalidIdEntity("Masters",EntityDescription.FinancialYear.ToString()), 
+                messageHelper.InvalidIdEntity(LocaleEnums.Masters.ToString(),EntityDescription.FinancialYear.ToString()), 
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -29,7 +29,7 @@ public class DeleteFinancialYearMasterHandler(
         if (existing is null)
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.FinancialYear.ToString()), 
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.FinancialYear.ToString()), 
                 (int)HttpStatusCode.NotFound
             );
 
@@ -38,7 +38,7 @@ public class DeleteFinancialYearMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             request.FinancialYearId, 
-            messageHelper.DeletedEntity("Masters",EntityDescription.FinancialYear.ToString()), 
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString(),EntityDescription.FinancialYear.ToString()), 
             (int)HttpStatusCode.OK
         );
     }

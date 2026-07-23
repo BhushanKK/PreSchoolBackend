@@ -40,7 +40,7 @@ public class UpdateRoleMasterHandler(
         {
             return ApiResponse<int>.FailureResponse(
                 messageHelper.NotFoundEntity(
-                    "Masters",
+                    LocaleEnums.Masters.ToString(),
                     EntityDescription.Role.ToString()),
                 (int)HttpStatusCode.NotFound);
         }
@@ -51,7 +51,7 @@ public class UpdateRoleMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Role.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(),EntityDescription.Role.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -97,7 +97,7 @@ public class UpdateRoleMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.RoleId,
-            messageHelper.UpdatedEntity("Masters",EntityDescription.Role.ToString()),
+            messageHelper.UpdatedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Role.ToString()),
             (int)HttpStatusCode.OK
         );
     }

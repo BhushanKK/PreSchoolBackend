@@ -40,7 +40,7 @@ public class UpdateDistrictMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.District.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.District.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -58,7 +58,7 @@ public class UpdateDistrictMasterHandler(
             return ApiResponse<int>.FailureResponse
             (
                 messageHelper.AlreadyExistsEntity(
-                    "Masters",
+                    LocaleEnums.Masters.ToString(),
                     EntityDescription.District.ToString()),
                 (int)HttpStatusCode.Conflict
             );
@@ -102,7 +102,7 @@ public class UpdateDistrictMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.DistrictId,
-            messageHelper.UpdatedEntity("Masters",EntityDescription.District.ToString()),
+            messageHelper.UpdatedEntity(LocaleEnums.Masters.ToString(),EntityDescription.District.ToString()),
             (int)HttpStatusCode.OK
         );
     }

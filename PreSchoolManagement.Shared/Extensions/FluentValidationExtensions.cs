@@ -1,12 +1,12 @@
 using System.Linq.Expressions;
 using FluentValidation;
+using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Shared.Localization;
 
 namespace PreSchoolManagement.Shared.Extensions;
 
 public static class FluentValidationExtensions
 {
-    private const string ValidationResource = "ValidationMessages";
     private const string FieldsResource = "Fields";
 
     public static IRuleBuilderOptions<T, string> Required<T>(
@@ -18,7 +18,7 @@ public static class FluentValidationExtensions
         return ruleBuilder
             .NotEmpty()
             .WithMessage(localizer.Get(
-                ValidationResource,
+                LocaleEnums.ValidationMessages.ToString(),
                 "Required",
                 localizer.Get(fieldResource, fieldKey)));
     }
@@ -33,7 +33,7 @@ public static class FluentValidationExtensions
         return ruleBuilder
             .MaximumLength(maxLength)
             .WithMessage(localizer.Get(
-                ValidationResource,
+                LocaleEnums.ValidationMessages.ToString(),
                 "MaxLength",
                 localizer.Get(fieldResource, fieldKey),
                 maxLength));
@@ -48,7 +48,7 @@ public static class FluentValidationExtensions
         return ruleBuilder
             .NotEmpty()
             .WithMessage(localizer.Get(
-                ValidationResource,
+                LocaleEnums.ValidationMessages.ToString(),
                 "Required",
                 localizer.Get(fieldResource, fieldKey)));
     }
@@ -64,7 +64,7 @@ public static class FluentValidationExtensions
         return ruleBuilder
             .GreaterThan(comparison)
             .WithMessage(localizer.Get(
-                ValidationResource,
+                LocaleEnums.ValidationMessages.ToString(),
                 "GreaterThanDate",
                 localizer.Get(fieldResource, fieldKey),
                 localizer.Get(fieldResource, comparisonFieldKey)));
@@ -79,7 +79,7 @@ public static class FluentValidationExtensions
         return ruleBuilder
             .GreaterThan(0)
             .WithMessage(localizer.Get(
-                ValidationResource,
+                LocaleEnums.ValidationMessages.ToString(),
                 "Required",
                 localizer.Get(fieldResource, fieldKey)));
     }

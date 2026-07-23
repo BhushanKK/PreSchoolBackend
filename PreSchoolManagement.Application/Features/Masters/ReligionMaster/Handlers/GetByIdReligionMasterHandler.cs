@@ -17,13 +17,13 @@ public class GetByIdReligionMasterHandler(
 {
     public async Task<ApiResponse<ReligionMaster?>> Handle(GetByIdReligionMasterQuery request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.Religion.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString());
 
         if (request.ReligionId <= 0)
         {
             return ApiResponse<ReligionMaster?>.FailureResponse
             (
-                messageHelper.InvalidIdEntity("Masters", EntityDescription.Religion.ToString()),
+                messageHelper.InvalidIdEntity(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -34,7 +34,7 @@ public class GetByIdReligionMasterHandler(
         {
             return ApiResponse<ReligionMaster?>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters", EntityDescription.Religion.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -42,7 +42,7 @@ public class GetByIdReligionMasterHandler(
         return ApiResponse<ReligionMaster?>.SuccessResponse
         (
             data, 
-            messageHelper.RetrievedEntity("Masters", EntityDescription.Religion.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString()),
             (int)HttpStatusCode.OK
         );
     }

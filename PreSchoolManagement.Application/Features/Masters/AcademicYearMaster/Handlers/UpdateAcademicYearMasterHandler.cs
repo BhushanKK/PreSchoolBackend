@@ -43,7 +43,7 @@ public class UpdateAcademicYearMasterHandler(
             return ApiResponse<int>.FailureResponse
             (
                 messageHelper.NotFoundEntity(
-                    "Masters",
+                    LocaleEnums.Masters.ToString(),
                     EntityDescription.AcademicYear.ToString()),
                 (int)HttpStatusCode.NotFound
             );
@@ -60,7 +60,7 @@ public class UpdateAcademicYearMasterHandler(
             return ApiResponse<int>.FailureResponse
             (
                 messageHelper.AlreadyExistsEntity(
-                    "Masters",
+                    LocaleEnums.Masters.ToString(),
                     EntityDescription.AcademicYear.ToString()),
                 (int)HttpStatusCode.Conflict
             );
@@ -108,7 +108,7 @@ public class UpdateAcademicYearMasterHandler(
         (
             entity.AcademicYearId,
             messageHelper.UpdatedEntity(
-                "Masters",
+                LocaleEnums.Masters.ToString(),
                 EntityDescription.AcademicYear.ToString()),
             (int)HttpStatusCode.OK
         );

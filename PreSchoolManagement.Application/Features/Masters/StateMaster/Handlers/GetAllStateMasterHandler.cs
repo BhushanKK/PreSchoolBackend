@@ -25,7 +25,7 @@ public class GetAllStateMasterHandler(
             return ApiResponse<List<StateMaster>>.SuccessResponse
             (
                 data,
-                messageHelper.RetrievedEntity("Masters",EntityDescription.State.ToString()),
+                messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.State.ToString()),
                 (int)HttpStatusCode.OK
             );
         }
@@ -33,7 +33,7 @@ public class GetAllStateMasterHandler(
         {
             return ApiResponse<List<StateMaster>>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.State.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.State.ToString()),
                 (int)HttpStatusCode.OK
             );
         }

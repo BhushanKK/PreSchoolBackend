@@ -30,7 +30,7 @@ public class CreateCasteMasterHandler(
 
         var exists = await service.IsExistsAsync(request.CasteName ?? string.Empty, OperationType.Add, null, cancellationToken);
         if (exists)
-            return ApiResponse<int>.FailureResponse(messageHelper.AlreadyExistsEntity("Masters" ,EntityDescription.Caste.ToString()), (int)HttpStatusCode.Conflict);
+            return ApiResponse<int>.FailureResponse(messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString() ,EntityDescription.Caste.ToString()), (int)HttpStatusCode.Conflict);
 
         var entity = mapper.Map<CasteMaster>(request);
         entity.EntryDate = DateTime.UtcNow;
@@ -41,7 +41,7 @@ public class CreateCasteMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.CasteID, 
-            messageHelper.AddedEntity("Masters" ,EntityDescription.Caste.ToString()), 
+            messageHelper.AddedEntity(LocaleEnums.Masters.ToString() ,EntityDescription.Caste.ToString()), 
             (int)HttpStatusCode.Created
         );
     }

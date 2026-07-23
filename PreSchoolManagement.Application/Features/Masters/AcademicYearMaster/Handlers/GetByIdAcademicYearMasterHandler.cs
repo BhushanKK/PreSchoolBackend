@@ -24,7 +24,7 @@ public class GetByIdAcademicYearMasterHandler(
         {
             return ApiResponse<AcademicYearMaster?>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.AcademicYear.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.AcademicYear.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -32,7 +32,7 @@ public class GetByIdAcademicYearMasterHandler(
         return ApiResponse<AcademicYearMaster?>.SuccessResponse
         (
             academicYear,
-            messageHelper.RetrievedEntity("Masters",EntityDescription.AcademicYear.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.AcademicYear.ToString()),
             (int)HttpStatusCode.OK
         );
     }

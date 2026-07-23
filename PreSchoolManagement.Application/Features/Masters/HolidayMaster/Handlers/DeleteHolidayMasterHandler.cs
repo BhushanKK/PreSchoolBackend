@@ -19,7 +19,7 @@ public class DeleteHolidayMasterHandler(
         DeleteHolidayMasterCommand request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.Holiday.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(), EntityDescription.Holiday.ToString());
 
         var entity = await service.GetByIdAsync(request.HolidayId, cancellationToken);
 
@@ -27,7 +27,7 @@ public class DeleteHolidayMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters", EntityDescription.Holiday.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.Holiday.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -37,7 +37,7 @@ public class DeleteHolidayMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.HolidayId,
-            messageHelper.DeletedEntity("Masters", EntityDescription.Holiday.ToString()),
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString(), EntityDescription.Holiday.ToString()),
             (int)HttpStatusCode.OK
         );
     }

@@ -19,7 +19,7 @@ public class GetByIdEmployeeTypeMasterHandler(
     public async Task<ApiResponse<EmployeeTypeMaster?>> Handle(GetByIdEmployeeTypeMasterQuery request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.EmployeeType.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(),EntityDescription.EmployeeType.ToString());
         
         if (request.EmployeeTypeId <= 0)
         {
@@ -36,7 +36,7 @@ public class GetByIdEmployeeTypeMasterHandler(
         {
             return ApiResponse<EmployeeTypeMaster?>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.EmployeeType.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.EmployeeType.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -44,7 +44,7 @@ public class GetByIdEmployeeTypeMasterHandler(
         return ApiResponse<EmployeeTypeMaster?>.SuccessResponse
         (
             data,
-            messageHelper.RetrievedEntity("Masters",EntityDescription.EmployeeType.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.EmployeeType.ToString()),
             (int)HttpStatusCode.OK
         );
     }

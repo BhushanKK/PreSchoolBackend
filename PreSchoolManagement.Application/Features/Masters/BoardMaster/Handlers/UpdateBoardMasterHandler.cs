@@ -40,7 +40,7 @@ public class UpdateBoardMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Board.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Board.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -57,7 +57,7 @@ public class UpdateBoardMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Board.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(),EntityDescription.Board.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -103,7 +103,7 @@ public class UpdateBoardMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.BoardId,
-            messageHelper.UpdatedEntity("Masters",EntityDescription.Board.ToString()),
+            messageHelper.UpdatedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Board.ToString()),
             (int)HttpStatusCode.OK
         );
     }

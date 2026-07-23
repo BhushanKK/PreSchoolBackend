@@ -26,7 +26,7 @@ public class GetMenuMasterByIdHandler(
         {
             return ApiResponse<MenuMasterDto?>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters", EntityDescription.Menu.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.Menu.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -36,7 +36,7 @@ public class GetMenuMasterByIdHandler(
         return ApiResponse<MenuMasterDto?>.SuccessResponse
         (
             dto,
-            messageHelper.RetrievedEntity("Masters", EntityDescription.Menu.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(), EntityDescription.Menu.ToString()),
             (int)HttpStatusCode.OK
         );
     }

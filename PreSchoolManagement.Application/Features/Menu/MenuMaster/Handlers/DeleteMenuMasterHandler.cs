@@ -25,7 +25,7 @@ public class DeleteMenuMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Menu.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Menu.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -37,7 +37,7 @@ public class DeleteMenuMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             request.MenuId,
-            messageHelper.DeletedEntity("Masters",EntityDescription.Menu.ToString()),
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Menu.ToString()),
             (int)HttpStatusCode.OK
         );
     }

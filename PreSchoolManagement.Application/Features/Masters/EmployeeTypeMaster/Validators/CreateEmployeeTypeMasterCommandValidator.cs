@@ -1,5 +1,6 @@
 using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Shared.Extensions;
 using PreSchoolManagement.Shared.Localization;
 
@@ -19,9 +20,9 @@ public class CreateEmployeeTypeMasterCommandValidator
             .GreaterThanOrEqualTo(0)
             .WithMessage(
                 localizer.Get(
-                    "ValidationMessages",
+                    LocaleEnums.ValidationMessages.ToString(),
                     "GreaterThanOrEqual",
-                    localizer.Get("ValidationMessages", "DisplayOrder"),
+                    localizer.Get(LocaleEnums.ValidationMessages.ToString(), "DisplayOrder"),
                     "0"));
     }
 }
@@ -43,9 +44,9 @@ public class UpdateEmployeeTypeMasterCommandValidator
             .GreaterThanOrEqualTo(0)
             .WithMessage(
                 localizer.Get(
-                    "ValidationMessages",
+                    LocaleEnums.ValidationMessages.ToString(),
                     "GreaterThanOrEqual",
-                    localizer.Get("ValidationMessages", "DisplayOrder"),
+                    localizer.Get(LocaleEnums.ValidationMessages.ToString(), "DisplayOrder"),
                     "0"));
     }
 }

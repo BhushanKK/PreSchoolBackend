@@ -25,7 +25,7 @@ public class GetAllMenuMasterQueryHandler(
         return ApiResponse<List<MenuMasterQueryDto>>.SuccessResponse(
             data,
             messageHelper.RetrievedEntity(
-                "Masters",
+                LocaleEnums.Masters.ToString(),
                 EntityDescription.Menu.ToString()),
             (int)HttpStatusCode.OK);
     }

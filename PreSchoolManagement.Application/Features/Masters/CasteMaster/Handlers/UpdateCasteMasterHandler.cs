@@ -40,7 +40,7 @@ public class UpdateCasteMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Caste.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Caste.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -57,7 +57,7 @@ public class UpdateCasteMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Caste.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(),EntityDescription.Caste.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -103,7 +103,7 @@ public class UpdateCasteMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.CasteID,
-            messageHelper.UpdatedEntity("Masters",EntityDescription.Caste.ToString()),
+            messageHelper.UpdatedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Caste.ToString()),
             (int)HttpStatusCode.OK
         );
     }

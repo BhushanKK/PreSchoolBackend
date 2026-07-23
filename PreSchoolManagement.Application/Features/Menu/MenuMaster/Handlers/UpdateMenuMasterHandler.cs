@@ -42,7 +42,7 @@ public class UpdateMenuMasterHandler(
         {
             return ApiResponse<int>.FailureResponse(
                 messageHelper.NotFoundEntity(
-                    "Masters",
+                    LocaleEnums.Masters.ToString(),
                     EntityDescription.Menu.ToString()),
                 (int)HttpStatusCode.NotFound);
         }
@@ -58,7 +58,7 @@ public class UpdateMenuMasterHandler(
         {
             return ApiResponse<int>.FailureResponse(
                 messageHelper.AlreadyExistsEntity(
-                    "Masters",
+                    LocaleEnums.Masters.ToString(),
                     EntityDescription.Menu.ToString()),
                 (int)HttpStatusCode.Conflict);
         }
@@ -104,7 +104,7 @@ public class UpdateMenuMasterHandler(
         return ApiResponse<int>.SuccessResponse(
             entity.MenuId,
             messageHelper.UpdatedEntity(
-                "Masters",
+                LocaleEnums.Masters.ToString(),
                 EntityDescription.Menu.ToString()),
             (int)HttpStatusCode.OK);
     }

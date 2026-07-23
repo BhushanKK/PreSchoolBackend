@@ -22,7 +22,7 @@ public class CreateMediumMasterHandler(
 {
     public async Task<ApiResponse<int>> Handle(CreateMediumMasterCommand request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.Medium.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(), EntityDescription.Medium.ToString());
 
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
@@ -41,7 +41,7 @@ public class CreateMediumMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.Medium.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(), EntityDescription.Medium.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -55,7 +55,7 @@ public class CreateMediumMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.MediumId,
-            messageHelper.AddedEntity("Masters", EntityDescription.Medium.ToString()),
+            messageHelper.AddedEntity(LocaleEnums.Masters.ToString(), EntityDescription.Medium.ToString()),
             (int)HttpStatusCode.Created
         );
     }

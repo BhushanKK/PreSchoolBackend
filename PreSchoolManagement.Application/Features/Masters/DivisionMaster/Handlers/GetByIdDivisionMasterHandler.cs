@@ -24,7 +24,7 @@ public class GetByIdDivisionMasterHandler(
         {
             return ApiResponse<DivisionMaster?>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Division.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Division.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -32,7 +32,7 @@ public class GetByIdDivisionMasterHandler(
         return ApiResponse<DivisionMaster?>.SuccessResponse
         (
             Division,
-            messageHelper.RetrievedEntity("Masters",EntityDescription.Division.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Division.ToString()),
             (int)HttpStatusCode.OK
         );
     }

@@ -20,7 +20,7 @@ public class GetAllDivisionMasterHandler(
         GetAllDivisionMasterQuery request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Division.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(),EntityDescription.Division.ToString());
 
         var Divisions = await service.GetAllAsync(request.filter, cancellationToken);
         
@@ -29,14 +29,14 @@ public class GetAllDivisionMasterHandler(
             return ApiResponse<List<DivisionMaster>>.SuccessResponse
             (
                 Divisions,
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Division.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Division.ToString()),
                 (int)HttpStatusCode.OK
             );    
         }
         return ApiResponse<List<DivisionMaster>>.SuccessResponse
         (
             Divisions,
-            messageHelper.RetrievedEntity("Masters",EntityDescription.Division.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Division.ToString()),
             (int)HttpStatusCode.OK
         );
     }

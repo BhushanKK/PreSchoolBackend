@@ -41,7 +41,7 @@ public class UpdateStateMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters", EntityDescription.State.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.State.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -58,7 +58,7 @@ public class UpdateStateMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.State.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(), EntityDescription.State.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -101,7 +101,7 @@ public class UpdateStateMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.StateId,
-            messageHelper.UpdatedEntity("Masters",EntityDescription.State.ToString()),
+            messageHelper.UpdatedEntity(LocaleEnums.Masters.ToString(),EntityDescription.State.ToString()),
             (int)HttpStatusCode.OK
         );
     }

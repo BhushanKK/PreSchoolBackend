@@ -33,7 +33,7 @@ public class CreateDistrictMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.District.ToString()), 
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(),EntityDescription.District.ToString()), 
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -47,7 +47,7 @@ public class CreateDistrictMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.DistrictId, 
-            messageHelper.AddedEntity("Masters",EntityDescription.District.ToString()), 
+            messageHelper.AddedEntity(LocaleEnums.Masters.ToString(),EntityDescription.District.ToString()), 
             (int)HttpStatusCode.Created
         );
     }

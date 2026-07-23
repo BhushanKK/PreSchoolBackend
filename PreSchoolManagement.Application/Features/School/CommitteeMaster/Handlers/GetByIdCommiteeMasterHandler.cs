@@ -22,7 +22,7 @@ public class GetByIdCommitteeMasterHandler(
         if (request.CommitteeId == Guid.Empty)
         {
             return ApiResponse<CommitteeMaster>.FailureResponse(
-                messageHelper.InvalidIdEntity("Masters",EntityDescription.Committee.ToString()),
+                messageHelper.InvalidIdEntity(LocaleEnums.Masters.ToString(),EntityDescription.Committee.ToString()),
                 (int)HttpStatusCode.BadRequest);
         }
 
@@ -32,7 +32,7 @@ public class GetByIdCommitteeMasterHandler(
         {
             return ApiResponse<CommitteeMaster>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Committee.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Committee.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -40,7 +40,7 @@ public class GetByIdCommitteeMasterHandler(
         return ApiResponse<CommitteeMaster>.SuccessResponse
         (
             data,
-            messageHelper.RetrievedEntity("Masters",EntityDescription.Committee.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Committee.ToString()),
             (int)HttpStatusCode.OK
         );
     }

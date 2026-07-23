@@ -21,7 +21,7 @@ public class GetAllBoardMasterHandler(
         return ApiResponse<List<BoardMaster>>.SuccessResponse
         (
             boards,
-            messageHelper.RetrievedEntity("Masters",EntityDescription.Board.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Board.ToString()),
             (int)HttpStatusCode.OK
         );
     }

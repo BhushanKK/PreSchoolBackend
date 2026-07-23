@@ -17,7 +17,7 @@ public class GetAllRelligionMasterHandler(
 
     public async Task<ApiResponse<List<ReligionMaster>>> Handle(GetAllReligionMasterQuery request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.Religion.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString());
 
         var data = await service.GetAllAsync(request.filter, cancellationToken);
         if (data != null)
@@ -25,7 +25,7 @@ public class GetAllRelligionMasterHandler(
             return ApiResponse<List<ReligionMaster>>.SuccessResponse
             (
                 data,
-                messageHelper.RetrievedEntity("Masters", EntityDescription.Religion.ToString()),
+                messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString()),
                 (int)HttpStatusCode.OK
             );
         }
@@ -33,7 +33,7 @@ public class GetAllRelligionMasterHandler(
         {
             return ApiResponse<List<ReligionMaster>>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters", EntityDescription.Religion.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString()),
                 (int)HttpStatusCode.OK
             );
         }

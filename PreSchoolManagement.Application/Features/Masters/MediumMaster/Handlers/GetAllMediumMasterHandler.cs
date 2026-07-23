@@ -18,13 +18,13 @@ public class GetAllMediumMasterHandler(
 {
     public async Task<ApiResponse<List<MediumMaster>>> Handle(GetAllMediumMasterQuery request,CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Medium.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(),EntityDescription.Medium.ToString());
 
         var mediums = await service.GetAllAsync(cancellationToken);
         return ApiResponse<List<MediumMaster>>.SuccessResponse
         (
             mediums,
-            messageHelper.RetrievedEntity("Masters",EntityDescription.Medium.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Medium.ToString()),
             (int)HttpStatusCode.OK
         );
     }

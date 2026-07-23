@@ -19,21 +19,21 @@ public class GetByIdHolidayMasterHandler(IHolidayMasterService service,
         GetByIdHolidayMasterQuery request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Holiday.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(),EntityDescription.Holiday.ToString());
 
         var Holiday = await service.GetByIdAsync(request.HolidayId, cancellationToken);
 
         if (Holiday is null)
         {
             return ApiResponse<HolidayMaster?>.FailureResponse(
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Holiday.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Holiday.ToString()),
                 (int)HttpStatusCode.NotFound);
         }
 
         return ApiResponse<HolidayMaster?>.SuccessResponse
         (
             Holiday,
-            messageHelper.RetrievedEntity("Masters",EntityDescription.Holiday.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Holiday.ToString()),
             (int)HttpStatusCode.OK
         );
     }

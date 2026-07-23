@@ -23,7 +23,7 @@ public class GetByIdStateMasterHandler(
         {
             return ApiResponse<StateMaster?>.FailureResponse
             (
-                messageHelper.InvalidIdEntity("Masters", EntityDescription.State.ToString()),
+                messageHelper.InvalidIdEntity(LocaleEnums.Masters.ToString(), EntityDescription.State.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -34,7 +34,7 @@ public class GetByIdStateMasterHandler(
         {
             return ApiResponse<StateMaster?>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters", EntityDescription.State.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.State.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -42,7 +42,7 @@ public class GetByIdStateMasterHandler(
         return ApiResponse<StateMaster?>.SuccessResponse
         (
             data,
-            messageHelper.RetrievedEntity("Masters", EntityDescription.State.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(), EntityDescription.State.ToString()),
             (int)HttpStatusCode.OK
         );
     }

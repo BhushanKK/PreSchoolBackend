@@ -41,7 +41,7 @@ public class UpdateFinancialYearMasterHandler(
         {
             return ApiResponse<int>.FailureResponse(
                 messageHelper.NotFoundEntity(
-                    "Masters",
+                    LocaleEnums.Masters.ToString(),
                     EntityDescription.FinancialYear.ToString()),
                 (int)HttpStatusCode.NotFound
             );
@@ -57,7 +57,7 @@ public class UpdateFinancialYearMasterHandler(
         {
             return ApiResponse<int>.FailureResponse(
                 messageHelper.AlreadyExistsEntity(
-                    "Masters",
+                    LocaleEnums.Masters.ToString(),
                     EntityDescription.FinancialYear.ToString()),
                 (int)HttpStatusCode.Conflict
             );
@@ -105,7 +105,7 @@ public class UpdateFinancialYearMasterHandler(
         return ApiResponse<int>.SuccessResponse(
             entity.FinancialYearId,
             messageHelper.UpdatedEntity(
-                "Masters",
+                LocaleEnums.Masters.ToString(),
                 EntityDescription.FinancialYear.ToString()),
             (int)HttpStatusCode.OK
         );

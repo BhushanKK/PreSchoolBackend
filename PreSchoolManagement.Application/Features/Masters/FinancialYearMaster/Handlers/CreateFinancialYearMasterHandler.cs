@@ -30,7 +30,7 @@ public class CreateFinancialYearMasterHandler(IFinancialYearMasterService servic
         if (exists)
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.FinancialYear.ToString()), 
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(),EntityDescription.FinancialYear.ToString()), 
                 (int)HttpStatusCode.Conflict
             );
 
@@ -43,7 +43,7 @@ public class CreateFinancialYearMasterHandler(IFinancialYearMasterService servic
         return ApiResponse<int>.SuccessResponse
         (
             entity.FinancialYearId, 
-            messageHelper.AddedEntity("Masters",EntityDescription.FinancialYear.ToString()), 
+            messageHelper.AddedEntity(LocaleEnums.Masters.ToString(),EntityDescription.FinancialYear.ToString()), 
             (int)HttpStatusCode.Created
         );
     }

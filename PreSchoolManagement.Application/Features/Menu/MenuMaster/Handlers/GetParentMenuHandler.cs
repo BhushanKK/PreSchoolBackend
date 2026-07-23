@@ -22,7 +22,7 @@ public sealed class GetParentMenuQueryHandler(
         return ApiResponse<List<ParentMenuDto>>.SuccessResponse
         (
             parentMenus,
-            messageHelper.RetrievedEntity("Masters",EntityDescription.Menu.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Menu.ToString()),
             (int)HttpStatusCode.OK
         );
     }

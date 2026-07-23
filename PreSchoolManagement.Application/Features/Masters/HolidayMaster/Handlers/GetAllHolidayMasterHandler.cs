@@ -19,12 +19,12 @@ public class GetAllHolidayMasterHandler(IHolidayMasterService service,IMessageHe
     {
 
         var Holidays = await service.GetAllAsync(request.filter, cancellationToken);
-        localization.Get("Masters", EntityDescription.Holiday.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(), EntityDescription.Holiday.ToString());
 
         return ApiResponse<List<HolidayMaster>>.SuccessResponse
         (
             Holidays,
-            messageHelper.RetrievedEntity("Masters", EntityDescription.Holiday.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(), EntityDescription.Holiday.ToString()),
             (int)HttpStatusCode.OK
         );
     }

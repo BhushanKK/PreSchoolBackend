@@ -48,7 +48,7 @@ public class CreateMenuMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Menu.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(),EntityDescription.Menu.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -63,7 +63,7 @@ public class CreateMenuMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.MenuId,
-            messageHelper.AddedEntity("Masters",EntityDescription.Menu.ToString()),
+            messageHelper.AddedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Menu.ToString()),
             (int)HttpStatusCode.Created
         );
     }

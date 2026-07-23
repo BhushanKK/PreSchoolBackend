@@ -18,7 +18,7 @@ public class GetAllCasteMasterHandler(
 {
     public async Task<ApiResponse<List<CasteMasterQueryDto>>> Handle(GetAllCasteMasterQuery request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters" ,EntityDescription.Caste.ToString());
+        localization.Get(LocaleEnums.Masters.ToString() ,EntityDescription.Caste.ToString());
 
         var data = await service.GetAllAsync(request.filter, cancellationToken);
         
@@ -27,7 +27,7 @@ public class GetAllCasteMasterHandler(
             return ApiResponse<List<CasteMasterQueryDto>>.SuccessResponse
             (
                 data, 
-                messageHelper.RetrievedEntity("Masters" ,EntityDescription.Caste.ToString()),
+                messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString() ,EntityDescription.Caste.ToString()),
                 (int)HttpStatusCode.OK
             );
         }
@@ -35,7 +35,7 @@ public class GetAllCasteMasterHandler(
         {
             return ApiResponse<List<CasteMasterQueryDto>>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters" ,EntityDescription.Caste.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString() ,EntityDescription.Caste.ToString()),
                 (int)HttpStatusCode.OK
             );
         }

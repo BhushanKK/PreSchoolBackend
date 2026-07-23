@@ -23,7 +23,7 @@ public class DeleteRoleMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Role.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Role.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -33,7 +33,7 @@ public class DeleteRoleMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.RoleId,
-            messageHelper.DeletedEntity("Masters",EntityDescription.Role.ToString()),
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Role.ToString()),
             (int)HttpStatusCode.OK
         );
     }

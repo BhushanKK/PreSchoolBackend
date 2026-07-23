@@ -23,7 +23,7 @@ public class GetAllFinancialYearMasterHandler(
             return ApiResponse<List<FinancialYearMaster>>.SuccessResponse
             (
                 data,
-                messageHelper.RetrievedEntity("Masters", EntityDescription.FinancialYear.ToString()),
+                messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(), EntityDescription.FinancialYear.ToString()),
                 (int)HttpStatusCode.OK
             );
         }
@@ -31,7 +31,7 @@ public class GetAllFinancialYearMasterHandler(
         {
             return ApiResponse<List<FinancialYearMaster>>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters", EntityDescription.FinancialYear.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.FinancialYear.ToString()),
                 (int)HttpStatusCode.OK
             );
         }

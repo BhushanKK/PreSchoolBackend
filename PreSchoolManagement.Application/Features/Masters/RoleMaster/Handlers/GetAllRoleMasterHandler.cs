@@ -23,7 +23,7 @@ public class GetAllRoleMasterHandler(
         return ApiResponse<List<RoleMaster>>.SuccessResponse
         (
             roles,
-            messageHelper.RetrievedEntity("Masters",EntityDescription.Role.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Role.ToString()),
             (int)HttpStatusCode.OK
         );
     }

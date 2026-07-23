@@ -1,5 +1,6 @@
 using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Shared.Extensions;
 using PreSchoolManagement.Shared.Localization;
 
@@ -20,9 +21,9 @@ public class CreateCasteMasterCommandValidator
             .When(x => x.CategoryId.HasValue)
             .WithMessage(
                 localizer.Get(
-                    "ValidationMessages",
+                    LocaleEnums.ValidationMessages.ToString(),
                     "GreaterThan",
-                    localizer.Get("ValidationMessages", "Category"),
+                    localizer.Get(LocaleEnums.ValidationMessages.ToString(), "Category"),
                     "0"));
     }
 }
@@ -45,9 +46,9 @@ public class UpdateCasteMasterCommandValidator
             .When(x => x.CategoryId.HasValue)
             .WithMessage(
                 localizer.Get(
-                    "ValidationMessages",
+                    LocaleEnums.ValidationMessages.ToString(),
                     "GreaterThan",
-                    localizer.Get("ValidationMessages", "Category"),
+                    localizer.Get(LocaleEnums.ValidationMessages.ToString(), "Category"),
                     "0"));
     }
 }

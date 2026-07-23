@@ -22,7 +22,7 @@ public class DeleteBoardMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Board.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Board.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -31,7 +31,7 @@ public class DeleteBoardMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.BoardId,
-            messageHelper.DeletedEntity("Masters",EntityDescription.Board.ToString()
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Board.ToString()
         ),
         (int)HttpStatusCode.OK);
     }

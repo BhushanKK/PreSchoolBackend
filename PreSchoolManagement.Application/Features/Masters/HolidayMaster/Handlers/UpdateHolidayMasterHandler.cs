@@ -25,7 +25,7 @@ public class UpdateHolidayMasterHandler(
         UpdateHolidayMasterCommand request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.Holiday.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(), EntityDescription.Holiday.ToString());
 
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
@@ -44,7 +44,7 @@ public class UpdateHolidayMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters", EntityDescription.Holiday.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.Holiday.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -59,7 +59,7 @@ public class UpdateHolidayMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.Holiday.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(), EntityDescription.Holiday.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -104,7 +104,7 @@ public class UpdateHolidayMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.HolidayId,
-            messageHelper.UpdatedEntity("Masters",EntityDescription.Holiday.ToString()),
+            messageHelper.UpdatedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Holiday.ToString()),
             (int)HttpStatusCode.OK
         );
     }
