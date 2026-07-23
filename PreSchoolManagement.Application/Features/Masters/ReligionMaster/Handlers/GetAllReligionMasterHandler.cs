@@ -7,22 +7,23 @@ using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Localization;
 using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Domain.Models;
 
 public class GetAllRelligionMasterHandler(
     IReligionMasterService service,
     IMessageHelper messageHelper,
     ILocalizationService localization)
-    : IRequestHandler<GetAllReligionMasterQuery, ApiResponse<List<ReligionMaster>>>
+    : IRequestHandler<GetAllReligionMasterQuery, ApiResponse<PaginatedResult<ReligionMaster>>>
 {
 
-    public async Task<ApiResponse<List<ReligionMaster>>> Handle(GetAllReligionMasterQuery request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<PaginatedResult<ReligionMaster>>> Handle(GetAllReligionMasterQuery request, CancellationToken cancellationToken)
     {
         localization.Get(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString());
 
-        var data = await service.GetAllAsync(request.filter, cancellationToken);
+        var data = await service.GetAllAsync(request.Request, cancellationToken);
         if (data != null)
         {
-            return ApiResponse<List<ReligionMaster>>.SuccessResponse
+            return ApiResponse<PaginatedResult<ReligionMaster>>.SuccessResponse
             (
                 data,
                 messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString()),
@@ -31,7 +32,7 @@ public class GetAllRelligionMasterHandler(
         }
         else
         {
-            return ApiResponse<List<ReligionMaster>>.FailureResponse
+            return ApiResponse<PaginatedResult<ReligionMaster>>.FailureResponse
             (
                 messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString()),
                 (int)HttpStatusCode.OK

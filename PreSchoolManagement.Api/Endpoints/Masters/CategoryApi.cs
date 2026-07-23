@@ -1,6 +1,7 @@
 using MediatR;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Api.Endpoints;
 
@@ -11,10 +12,10 @@ public static class CategoryMasterApi
         var group = app.MapGroup("/api/categorymaster")
                        .WithTags("Category Master");
 
-        group.MapGet("/{filter:bool}", GetAll)
+        group.MapGet("/", GetAll)
             .WithName("GetAllCategories")
-            .WithSummary("Get all category masters")
-            .WithDescription("Returns all category master records.")
+            .WithSummary("Get all category masters with pagination")
+            .WithDescription("Returns all category master with paginated records.")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status500InternalServerError)
             .RequireAuthorization();
@@ -46,12 +47,13 @@ public static class CategoryMasterApi
         return app;
     }
 
-    private static async Task<IResult> GetAll(bool filter,
+    private static async Task<IResult> GetAll(
+        [AsParameters] PaginationRequest request,
         ISender sender,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllCategoryMasterQuery(filter),
+            new GetAllCategoryMasterQuery(request),
             cancellationToken);
 
         return TypedResults.Ok(result);

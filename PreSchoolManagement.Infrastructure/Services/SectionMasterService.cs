@@ -5,6 +5,7 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
@@ -13,19 +14,38 @@ public class SectionMasterService(
     ILanguageService languageService)
     : ISectionMasterService
 {
-    public async Task<List<SectionMaster>> GetAllAsync(
-    bool filter = false,
-    CancellationToken cancellationToken = default)
+    public async Task<PaginatedResult<SectionMaster>> GetAllAsync(
+        PaginationRequest request,
+        CancellationToken cancellationToken)
     {
-        var sections = await context.SectionMasters
+        IQueryable<SectionMaster> query = context.SectionMasters
             .AsNoTracking()
-            .Where(x => !filter || x.IsActive)
-            .Include(x => x.Translations)
+            .Include(x => x.Translations);
+
+        if (request.Filter)
+            query = query.Where(x => x.IsActive);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+            query = query.Where(x => x.SectionName.Contains(request.SearchText));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(x => x.SectionId)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
             .ToListAsync(cancellationToken);
 
-        return sections
-            .Select(section => MapSection(section, languageService.CurrentLanguage))
-            .ToList();
+        return new PaginatedResult<SectionMaster>
+        {
+            Items = items
+                .Select(x => MapSection(x, languageService.CurrentLanguage))
+                .ToList(),
+
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
     }
 
     public async Task<SectionMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)

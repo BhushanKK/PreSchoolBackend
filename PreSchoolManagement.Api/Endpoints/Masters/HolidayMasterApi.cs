@@ -1,6 +1,7 @@
 using MediatR;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Api.Endpoints;
 
@@ -13,8 +14,8 @@ public static class HolidayMasterApi
 
         group.MapGet("/", GetAll)
             .WithName("GetAllHolidays")
-            .WithSummary("Get all Holiday masters")
-            .WithDescription("Returns all Holiday master records.")
+            .WithSummary("Get all Holiday masters with Pagination.")
+            .WithDescription("Returns all Holiday master records with Pagination.")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status500InternalServerError)
             .RequireAuthorization();
@@ -47,11 +48,12 @@ public static class HolidayMasterApi
     }
 
     private static async Task<IResult> GetAll(
+        [AsParameters] PaginationRequest request,
         ISender sender,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllHolidayMasterQuery(),
+            new GetAllHolidayMasterQuery(request),
             cancellationToken);
 
         return TypedResults.Ok(result);

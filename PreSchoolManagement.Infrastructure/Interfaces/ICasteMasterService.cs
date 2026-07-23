@@ -1,4 +1,5 @@
 using PreSchoolManagement.Domain.Dtos;
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
 
@@ -6,7 +7,9 @@ namespace PreSchoolManagement.Infrastructure.Interfaces;
 
 public interface ICasteMasterService
 {
-    Task<List<CasteMasterQueryDto>> GetAllAsync(bool applyFilter = false, CancellationToken cancellationToken = default);
+    Task<PaginatedResult<CasteMasterQueryDto>> GetAllAsync(
+        PaginationRequest request,
+        CancellationToken cancellationToken = default);
     Task<CasteMaster?> GetByIdAsync(int id, CancellationToken cancellationToken);
     Task AddAsync(CasteMaster caste, CancellationToken cancellationToken);
     Task UpdateAsync(CasteMaster caste, CancellationToken cancellationToken);

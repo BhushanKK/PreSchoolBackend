@@ -1,6 +1,7 @@
 using MediatR;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Api.Endpoints;
 
@@ -47,11 +48,12 @@ public static class RoleMasterApi
     }
 
     private static async Task<IResult> GetAll(
+        [AsParameters] PaginationRequest request, 
         ISender sender,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllRoleMasterQuery(),
+            new GetAllRoleMasterQuery(request),
             cancellationToken);
 
         return TypedResults.Ok(result);

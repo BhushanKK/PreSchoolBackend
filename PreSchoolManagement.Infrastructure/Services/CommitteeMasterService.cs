@@ -4,18 +4,42 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using SchoolManagement.Domain.Entities;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
 public class CommitteeMasterService(ApplicationDbContext context) : ICommitteeMasterService
 {
-    public async Task<List<CommitteeMaster>> GetAllAsync(
-        bool isFilter = false,
-        CancellationToken cancellationToken = default)
-        => await context.CommitteeMasters
-            .AsNoTracking()
-            .Where(x => !isFilter || x.IsActive)
+    public async Task<PaginatedResult<CommitteeMaster>> GetAllAsync(
+    PaginationRequest request,
+    CancellationToken cancellationToken)
+    {
+        IQueryable<CommitteeMaster> query = context.CommitteeMasters
+            .AsNoTracking();
+
+        if (request.Filter)
+            query = query.Where(x => x.IsActive);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+            query = query.Where(x =>
+                x.CommitteeName.Contains(request.SearchText));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(x => x.CommitteeId)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
             .ToListAsync(cancellationToken);
+
+        return new PaginatedResult<CommitteeMaster>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
+    }
 
     public Task<CommitteeMaster?> GetByIdAsync(
         Guid committeeId,

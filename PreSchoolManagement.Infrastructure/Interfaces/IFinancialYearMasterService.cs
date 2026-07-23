@@ -1,3 +1,4 @@
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
 
@@ -5,7 +6,9 @@ namespace PreSchoolManagement.Infrastructure.Interfaces;
 
 public interface IFinancialYearMasterService
 {
-    Task<List<FinancialYearMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken = default);
+    Task<PaginatedResult<FinancialYearMaster>> GetAllAsync(
+        PaginationRequest request, 
+        CancellationToken cancellationToken);
     Task<FinancialYearMaster?> GetByIdAsync(int id, CancellationToken cancellationToken);
     Task AddAsync(FinancialYearMaster financialYear, CancellationToken cancellationToken);
     Task UpdateAsync(FinancialYearMaster financialYear, CancellationToken cancellationToken);

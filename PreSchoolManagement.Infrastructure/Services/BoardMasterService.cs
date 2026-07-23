@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using PreSchoolManagement.Infrastructure.Interfaces;
@@ -12,22 +13,42 @@ public class BoardMasterService(
     ApplicationDbContext context,
     ILanguageService languageService) : IBoardMasterService
 {
-    public async Task<List<BoardMaster>> GetAllAsync(bool filter = false,
-    CancellationToken cancellationToken = default)
+    public async Task<PaginatedResult<BoardMaster>> GetAllAsync(
+        PaginationRequest request,
+        CancellationToken cancellationToken)
     {
-        var boards = await context.BoardMasters
+        IQueryable<BoardMaster> query = context.BoardMasters
             .AsNoTracking()
-            .Include(x => x.Translations)
-            .Where(x => !filter || x.IsActive)
+            .Include(x => x.Translations);
+
+        if (request.Filter)
+            query = query.Where(x => x.IsActive);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+            query = query.Where(x => x.BoardName.Contains(request.SearchText));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(x => x.BoardId)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
             .ToListAsync(cancellationToken);
 
-        return boards
-            .Select(x => MapBoard(x, languageService.CurrentLanguage))
-            .ToList();
+        return new PaginatedResult<BoardMaster>
+        {
+            Items = items
+                .Select(x => MapBoard(x, languageService.CurrentLanguage))
+                .ToList(),
+
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
     }
 
-public async Task<BoardMaster?> GetByIdAsync(int id,
-    CancellationToken cancellationToken)
+    public async Task<BoardMaster?> GetByIdAsync(int id,
+        CancellationToken cancellationToken)
     {
         return await context.BoardMasters
             .AsNoTracking()

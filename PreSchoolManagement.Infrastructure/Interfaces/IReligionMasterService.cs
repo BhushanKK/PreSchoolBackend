@@ -1,3 +1,4 @@
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
 
@@ -5,7 +6,9 @@ namespace PreSchoolManagement.Infrastructure.Interfaces;
 
 public interface IReligionMasterService
 {
-    Task<List<ReligionMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken = default);
+    Task<PaginatedResult<ReligionMaster>> GetAllAsync(
+        PaginationRequest request, 
+        CancellationToken cancellationToken);
 
     Task<ReligionMaster?> GetByIdAsync(int id, CancellationToken cancellationToken);
 

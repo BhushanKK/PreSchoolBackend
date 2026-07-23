@@ -6,11 +6,8 @@ public class CasteMasterDto
 {
     [JsonIgnore]
     public int CasteId { get; set; }
-
     public int? CategoryId { get; set; }
-
     public string CasteName { get; set; } = string.Empty;
-
     public bool IsActive { get; set; }
     public ICollection<CasteTranslationDto> Translations { get; set; } 
     = new List<CasteTranslationDto>();

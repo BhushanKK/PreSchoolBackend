@@ -1,6 +1,7 @@
 using MediatR;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Api.Endpoints;
 
@@ -11,12 +12,13 @@ public static class AcademicYearMasterApi
         var group = app.MapGroup("/api/AcademicYearmaster")
                        .WithTags("AcademicYear Master");
 
-        group.MapGet("/{filter:bool}", GetAll)
+        group.MapGet("/", GetAll)
             .WithName("GetAllAcademicYears")
-            .WithSummary("Get all AcademicYear masters")
-            .WithDescription("Returns all AcademicYear master records.")
+            .WithSummary("Get Academic Year list with pagination")
+            .WithDescription("Returns paginated Academic Year records.")
             .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status500InternalServerError).RequireAuthorization();
+            .Produces(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization();
 
         group.MapGet("/{id:int}", GetById)
             .WithName("GetAcademicYearById")
@@ -45,12 +47,13 @@ public static class AcademicYearMasterApi
         return app;
     }
 
-    private static async Task<IResult> GetAll(bool filter,
+    private static async Task<IResult> GetAll(
+        [AsParameters] PaginationRequest request,
         ISender sender,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllAcademicYearMasterQuery(filter),
+            new GetAllAcademicYearMasterQuery(request),
             cancellationToken);
 
         return TypedResults.Ok(result);
@@ -85,7 +88,7 @@ public static class AcademicYearMasterApi
         UpdateAcademicYearMasterCommand request,
         ISender sender,
         CancellationToken cancellationToken)
-    {   
+    {
         request.AcademicYearId = id;
         var result = await sender.Send(
             request,

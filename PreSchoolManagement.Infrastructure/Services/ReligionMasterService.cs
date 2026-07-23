@@ -5,23 +5,45 @@ using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Common;
 using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
 public class ReligionMasterService(ApplicationDbContext context,ILanguageService languageService) 
 : IReligionMasterService
 {
-    public async Task<List<ReligionMaster>> GetAllAsync(bool filter = false, 
-    CancellationToken cancellationToken = default)
+    public async Task<PaginatedResult<ReligionMaster>> GetAllAsync(
+        PaginationRequest request,
+        CancellationToken cancellationToken)
     {
-         var religions = await context.ReligionMasters
+        IQueryable<ReligionMaster> query = context.ReligionMasters
             .AsNoTracking()
-            .Include(x => x.Translations)
+            .Include(x => x.Translations);
+
+        if (request.Filter)
+            query = query.Where(x => x.IsActive);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+            query = query.Where(x => x.ReligionName.Contains(request.SearchText));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(x => x.ReligionId)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
             .ToListAsync(cancellationToken);
 
-        return religions
-            .Select(religion => MapReligion(religion, languageService.CurrentLanguage))
-            .ToList();
+        return new PaginatedResult<ReligionMaster>
+        {
+            Items = items
+                .Select(x => MapReligion(x, languageService.CurrentLanguage))
+                .ToList(),
+
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
     }
 
     public async Task<ReligionMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)

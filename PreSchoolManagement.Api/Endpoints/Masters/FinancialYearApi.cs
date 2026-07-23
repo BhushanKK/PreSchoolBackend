@@ -1,6 +1,7 @@
 using MediatR;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Api.Endpoints;
 
@@ -11,10 +12,10 @@ public static class FinancialYearMasterApi
         var group = app.MapGroup("/api/FinancialYearmaster")
                        .WithTags("FinancialYear Master");
 
-        group.MapGet("/{filter:bool}", GetAll)
+        group.MapGet("/", GetAll)
             .WithName("GetAllFinancialYears")
-            .WithSummary("Get all FinancialYear masters")
-            .WithDescription("Returns all FinancialYear master records.")
+            .WithSummary("Get all FinancialYear masters with pagination")
+            .WithDescription("Returns all FinancialYear master records with pagination.")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status500InternalServerError).RequireAuthorization();
 
@@ -45,12 +46,13 @@ public static class FinancialYearMasterApi
         return app;
     }
 
-    private static async Task<IResult> GetAll(bool filter,
+    private static async Task<IResult> GetAll(
+        [AsParameters] PaginationRequest request,
         ISender sender,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllFinancialYearMasterQuery(filter),
+            new GetAllFinancialYearMasterQuery(request),
             cancellationToken);
 
         return TypedResults.Ok(result);

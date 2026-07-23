@@ -1,8 +1,9 @@
 using MediatR;
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.ResponseModels;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Queries;
 
-public sealed record GetAllSectionMasterQuery(bool filter = false)
-: IRequest<ApiResponse<List<SectionMaster>>>;
+public sealed record GetAllSectionMasterQuery(PaginationRequest Request)
+    : IRequest<ApiResponse<PaginatedResult<SectionMaster>>>;

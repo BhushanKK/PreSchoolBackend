@@ -1,3 +1,4 @@
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
 
@@ -5,7 +6,9 @@ namespace PreSchoolManagement.Infrastructure.Interfaces;
 
 public interface IMediumMasterService
 {
-    Task<List<MediumMaster>> GetAllAsync (CancellationToken cancellationToken);
+    Task<PaginatedResult<MediumMaster>> GetAllAsync(
+        PaginationRequest request, 
+        CancellationToken cancellationToken);
 
     Task<MediumMaster?>GetByIdAsync (int id,CancellationToken cancellationToken);
 

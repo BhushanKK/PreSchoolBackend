@@ -4,4 +4,7 @@ using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Queries;
 
-public sealed record GetAllMediumMasterQuery : IRequest<ApiResponse<List<MediumMaster>>>;
+public sealed record GetByIdMediumMasterQuery(int mediumId) 
+    : IRequest<ApiResponse<MediumMaster?>>;
+
+

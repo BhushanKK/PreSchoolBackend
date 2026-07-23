@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using PreSchoolManagement.Infrastructure.Interfaces;
@@ -11,16 +12,38 @@ namespace PreSchoolManagement.Infrastructure.Services;
 public  class MediumMasterService(ApplicationDbContext context,ILanguageService languageService)
 :IMediumMasterService
 {
-    public async Task<List<MediumMaster>>GetAllAsync(CancellationToken cancellationToken)
+    public async Task<PaginatedResult<MediumMaster>> GetAllAsync(
+        PaginationRequest request,
+        CancellationToken cancellationToken)
     {
-        var mediums = await context.MediumMasters
+        IQueryable<MediumMaster> query = context.MediumMasters
             .AsNoTracking()
-            .Include(x => x.Translations)
+            .Include(x => x.Translations);
+
+        if (request.Filter)
+            query = query.Where(x => x.IsActive);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+            query = query.Where(x => x.MediumName.Contains(request.SearchText));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(x => x.MediumId)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
             .ToListAsync(cancellationToken);
 
-        return mediums
-            .Select(medium => MapMedium(medium, languageService.CurrentLanguage))
-            .ToList();
+        return new PaginatedResult<MediumMaster>
+        {
+            Items = items
+                .Select(x => MapMedium(x, languageService.CurrentLanguage))
+                .ToList(),
+
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
     }
 
     public async Task<MediumMaster?> GetByIdAsync(int id,CancellationToken cancellationToken)

@@ -5,21 +5,45 @@ using PreSchoolManagement.Infrastructure.Data;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
 public class StateMasterService(ApplicationDbContext context,
 ILanguageService languageService):IStateMasterService
 {
-    public async Task<List<StateMaster>> GetAllAsync(
-        CancellationToken cancellationToken )
+    public async Task<PaginatedResult<StateMaster>> GetAllAsync(
+        PaginationRequest request,
+        CancellationToken cancellationToken)
     {
-        var states = await context.StateMasters
+        IQueryable<StateMaster> query = context.StateMasters
             .AsNoTracking()
-            .Include(x => x.Translations)
+            .Include(x => x.Translations);
+
+        if (request.Filter)
+            query = query.Where(x => x.IsActive);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+            query = query.Where(x => x.StateName.Contains(request.SearchText));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(x => x.StateId)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
             .ToListAsync(cancellationToken);
-        
-        return states.Select(x => MapState(x, languageService.CurrentLanguage)).ToList();
+
+        return new PaginatedResult<StateMaster>
+        {
+            Items = items
+                .Select(x => MapState(x, languageService.CurrentLanguage))
+                .ToList(),
+
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
     }
 
     public async Task<StateMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)

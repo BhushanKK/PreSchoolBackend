@@ -6,21 +6,22 @@ using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class GetAllFinancialYearMasterHandler(
     IFinancialYearMasterService service,
     IMessageHelper messageHelper)
-    : IRequestHandler<GetAllFinancialYearMasterQuery, ApiResponse<List<FinancialYearMaster>>>
+    : IRequestHandler<GetAllFinancialYearMasterQuery, ApiResponse<PaginatedResult<FinancialYearMaster>>>
 {
-    public async Task<ApiResponse<List<FinancialYearMaster>>> Handle(GetAllFinancialYearMasterQuery request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<PaginatedResult<FinancialYearMaster>>> Handle(GetAllFinancialYearMasterQuery request, CancellationToken cancellationToken)
     {
-        var data = await service.GetAllAsync(request.filter, cancellationToken);
+        var data = await service.GetAllAsync(request.Request, cancellationToken);
 
         if (data != null)
         {
-            return ApiResponse<List<FinancialYearMaster>>.SuccessResponse
+            return ApiResponse<PaginatedResult<FinancialYearMaster>>.SuccessResponse
             (
                 data,
                 messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(), EntityDescription.FinancialYear.ToString()),
@@ -29,7 +30,7 @@ public class GetAllFinancialYearMasterHandler(
         }
         else
         {
-            return ApiResponse<List<FinancialYearMaster>>.FailureResponse
+            return ApiResponse<PaginatedResult<FinancialYearMaster>>.FailureResponse
             (
                 messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.FinancialYear.ToString()),
                 (int)HttpStatusCode.OK

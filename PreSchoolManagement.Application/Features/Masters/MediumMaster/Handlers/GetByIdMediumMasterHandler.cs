@@ -19,15 +19,15 @@ public class GetByIdMediumMasterHandler(
     public async Task<ApiResponse<MediumMaster?>> Handle(
         GetByIdMediumMasterQuery request,CancellationToken cancellationToken)
     {
-        localization.Get(LocaleEnums.Masters.ToString(),EntityDescription.Medium.ToString());
+        localization.Get("Masters",EntityDescription.Medium.ToString());
 
-        var medium = await service.GetByIdAsync(request.MediumId,cancellationToken);
+        var medium = await service.GetByIdAsync(request.mediumId,cancellationToken);
 
         if (medium is null)
         {
             return ApiResponse<MediumMaster?>.FailureResponse
             (
-                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Medium.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.Medium.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -35,7 +35,7 @@ public class GetByIdMediumMasterHandler(
         return ApiResponse<MediumMaster?>.SuccessResponse
         (
             medium,
-            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Medium.ToString()),
+            messageHelper.RetrievedEntity("Masters",EntityDescription.Medium.ToString()),
             (int)HttpStatusCode.OK
         );
     }

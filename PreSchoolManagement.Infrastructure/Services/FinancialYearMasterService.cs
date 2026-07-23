@@ -5,6 +5,7 @@ using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using Serilog;
 using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
@@ -12,19 +13,38 @@ public class FinancialYearMasterService(
     ApplicationDbContext context,
     ILanguageService languageService) : IFinancialYearMasterService
 {
-    public async Task<List<FinancialYearMaster>> GetAllAsync(
-        bool filter,
+    public async Task<PaginatedResult<FinancialYearMaster>> GetAllAsync(
+        PaginationRequest request,
         CancellationToken cancellationToken)
     {
-        var financialYears = await context.FinancialYearMasters
+        IQueryable<FinancialYearMaster> query = context.FinancialYearMasters
             .AsNoTracking()
-            .Where(x => !filter || x.IsActive)
-            .Include(x => x.Translations)
+            .Include(x => x.Translations);
+
+        if (request.Filter)
+            query = query.Where(x => x.IsActive);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+            query = query.Where(x => x.FinancialYearName.Contains(request.SearchText));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(x => x.FinancialYearId)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
             .ToListAsync(cancellationToken);
 
-        return financialYears
-            .Select(year => MapFinancialYear(year, languageService.CurrentLanguage))
-            .ToList();
+        return new PaginatedResult<FinancialYearMaster>
+        {
+            Items = items
+                .Select(x => MapFinancialYear(x, languageService.CurrentLanguage))
+                .ToList(),
+
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
     }
 
     public async Task<FinancialYearMaster?> GetByIdAsync(

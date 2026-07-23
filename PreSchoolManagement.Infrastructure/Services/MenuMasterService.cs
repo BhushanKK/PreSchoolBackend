@@ -100,20 +100,14 @@ public class MenuMasterService(
         try
         {
             await context.MenuMasters.AddAsync(menuMaster, cancellationToken);
-
             await context.SaveChangesAsync(cancellationToken);
-
             await transaction.CommitAsync(cancellationToken);
-
             return menuMaster;
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
-
-            Log.Error(ex,
-                "An error occurred while adding menu master.");
-
+            Log.Error(ex,"An error occurred while adding menu master.");
             throw;
         }
     }

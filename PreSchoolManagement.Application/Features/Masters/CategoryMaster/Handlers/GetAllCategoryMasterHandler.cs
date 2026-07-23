@@ -1,6 +1,7 @@
 using System.Net;
 using MediatR;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
@@ -12,30 +13,21 @@ namespace PreSchoolManagement.Application.Features.Handlers;
 public class GetAllCategoryMasterHandler(
     ICategoryMasterService service,
     IMessageHelper messageHelper)
-    : IRequestHandler<GetAllCategoryMasterQuery, ApiResponse<List<CategoryMaster>>>
+    : IRequestHandler<GetAllCategoryMasterQuery,
+      ApiResponse<PaginatedResult<CategoryMaster>>>
 {
-    public async Task<ApiResponse<List<CategoryMaster>>> Handle(
+    public async Task<ApiResponse<PaginatedResult<CategoryMaster>>> Handle(
         GetAllCategoryMasterQuery request,
         CancellationToken cancellationToken)
     {
-        var data = await service.GetAllAsync(request.filter,cancellationToken);
+        var result = await service.GetAllAsync(request.Request,cancellationToken);
 
-        if (data != null)
-        {
-            return ApiResponse<List<CategoryMaster>>.SuccessResponse
-            (
-                data,
-                messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Category.ToString()),
-                (int)HttpStatusCode.OK
-            );
-        }
-        else
-        {
-            return ApiResponse<List<CategoryMaster>>.FailureResponse
-            (
-                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Category.ToString()),
-                (int)HttpStatusCode.OK
-            );
-        }
+        return ApiResponse<PaginatedResult<CategoryMaster>>.SuccessResponse
+        (
+            result,
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),
+            EntityDescription.AcademicYear.ToString()),
+            (int)HttpStatusCode.OK
+        );
     }
 }

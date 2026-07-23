@@ -1,8 +1,10 @@
 using MediatR;
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.ResponseModels;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Queries;
 
-public sealed record GetAllCommitteeMasterQuery(bool filter= false)
-: IRequest<ApiResponse<List<CommitteeMaster>>>;
+public sealed record GetAllCommitteeMasterQuery(
+PaginationRequest Request)
+: IRequest<ApiResponse<PaginatedResult<CommitteeMaster>>>;

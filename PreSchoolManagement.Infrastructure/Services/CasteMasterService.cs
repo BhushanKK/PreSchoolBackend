@@ -6,6 +6,7 @@ using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Domain.Dtos;
 using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
@@ -13,50 +14,75 @@ public class CasteMasterService(
     ApplicationDbContext context,
     ILanguageService languageService) : ICasteMasterService
 {
-    public async Task<List<CasteMasterQueryDto>> GetAllAsync(
-    bool applyFilter = false,
+    public async Task<PaginatedResult<CasteMasterQueryDto>> GetAllAsync(
+    PaginationRequest request,
     CancellationToken cancellationToken = default)
-{
-    var language = languageService.CurrentLanguage;
+    {
+        var language = languageService.CurrentLanguage;
 
-    var query =
-        from caste in context.CasteMasters.AsNoTracking()
+        var query =
+            from caste in context.CasteMasters.AsNoTracking()
 
-        join category in context.CategoryMasters.AsNoTracking()
-            on caste.CategoryId equals category.CategoryId
+            join category in context.CategoryMasters.AsNoTracking()
+                on caste.CategoryId equals category.CategoryId
 
-        join casteTranslation in context.CasteTranslations.AsNoTracking()
-            .Where(x => x.LanguageCode == language)
-            on caste.CasteId equals casteTranslation.CasteId into ct
-        from casteTranslation in ct.DefaultIfEmpty()
+            join casteTranslation in context.CasteTranslations.AsNoTracking()
+                .Where(x => x.LanguageCode == language)
+                on caste.CasteId equals casteTranslation.CasteId into ct
+            from casteTranslation in ct.DefaultIfEmpty()
 
-        join categoryTranslation in context.CategoryTranslations.AsNoTracking()
-            .Where(x => x.LanguageCode == language)
-            on category.CategoryId equals categoryTranslation.CategoryId into cat
-        from categoryTranslation in cat.DefaultIfEmpty()
+            join categoryTranslation in context.CategoryTranslations.AsNoTracking()
+                .Where(x => x.LanguageCode == language)
+                on category.CategoryId equals categoryTranslation.CategoryId into cat
+            from categoryTranslation in cat.DefaultIfEmpty()
 
-        where !applyFilter || caste.IsActive
+            where !request.Filter || caste.IsActive
 
-        orderby caste.CategoryId
+            select new CasteMasterQueryDto
+            {
+                CasteId = caste.CasteId,
+                CategoryId = category.CategoryId,
 
-        select new CasteMasterQueryDto
+                CategoryName = categoryTranslation != null
+                    ? categoryTranslation.CategoryName
+                    : category.CategoryName,
+
+                CasteName = casteTranslation != null
+                    ? casteTranslation.CasteName
+                    : caste.CasteName,
+
+                IsActive = caste.IsActive
+            };
+
+        // Search
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
         {
-            CasteId = caste.CasteId,
-            CategoryId = category.CategoryId,
+            var search = request.SearchText.Trim().ToLower();
 
-            CategoryName = categoryTranslation != null
-                ? categoryTranslation.CategoryName
-                : category.CategoryName,
+            query = query.Where(x =>
+                x.CasteName.ToLower().Contains(search) ||
+                x.CategoryName.ToLower().Contains(search));
+        }
 
-            CasteName = casteTranslation != null
-                ? casteTranslation.CasteName
-                : caste.CasteName,
+        // Total records
+        var totalCount = await query.CountAsync(cancellationToken);
 
-            IsActive = caste.IsActive
+        // Paging
+        var items = await query
+            .OrderBy(x => x.CategoryName)
+            .ThenBy(x => x.CasteName)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .ToListAsync(cancellationToken);
+
+        return new PaginatedResult<CasteMasterQueryDto>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
         };
-
-    return await query.ToListAsync(cancellationToken);
-}
+    }
 
     public async Task<CasteMaster?> GetByIdAsync(
         int id,

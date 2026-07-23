@@ -1,6 +1,7 @@
 using System.Net;
 using MediatR;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
@@ -12,18 +13,20 @@ namespace PreSchoolManagement.Application.Features.Handlers;
 public class GetAllAcademicYearMasterHandler(
     IAcademicYearMasterService service,
     IMessageHelper messageHelper)
-    : IRequestHandler<GetAllAcademicYearMasterQuery, ApiResponse<List<AcademicYearMaster>>>
+    : IRequestHandler<GetAllAcademicYearMasterQuery,
+      ApiResponse<PaginatedResult<AcademicYearMaster>>>
 {
-    public async Task<ApiResponse<List<AcademicYearMaster>>> Handle(
+    public async Task<ApiResponse<PaginatedResult<AcademicYearMaster>>> Handle(
         GetAllAcademicYearMasterQuery request,
         CancellationToken cancellationToken)
     {
-        var academicYears = await service.GetAllAsync(request.filter, cancellationToken);
+        var result = await service.GetAllAsync(request.Request,cancellationToken);
 
-        return ApiResponse<List<AcademicYearMaster>>.SuccessResponse
+        return ApiResponse<PaginatedResult<AcademicYearMaster>>.SuccessResponse
         (
-            academicYears,
-            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(), EntityDescription.AcademicYear.ToString()),
+            result,
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),
+            EntityDescription.AcademicYear.ToString()),
             (int)HttpStatusCode.OK
         );
     }

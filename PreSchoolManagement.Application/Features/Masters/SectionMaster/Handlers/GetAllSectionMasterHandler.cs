@@ -6,21 +6,22 @@ using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Shared.Common;
 using SchoolManagement.Domain.Entities;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class GetAllSectionMasterHandler(
     ISectionMasterService service,
     IMessageHelper messageHelper)
-    : IRequestHandler<GetAllSectionMasterQuery, ApiResponse<List<SectionMaster>>>
+    : IRequestHandler<GetAllSectionMasterQuery, ApiResponse<PaginatedResult<SectionMaster>>>
 {
-    public async Task<ApiResponse<List<SectionMaster>>> Handle(
+    public async Task<ApiResponse<PaginatedResult<SectionMaster>>> Handle(
         GetAllSectionMasterQuery request,
         CancellationToken cancellationToken)
     {
-        var Sections = await service.GetAllAsync(request.filter,cancellationToken);
+        var Sections = await service.GetAllAsync(request.Request,cancellationToken);
 
-        return ApiResponse<List<SectionMaster>>.SuccessResponse
+        return ApiResponse<PaginatedResult<SectionMaster>>.SuccessResponse
         (
             Sections,
             messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Section.ToString()),

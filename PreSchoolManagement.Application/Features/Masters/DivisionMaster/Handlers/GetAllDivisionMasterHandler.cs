@@ -7,6 +7,7 @@ using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Shared.Localization;
 using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
@@ -14,29 +15,29 @@ public class GetAllDivisionMasterHandler(
     IDivisionMasterService service,
     IMessageHelper messageHelper,
     ILocalizationService localization)
-    : IRequestHandler<GetAllDivisionMasterQuery, ApiResponse<List<DivisionMaster>>>
+    : IRequestHandler<GetAllDivisionMasterQuery, ApiResponse<PaginatedResult<DivisionMaster>>>
 {
-    public async Task<ApiResponse<List<DivisionMaster>>> Handle(
+    public async Task<ApiResponse<PaginatedResult<DivisionMaster>>> Handle(
         GetAllDivisionMasterQuery request,
         CancellationToken cancellationToken)
     {
-        localization.Get(LocaleEnums.Masters.ToString(),EntityDescription.Division.ToString());
+        localization.Get("Masters",EntityDescription.Division.ToString());
 
-        var Divisions = await service.GetAllAsync(request.filter, cancellationToken);
+        var Divisions = await service.GetAllAsync(request.Request, cancellationToken);
         
         if(Divisions is null)
         {
-            return ApiResponse<List<DivisionMaster>>.SuccessResponse
+            return ApiResponse<PaginatedResult<DivisionMaster>>.SuccessResponse
             (
                 Divisions,
-                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Division.ToString()),
+                messageHelper.NotFoundEntity("Masters",EntityDescription.Division.ToString()),
                 (int)HttpStatusCode.OK
             );    
         }
-        return ApiResponse<List<DivisionMaster>>.SuccessResponse
+        return ApiResponse<PaginatedResult<DivisionMaster>>.SuccessResponse
         (
             Divisions,
-            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Division.ToString()),
+            messageHelper.RetrievedEntity("Masters",EntityDescription.Division.ToString()),
             (int)HttpStatusCode.OK
         );
     }

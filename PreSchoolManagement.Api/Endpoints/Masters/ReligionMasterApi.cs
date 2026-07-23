@@ -1,6 +1,7 @@
 using MediatR;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 namespace PreSchoolManagement.Api.Endpoints;
 
 public static class ReligionMasterApi
@@ -10,10 +11,10 @@ public static class ReligionMasterApi
         var group = app.MapGroup("/api/Religionmaster")
                        .WithTags("Religion Master");
 
-        group.MapGet("/{filter:bool}", GetAll)
+        group.MapGet("/", GetAll)
             .WithName("GetAllReligions")
-            .WithSummary("Get all Religion masters")
-            .WithDescription("Returns all Religion master records.")
+            .WithSummary("Get all Religion masters with Pagination.")
+            .WithDescription("Returns all Religion master records with Pagination.")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status500InternalServerError);
 
@@ -40,12 +41,13 @@ public static class ReligionMasterApi
         return app;
     }
 
-    private static async Task<IResult> GetAll(bool filter,
+    private static async Task<IResult> GetAll(
+        [AsParameters] PaginationRequest request, 
         ISender sender,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllReligionMasterQuery(filter),
+            new GetAllReligionMasterQuery(request),
             cancellationToken);
 
         return TypedResults.Ok(result);

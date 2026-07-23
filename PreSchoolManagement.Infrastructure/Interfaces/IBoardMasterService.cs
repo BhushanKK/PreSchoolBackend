@@ -1,3 +1,5 @@
+using PreSchoolManagement.Domain.Dtos;
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.Utils;
 using SchoolManagement.Domain.Entities;
 
@@ -5,7 +7,10 @@ namespace PreSchoolManagement.Infrastructure.Interfaces;
 
 public interface IBoardMasterService
 {
-    Task<List<BoardMaster>> GetAllAsync(bool filter = false, CancellationToken cancellationToken = default);
+    Task<PaginatedResult<BoardMaster>> GetAllAsync(
+        PaginationRequest request,
+        CancellationToken cancellationToken = default);
+
     Task<BoardMaster?> GetByIdAsync(int id, CancellationToken cancellationToken);
     Task AddAsync(BoardMaster board, CancellationToken cancellationToken);
     Task UpdateAsync(BoardMaster board, CancellationToken cancellationToken);
