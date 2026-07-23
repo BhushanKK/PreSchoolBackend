@@ -102,7 +102,7 @@ public class UpdateCasteMasterHandler(
 
         return ApiResponse<int>.SuccessResponse
         (
-            entity.CasteID,
+            entity.CasteId,
             messageHelper.UpdatedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Caste.ToString()),
             (int)HttpStatusCode.OK
         );

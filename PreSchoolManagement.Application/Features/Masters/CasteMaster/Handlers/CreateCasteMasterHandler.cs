@@ -40,7 +40,7 @@ public class CreateCasteMasterHandler(
 
         return ApiResponse<int>.SuccessResponse
         (
-            entity.CasteID, 
+            entity.CasteId, 
             messageHelper.AddedEntity(LocaleEnums.Masters.ToString() ,EntityDescription.Caste.ToString()), 
             (int)HttpStatusCode.Created
         );

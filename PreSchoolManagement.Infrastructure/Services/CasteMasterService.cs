@@ -23,11 +23,11 @@ public class CasteMasterService(
         from caste in context.CasteMasters.AsNoTracking()
 
         join category in context.CategoryMasters.AsNoTracking()
-            on caste.CategoryID equals category.CategoryId
+            on caste.CategoryId equals category.CategoryId
 
         join casteTranslation in context.CasteTranslations.AsNoTracking()
             .Where(x => x.LanguageCode == language)
-            on caste.CasteID equals casteTranslation.CasteID into ct
+            on caste.CasteId equals casteTranslation.CasteId into ct
         from casteTranslation in ct.DefaultIfEmpty()
 
         join categoryTranslation in context.CategoryTranslations.AsNoTracking()
@@ -37,11 +37,11 @@ public class CasteMasterService(
 
         where !applyFilter || caste.IsActive
 
-        orderby caste.CategoryID
+        orderby caste.CategoryId
 
         select new CasteMasterQueryDto
         {
-            CasteId = caste.CasteID,
+            CasteId = caste.CasteId,
             CategoryId = category.CategoryId,
 
             CategoryName = categoryTranslation != null
@@ -62,14 +62,10 @@ public class CasteMasterService(
         int id,
         CancellationToken cancellationToken)
     {
-        var castes = await context.CasteMasters
+        return await context.CasteMasters
             .AsNoTracking()
             .Include(x => x.Translations)
-            .FirstOrDefaultAsync(x => x.CasteID == id, cancellationToken);
-
-        return castes is null
-            ? null
-            : MapCaste(castes, languageService.CurrentLanguage);
+            .FirstOrDefaultAsync(x => x.CasteId == id, cancellationToken);
     }
 
     public async Task AddAsync(CasteMaster caste, CancellationToken cancellationToken)
@@ -127,19 +123,19 @@ public class CasteMasterService(
     }
 
     public Task<bool> IsExistsAsync(string caste, OperationType operation, int? casteId, CancellationToken cancellationToken)
-        => context.CasteMasters.AnyAsync(x => x.CasteName == caste && (casteId == null || x.CasteID != casteId), cancellationToken);
+        => context.CasteMasters.AnyAsync(x => x.CasteName == caste && (casteId == null || x.CasteId != casteId), cancellationToken);
 
     public async Task<CasteMaster?> GetForUpdateAsync(int id,
     CancellationToken cancellationToken)
     => await context.CasteMasters
         .Include(x => x.Translations)
-        .FirstOrDefaultAsync(x => x.CasteID == id, cancellationToken);
+        .FirstOrDefaultAsync(x => x.CasteId == id, cancellationToken);
 
     private CasteMaster MapCaste(CasteMaster caste, string language)
     {
         return new CasteMaster
         {
-            CasteID = caste.CasteID,
+            CasteId = caste.CasteId,
             CasteName = TranslationHelper.GetTranslatedValue(
                 caste.Translations,
                 language,
