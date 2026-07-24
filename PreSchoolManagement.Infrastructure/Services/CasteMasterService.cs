@@ -20,54 +20,42 @@ public class CasteMasterService(
     {
         var language = languageService.CurrentLanguage;
 
-        var query =
-            from caste in context.CasteMasters.AsNoTracking()
-
-            join category in context.CategoryMasters.AsNoTracking()
-                on caste.CategoryId equals category.CategoryId
-
-            join casteTranslation in context.CasteTranslations.AsNoTracking()
-                .Where(x => x.LanguageCode == language)
-                on caste.CasteId equals casteTranslation.CasteId into ct
-            from casteTranslation in ct.DefaultIfEmpty()
-
-            join categoryTranslation in context.CategoryTranslations.AsNoTracking()
-                .Where(x => x.LanguageCode == language)
-                on category.CategoryId equals categoryTranslation.CategoryId into cat
-            from categoryTranslation in cat.DefaultIfEmpty()
-
-            where !request.Filter || caste.IsActive
-
-            select new CasteMasterQueryDto
+        var query = context.CasteMasters
+            .AsNoTracking()
+            .Where(x => !request.Filter || x.IsActive)
+            .Select(caste => new CasteMasterQueryDto
             {
                 CasteId = caste.CasteId,
-                CategoryId = category.CategoryId,
+                CategoryId = caste.CategoryId,
 
-                CategoryName = categoryTranslation != null
-                    ? categoryTranslation.CategoryName
-                    : category.CategoryName,
+                CategoryName =
+                    caste.Category.Translations
+                        .Where(t => t.LanguageCode == language)
+                        .Select(t => t.CategoryName)
+                        .FirstOrDefault()
+                    ?? caste.Category.CategoryName,
 
-                CasteName = casteTranslation != null
-                    ? casteTranslation.CasteName
-                    : caste.CasteName,
+                CasteName =
+                    caste.Translations
+                        .Where(t => t.LanguageCode == language)
+                        .Select(t => t.CasteName)
+                        .FirstOrDefault()
+                    ?? caste.CasteName,
 
                 IsActive = caste.IsActive
-            };
+            });
 
-        // Search
         if (!string.IsNullOrWhiteSpace(request.SearchText))
         {
-            var search = request.SearchText.Trim().ToLower();
+            var search = $"%{request.SearchText.Trim()}%";
 
             query = query.Where(x =>
-                x.CasteName.ToLower().Contains(search) ||
-                x.CategoryName.ToLower().Contains(search));
+                EF.Functions.Like(x.CasteName, search) ||
+                EF.Functions.Like(x.CategoryName, search));
         }
 
-        // Total records
         var totalCount = await query.CountAsync(cancellationToken);
 
-        // Paging
         var items = await query
             .OrderBy(x => x.CategoryName)
             .ThenBy(x => x.CasteName)

@@ -10,6 +10,7 @@ public class DistrictMaster : BaseEntity
     public bool IsActive { get; set; } = false;
     public virtual ICollection<DistrictTranslation> Translations { get; set; }
         = new List<DistrictTranslation>();
+    public virtual StateMaster State { get; set; } = null!;
 }
 
 public class DistrictTranslation
