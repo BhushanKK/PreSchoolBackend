@@ -11,6 +11,8 @@ using PreSchoolManagement.Infrastructure.Data;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using PreSchoolManagement.Shared.Localization;
+using System.IO.Compression;
+using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,6 +73,25 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+});
+
+builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
+{
+    options.Level = CompressionLevel.Fastest;
+});
+
+builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+{
+    options.Level = CompressionLevel.Fastest;
+});
+
+
 var app = builder.Build();
 
 var supportedCultures = new[]
@@ -93,6 +114,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.UseCors("ReactPolicy");
 app.UseStaticFiles();
+app.UseResponseCompression();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<AuditMiddleware>();

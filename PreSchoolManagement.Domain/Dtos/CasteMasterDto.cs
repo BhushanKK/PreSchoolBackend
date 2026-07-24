@@ -31,3 +31,9 @@ public class CasteTranslationDto
     public int? CasteTranslationId {get;set;}
     public int? CasteId {get;set;}
 }
+
+public class CasteDropdownDto
+{
+    public int CasteId { get; set; }
+    public string CasteName { get; set; } = string.Empty;
+}

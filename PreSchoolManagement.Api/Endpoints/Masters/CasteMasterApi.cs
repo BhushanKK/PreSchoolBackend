@@ -20,6 +20,14 @@ public static class CasteMasterApi
             .Produces(StatusCodes.Status500InternalServerError)
             .RequireAuthorization();
 
+        group.MapGet("/dropdown", GetAllActiveCastes)
+            .WithName("GetAllActiveCastes")
+            .WithSummary("Get all active caste for dropdowns.")
+            .WithDescription("Returns paginated active caste.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization();
+
         group.MapGet("/{id:int}", GetById)
             .WithName("GetCasteById")
             .WithSummary("Get caste by Id")
@@ -58,7 +66,16 @@ public static class CasteMasterApi
 
         return TypedResults.Ok(result);
     }
+    private static async Task<IResult> GetAllActiveCastes(
+        ISender sender,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new GetCasteDropdownQuery(),
+            cancellationToken);
 
+        return TypedResults.Ok(result);
+    }
     private static async Task<IResult> GetById(
         int id,
         ISender sender,

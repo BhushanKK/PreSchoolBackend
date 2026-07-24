@@ -17,3 +17,9 @@ public class CategoryTranslationDto
     public string CategoryName { get; set; } = string.Empty;
     public string LanguageCode { get; set; } = string.Empty;
 }
+
+public class CategoryDropdownDto
+{
+    public int CategoryId { get; set; }
+    public string CategoryName { get; set; } = string.Empty;
+}

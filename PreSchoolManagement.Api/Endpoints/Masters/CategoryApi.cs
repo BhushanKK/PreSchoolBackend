@@ -20,6 +20,14 @@ public static class CategoryMasterApi
             .Produces(StatusCodes.Status500InternalServerError)
             .RequireAuthorization();
 
+        group.MapGet("/dropdown", GetAllActiveCategories)
+            .WithName("GetActiveCategories")
+            .WithSummary("Get all active category for dropdown.")
+            .WithDescription("Returns all active category for dropdown.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization();
+
         group.MapGet("/{id:int}", GetById)
             .WithName("GetCategoryById")
             .WithSummary("Get category by Id")
@@ -54,6 +62,17 @@ public static class CategoryMasterApi
     {
         var result = await sender.Send(
             new GetAllCategoryMasterQuery(request),
+            cancellationToken);
+
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<IResult> GetAllActiveCategories(
+        ISender sender,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new GetCategoryDropdownQuery(),
             cancellationToken);
 
         return TypedResults.Ok(result);

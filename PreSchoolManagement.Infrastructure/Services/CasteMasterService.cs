@@ -84,18 +84,36 @@ public class CasteMasterService(
         };
     }
 
+    public async Task<List<CasteDropdownDto>> GetActiveCastesAsync(
+    CancellationToken cancellationToken)
+    {
+        var roles = await context.CasteMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.CasteName)
+            .ToListAsync(cancellationToken);
+
+        return roles.Select(x => new CasteDropdownDto
+        {
+            CasteId = x.CasteId,
+            CasteName = TranslationHelper.GetTranslatedValue(
+                x.Translations,
+                languageService.CurrentLanguage,
+                t => t.LanguageCode,
+                t => t.CasteName,
+                x.CasteName)
+        }).ToList();
+    }
+
     public async Task<CasteMaster?> GetByIdAsync(
         int id,
         CancellationToken cancellationToken)
     {
-        var castes = await context.CasteMasters
+        return await context.CasteMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(x => x.CasteId == id, cancellationToken);
-
-        return castes is null
-            ? null
-            : MapCaste(castes, languageService.CurrentLanguage);
     }
 
     public async Task AddAsync(CasteMaster caste, CancellationToken cancellationToken)

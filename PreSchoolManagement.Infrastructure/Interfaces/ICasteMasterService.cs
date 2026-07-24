@@ -11,6 +11,7 @@ public interface ICasteMasterService
         PaginationRequest request,
         CancellationToken cancellationToken = default);
     Task<CasteMaster?> GetByIdAsync(int id, CancellationToken cancellationToken);
+    Task<List<CasteDropdownDto>> GetActiveCastesAsync(CancellationToken cancellationToken); //for Dropdown
     Task AddAsync(CasteMaster caste, CancellationToken cancellationToken);
     Task UpdateAsync(CasteMaster caste, CancellationToken cancellationToken);
     Task DeleteAsync(CasteMaster caste, CancellationToken cancellationToken);

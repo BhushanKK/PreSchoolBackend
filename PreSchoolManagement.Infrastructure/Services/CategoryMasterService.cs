@@ -6,6 +6,7 @@ using PreSchoolManagement.Infrastructure.Interfaces;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Common;
 using PreSchoolManagement.Domain.Models;
+using PreSchoolManagement.Domain.Dtos;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
@@ -58,7 +59,27 @@ public class CategoryMasterService(
                 x => x.CategoryId == id,
                 cancellationToken);
     }
+    public async Task<List<CategoryDropdownDto>> GetActiveCategoriesAsync(
+    CancellationToken cancellationToken)
+    {
+        var roles = await context.CategoryMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.CategoryName)
+            .ToListAsync(cancellationToken);
 
+        return roles.Select(x => new CategoryDropdownDto
+        {
+            CategoryId = x.CategoryId,
+            CategoryName = TranslationHelper.GetTranslatedValue(
+                x.Translations,
+                languageService.CurrentLanguage,
+                t => t.LanguageCode,
+                t => t.CategoryName,
+                x.CategoryName)
+        }).ToList();
+    }
     public async Task AddAsync(CategoryMaster category, CancellationToken cancellationToken)
     {
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
