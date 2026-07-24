@@ -6,6 +6,7 @@ using PreSchoolManagement.Infrastructure.Interfaces;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Common;
 using PreSchoolManagement.Domain.Models;
+using PreSchoolManagement.Domain.Dtos;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
@@ -52,6 +53,28 @@ ILanguageService languageService):IStateMasterService
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(x => x.StateId == id, cancellationToken);
+    }
+    
+    public async Task<List<StateDropdownDto>> GetActiveStateAsync(
+    CancellationToken cancellationToken)
+    {
+        var states = await context.StateMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.StateName)
+            .ToListAsync(cancellationToken);
+
+        return states.Select(x => new StateDropdownDto
+        {
+            StateId = x.StateId,
+            StateName = TranslationHelper.GetTranslatedValue(
+                x.Translations,
+                languageService.CurrentLanguage,
+                t => t.LanguageCode,
+                t => t.StateName,
+                x.StateName)
+        }).ToList();
     }
 
     public async Task AddAsync (StateMaster state,CancellationToken cancellationToken)

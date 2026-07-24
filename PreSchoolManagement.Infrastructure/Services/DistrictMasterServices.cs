@@ -5,6 +5,7 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
@@ -12,51 +13,86 @@ public class DistrictMasterServices(
     ApplicationDbContext context,
     ILanguageService languageService) : IDistrictMasterService
 {
-    public async Task<List<DistrictMasterQueryDto>> GetAllAsync(
-    CancellationToken cancellationToken)
+    public async Task<PaginatedResult<DistrictMasterQueryDto>> GetAllAsync(
+    PaginationRequest request,
+    CancellationToken cancellationToken = default)
     {
         var language = languageService.CurrentLanguage;
 
-        return await (
+        var query =
             from district in context.DistrictMasters.AsNoTracking()
 
             join state in context.StateMasters.AsNoTracking()
                 on district.StateId equals state.StateId
 
-            join districtTranslation in context.DistrictTranslations
-                .AsNoTracking()
+            // District Translation
+            join districtTranslation in context.DistrictTranslations.AsNoTracking()
                 .Where(x => x.LanguageCode == language)
                 on district.DistrictId equals districtTranslation.DistrictId into dt
             from districtTranslation in dt.DefaultIfEmpty()
 
-            orderby state.StateId
+                // State Translation
+            join stateTranslation in context.StateTranslations.AsNoTracking()
+                .Where(x => x.LanguageCode == language)
+                on state.StateId equals stateTranslation.StateId into st
+            from stateTranslation in st.DefaultIfEmpty()
+
+            where !request.Filter || district.IsActive
 
             select new DistrictMasterQueryDto
             {
                 DistrictId = district.DistrictId,
                 StateId = state.StateId,
-                StateName = state.StateName,
+
+                StateName = stateTranslation != null
+                    ? stateTranslation.StateName
+                    : state.StateName,
+
                 DistrictName = districtTranslation != null
                     ? districtTranslation.DistrictName
                     : district.DistrictName,
 
                 IsActive = district.IsActive
-            })
+            };
+
+        // Search
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+        {
+            var search = request.SearchText.Trim().ToLower();
+
+            query = query.Where(x =>
+                x.DistrictName.ToLower().Contains(search) ||
+                x.StateName.ToLower().Contains(search));
+        }
+
+        // Total Records
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        // Paging
+        var items = await query
+            .OrderBy(x => x.StateName)
+            .ThenBy(x => x.DistrictName)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
             .ToListAsync(cancellationToken);
+
+        return new PaginatedResult<DistrictMasterQueryDto>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
     }
 
     public async Task<DistrictMaster?> GetByIdAsync(
         int id,
         CancellationToken cancellationToken)
     {
-        var districts = await context.DistrictMasters
+        return await context.DistrictMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(x => x.DistrictId == id, cancellationToken);
-
-        return districts is null
-            ? null
-            : MapDistrict(districts, languageService.CurrentLanguage);
     }
 
     public async Task AddAsync(DistrictMaster district, CancellationToken cancellationToken)

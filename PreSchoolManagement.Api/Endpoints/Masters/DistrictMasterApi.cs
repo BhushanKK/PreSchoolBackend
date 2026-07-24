@@ -1,6 +1,7 @@
 using MediatR;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Api.Endpoints;
 
@@ -13,8 +14,8 @@ public static class DistrictMasterApi
         
         group.MapGet("/", GetAll)
             .WithName("GetAllDistricts")
-            .WithSummary("Get all district masters")
-            .WithDescription("Returns all district master records.")
+            .WithSummary("Get all district masters with pagination.")
+            .WithDescription("Returns all district master records with pagination.")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status500InternalServerError).RequireAuthorization();
 
@@ -93,11 +94,12 @@ public static class DistrictMasterApi
     }
 
     private static async Task<IResult> GetAll(
+        [AsParameters] PaginationRequest request,
         ISender sender,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllDistrictMasterQuery(),cancellationToken);
+            new GetAllDistrictMasterQuery(request),cancellationToken);
         
         return TypedResults.Ok(result);
     }
