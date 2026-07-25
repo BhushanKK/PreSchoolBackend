@@ -36,6 +36,7 @@ public static class MasterServicesDI
         services.AddScoped<IBoardMasterService, BoardMasterService>();
         services.AddScoped<IMediumMasterService,MediumMasterService>();
         services.AddScoped<IFileStorageService, FileStorageService>();
+        services.AddScoped<ISchoolDetailsMasterService ,SchoolDetailsMasterService>();
 
         return services;
     }

@@ -23,6 +23,7 @@ public static class MapperExtensions
         services.AddAutoMapper(typeof(DesignationMasterProfile));
         services.AddAutoMapper(typeof(BoardMasterProfile));
         services.AddAutoMapper(typeof(MediumMasterProfile));
+        services.AddAutoMapper(typeof(SchoolDetailsMasterProfile));
         
         return services;
     }

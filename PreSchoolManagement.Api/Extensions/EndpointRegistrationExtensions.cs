@@ -25,6 +25,7 @@ public static class EndpointRegistrationExtensions
         app.MapCommitteeMasterEndpoints();
         app.MapBoardMasterEndpoints();
         app.MapMediumMasterEndpoints();
+        app.MapSchoolDetailsMasterEndpoints();
 
         return app;
     }
