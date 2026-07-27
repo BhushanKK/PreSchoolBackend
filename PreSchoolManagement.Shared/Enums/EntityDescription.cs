@@ -20,5 +20,6 @@ public enum EntityDescription
     Designation,
     Committee,
     Board,
-    Medium
+    Medium,
+    Chairman,
 }

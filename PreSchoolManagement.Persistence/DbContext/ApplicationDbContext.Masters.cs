@@ -36,4 +36,5 @@ public partial class ApplicationDbContext
     public DbSet<MediumTranslation> MediumTranslations => Set<MediumTranslation>();
     public DbSet<StandardTranslation> StandardTranslations => Set<StandardTranslation>();
     public DbSet<FinancialYearTranslation> financialYearTranslations => Set<FinancialYearTranslation>();
+    public DbSet<ChairmanMaster> ChairmanMasters => Set<ChairmanMaster>();
 }
