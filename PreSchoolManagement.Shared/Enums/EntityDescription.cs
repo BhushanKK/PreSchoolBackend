@@ -20,5 +20,6 @@ public enum EntityDescription
     designation,
     committee,
     Board,
-    Medium
+    Medium,
+    SchoolDetails
 }
