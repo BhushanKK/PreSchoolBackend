@@ -5,6 +5,7 @@ using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
@@ -12,51 +13,75 @@ public class DistrictMasterServices(
     ApplicationDbContext context,
     ILanguageService languageService) : IDistrictMasterService
 {
-    public async Task<List<DistrictMasterQueryDto>> GetAllAsync(
-    CancellationToken cancellationToken)
+    public async Task<PaginatedResult<DistrictMasterQueryDto>> GetAllAsync(
+    PaginationRequest request,
+    CancellationToken cancellationToken = default)
+{
+    var language = languageService.CurrentLanguage;
+
+    var query = context.DistrictMasters
+        .AsNoTracking()
+        .Where(x => !request.Filter || x.IsActive)
+        .Select(district => new DistrictMasterQueryDto
+        {
+            DistrictId = district.DistrictId,
+            StateId = district.StateId,
+
+            StateName =
+                district.State.Translations
+                    .Where(t => t.LanguageCode == language)
+                    .Select(t => t.StateName)
+                    .FirstOrDefault()
+                ?? district.State.StateName,
+
+            DistrictName =
+                district.Translations
+                    .Where(t => t.LanguageCode == language)
+                    .Select(t => t.DistrictName)
+                    .FirstOrDefault()
+                ?? district.DistrictName,
+
+            IsActive = district.IsActive
+        });
+
+    // Search
+    if (!string.IsNullOrWhiteSpace(request.SearchText))
     {
-        var language = languageService.CurrentLanguage;
+        var search = $"%{request.SearchText.Trim()}%";
 
-        return await (
-            from district in context.DistrictMasters.AsNoTracking()
-
-            join state in context.StateMasters.AsNoTracking()
-                on district.StateId equals state.StateId
-
-            join districtTranslation in context.DistrictTranslations
-                .AsNoTracking()
-                .Where(x => x.LanguageCode == language)
-                on district.DistrictId equals districtTranslation.DistrictId into dt
-            from districtTranslation in dt.DefaultIfEmpty()
-
-            orderby state.StateId
-
-            select new DistrictMasterQueryDto
-            {
-                DistrictId = district.DistrictId,
-                StateId = state.StateId,
-                StateName = state.StateName,
-                DistrictName = districtTranslation != null
-                    ? districtTranslation.DistrictName
-                    : district.DistrictName,
-
-                IsActive = district.IsActive
-            })
-            .ToListAsync(cancellationToken);
+        query = query.Where(x =>
+            EF.Functions.Like(x.DistrictName, search) ||
+            EF.Functions.Like(x.StateName, search));
     }
+
+    // Total Records
+    var totalCount = await query.CountAsync(cancellationToken);
+
+    // Paging
+    var items = await query
+        .OrderBy(x => x.StateName)
+        .ThenBy(x => x.DistrictName)
+        .Skip((request.PageNumber - 1) * request.PageSize)
+        .Take(request.PageSize)
+        .ToListAsync(cancellationToken);
+
+    return new PaginatedResult<DistrictMasterQueryDto>
+    {
+        Items = items,
+        TotalCount = totalCount,
+        PageNumber = request.PageNumber,
+        PageSize = request.PageSize
+    };
+}
 
     public async Task<DistrictMaster?> GetByIdAsync(
         int id,
         CancellationToken cancellationToken)
     {
-        var districts = await context.DistrictMasters
+        return await context.DistrictMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(x => x.DistrictId == id, cancellationToken);
-
-        return districts is null
-            ? null
-            : MapDistrict(districts, languageService.CurrentLanguage);
     }
 
     public async Task AddAsync(DistrictMaster district, CancellationToken cancellationToken)

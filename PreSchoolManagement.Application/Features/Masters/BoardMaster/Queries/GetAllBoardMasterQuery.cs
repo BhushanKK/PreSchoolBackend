@@ -1,8 +1,10 @@
 using MediatR;
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.ResponseModels;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Queries;
 
-public sealed record GetAllBoardMasterQuery(bool filter = false)
-: IRequest<ApiResponse<List<BoardMaster>>>;
+public sealed record GetAllBoardMasterQuery(
+    PaginationRequest Request)
+    : IRequest<ApiResponse<PaginatedResult<BoardMaster>>>;

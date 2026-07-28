@@ -1,6 +1,7 @@
 using MediatR;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 
 public static class DesignationMasterApi
 {
@@ -9,10 +10,10 @@ public static class DesignationMasterApi
         var group = app.MapGroup("/api/DesignationMaster")
                         .WithTags("Designation Master");
 
-        group.MapGet("/{filter:bool}", GetAll)
+        group.MapGet("/", GetAll)
             .WithName("GetAllDesignation")
-            .WithSummary("Get all Designation masters")
-            .WithDescription("Returns all Designation master records.")
+            .WithSummary("Get all Designation masters with pagination.")
+            .WithDescription("Returns all Designation master records with pagination.")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status500InternalServerError)
             .RequireAuthorization();
@@ -44,15 +45,15 @@ public static class DesignationMasterApi
         return app;
     }
 
-    private static async Task<IResult>GetAll(bool filter,
+    private static async Task<IResult>GetAll(
+    [AsParameters] PaginationRequest request,
     ISender sender,
     CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllDesignationMasterQuery(),
+            new GetAllDesignationMasterQuery(request),
             cancellationToken
         );
-
         return TypedResults.Ok(result);
     }
 

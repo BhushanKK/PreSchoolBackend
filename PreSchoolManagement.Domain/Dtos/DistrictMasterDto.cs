@@ -13,7 +13,7 @@ public class DistrictMasterDto
 
 public class DistrictMasterQueryDto : DistrictMasterDto
 {
-    [JsonPropertyName("DistrictId")]
+    [JsonPropertyName("districtId")]
     public int Id
     {
         get => DistrictId;

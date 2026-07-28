@@ -1,40 +1,57 @@
+using Serilog;
 using Microsoft.EntityFrameworkCore;
-using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
-using Serilog;
-using PreSchoolManagement.Domain.Dtos;
 using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Infrastructure.Interfaces;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
-public class ReligionMasterService(ApplicationDbContext context,ILanguageService languageService) : IReligionMasterService
+public class ReligionMasterService(ApplicationDbContext context,ILanguageService languageService) 
+: IReligionMasterService
 {
-    public async Task<List<ReligionMaster>> GetAllAsync(bool filter = false, 
-    CancellationToken cancellationToken = default)
+    public async Task<PaginatedResult<ReligionMaster>> GetAllAsync(
+        PaginationRequest request,
+        CancellationToken cancellationToken)
     {
-        var religions = await context.ReligionMasters
+        IQueryable<ReligionMaster> query = context.ReligionMasters
             .AsNoTracking()
-            .Include(x => x.Translations)
-            .Where(x => !filter || x.IsActive)
+            .Include(x => x.Translations);
+
+        if (request.Filter)
+            query = query.Where(x => x.IsActive);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+            query = query.Where(x => x.ReligionName.Contains(request.SearchText));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(x => x.ReligionId)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
             .ToListAsync(cancellationToken);
 
-        return religions
-            .Select(x => MapReligion(x,languageService.CurrentLanguage))
-            .ToList();
+        return new PaginatedResult<ReligionMaster>
+        {
+            Items = items
+                .Select(x => MapReligion(x, languageService.CurrentLanguage))
+                .ToList(),
+
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
     }
 
     public async Task<ReligionMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        var religions = await context.ReligionMasters
+        return await context.ReligionMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(x => x.ReligionId == id,cancellationToken);
-
-        return religions is null
-            ? null
-            : MapReligion (religions, languageService.CurrentLanguage);
     }
 
     public async Task AddAsync(ReligionMaster religion, CancellationToken cancellationToken)
@@ -91,7 +108,7 @@ public class ReligionMasterService(ApplicationDbContext context,ILanguageService
         }
     }
     public Task<bool> IsExistsAsync(string religion, OperationType operation, int? religionId, CancellationToken cancellationToken)
-    => context.ReligionMasters.AnyAsync(x => x.Religion == religion && (religionId == null || x.ReligionId != religionId), cancellationToken);
+    => context.ReligionMasters.AnyAsync(x => x.ReligionName == religion && (religionId == null || x.ReligionId != religionId), cancellationToken);
 
     public async Task<ReligionMaster?> GetForUpdateAsync(int id,
     CancellationToken cancellationToken)
@@ -104,14 +121,16 @@ public class ReligionMasterService(ApplicationDbContext context,ILanguageService
         return new ReligionMaster
         {
             ReligionId = religion.ReligionId,
-            Religion = TranslationHelper.GetTranslatedValue(
+            ReligionName = TranslationHelper.GetTranslatedValue(
                 religion.Translations,
                 language,
                 x => x.LanguageCode,
                 x => x.ReligionName,
-                religion.Religion),
-            
-            IsActive = religion.IsActive
+                religion.ReligionName),
+            IsMinority=religion.IsMinority,
+            IsActive = religion.IsActive,
+
+            Translations = religion.Translations.ToList()
         };
     }
 }

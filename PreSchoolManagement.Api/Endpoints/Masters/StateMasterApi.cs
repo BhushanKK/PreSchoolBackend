@@ -1,6 +1,7 @@
 using MediatR;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Api.Endpoints;
 
@@ -11,10 +12,18 @@ public static class StateMasterApi
         var group = app.MapGroup("/api/statemaster")
                         .WithTags("State Master");
 
-        group.MapGet("/{filter:bool}", GetAll)
+        group.MapGet("/", GetAll)
               .WithName("GetAllState")
               .WithSummary("Get all state masters")
               .WithDescription("Return all state master records.")
+              .Produces(StatusCodes.Status200OK)
+              .Produces(StatusCodes.Status500InternalServerError)
+              .RequireAuthorization();
+
+        group.MapGet("/dropdown", GetAllActiveStates)
+              .WithName("GetAllActiveState")
+              .WithSummary("Get all state masters for dropdown binding.")
+              .WithDescription("Return all state master records for dropdown binding.")
               .Produces(StatusCodes.Status200OK)
               .Produces(StatusCodes.Status500InternalServerError)
               .RequireAuthorization();
@@ -47,19 +56,31 @@ public static class StateMasterApi
     }
 
     private static async Task<IResult> GetAll(bool filter,
+    [AsParameters] PaginationRequest request, 
     ISender sender,
     CancellationToken cancellationToken)
     {
-        var result = await sender.Send(new GetAllStateMasterQuery(filter),cancellationToken);
+        var result = await sender.Send(new GetAllStateMasterQuery(request),cancellationToken);
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<IResult>GetById(
+        int id, ISender sender, 
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(new GetByIdStateMasterQuery(id),
+        cancellationToken);
 
         return TypedResults.Ok(result);
     }
 
-    private static async Task<IResult>GetById
-    ( int id, ISender sender, CancellationToken cancellationToken)
+    private static async Task<IResult> GetAllActiveStates(
+        ISender sender,
+        CancellationToken cancellationToken)
     {
-        var result = await sender.Send(new GetByIdStateMasterQuery(id),
-        cancellationToken);
+        var result = await sender.Send(
+            new GetStateDropdownQuery(),
+            cancellationToken);
 
         return TypedResults.Ok(result);
     }

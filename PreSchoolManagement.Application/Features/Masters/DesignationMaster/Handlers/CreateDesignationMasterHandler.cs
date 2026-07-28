@@ -33,7 +33,7 @@ public class CreateDesignationMasterHanler(
 
         var exists = await service.IsExistsAsync
         (
-            request.Designation ?? string.Empty,
+            request.DesignationName ?? string.Empty,
             OperationType.Add,
             null,
             cancellationToken
@@ -43,7 +43,7 @@ public class CreateDesignationMasterHanler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.designation.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(), EntityDescription.Designation.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -57,7 +57,7 @@ public class CreateDesignationMasterHanler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.DesignationId,
-            messageHelper.AddedEntity("Masters", EntityDescription.designation.ToString()),
+            messageHelper.AddedEntity(LocaleEnums.Masters.ToString(), EntityDescription.Designation.ToString()),
             (int)HttpStatusCode.Created
         );
     }

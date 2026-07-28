@@ -42,7 +42,7 @@ public class UpdateSectionMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Section.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Section.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -60,7 +60,7 @@ public class UpdateSectionMasterHandler(
             return ApiResponse<int>.FailureResponse
             (
                 messageHelper.AlreadyExistsEntity(
-                "Masters",
+                LocaleEnums.Masters.ToString(),
                 EntityDescription.Section.ToString()),
                 (int)HttpStatusCode.Conflict
             );
@@ -105,7 +105,7 @@ public class UpdateSectionMasterHandler(
         (
             entity.SectionId,
             messageHelper.UpdatedEntity(
-            "Masters",
+            LocaleEnums.Masters.ToString(),
             EntityDescription.Section.ToString()),
             (int)HttpStatusCode.OK
         );

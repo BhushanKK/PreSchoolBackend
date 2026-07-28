@@ -19,7 +19,7 @@ public class DeleteCategoryMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.InvalidIdEntity("Masters",EntityDescription.Category.ToString()),
+                messageHelper.InvalidIdEntity(LocaleEnums.Masters.ToString(),EntityDescription.Category.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -30,7 +30,7 @@ public class DeleteCategoryMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Category.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Category.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -40,7 +40,7 @@ public class DeleteCategoryMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             request.CategoryId,
-            messageHelper.DeletedEntity("Masters",EntityDescription.Category.ToString()),
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Category.ToString()),
             (int)HttpStatusCode.OK
         );
     }

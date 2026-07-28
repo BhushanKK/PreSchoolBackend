@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using PreSchoolManagement.Infrastructure.Interfaces;
@@ -11,26 +12,46 @@ namespace PreSchoolManagement.Infrastructure.Services;
 public  class MediumMasterService(ApplicationDbContext context,ILanguageService languageService)
 :IMediumMasterService
 {
-    public async Task<List<MediumMaster>>GetAllAsync(CancellationToken cancellationToken)
+    public async Task<PaginatedResult<MediumMaster>> GetAllAsync(
+        PaginationRequest request,
+        CancellationToken cancellationToken)
     {
-        var mediums = await context.MediumMasters
+        IQueryable<MediumMaster> query = context.MediumMasters
             .AsNoTracking()
-            .Include(x => x.Translations)
+            .Include(x => x.Translations);
+
+        if (request.Filter)
+            query = query.Where(x => x.IsActive);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+            query = query.Where(x => x.MediumName.Contains(request.SearchText));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(x => x.MediumId)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
             .ToListAsync(cancellationToken);
 
-        return mediums.Select(x => MapMedium(x,languageService.CurrentLanguage)).ToList();
+        return new PaginatedResult<MediumMaster>
+        {
+            Items = items
+                .Select(x => MapMedium(x, languageService.CurrentLanguage))
+                .ToList(),
+
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
     }
 
     public async Task<MediumMaster?> GetByIdAsync(int id,CancellationToken cancellationToken)
     {
-        var medium = await context.MediumMasters
+        return await context.MediumMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(x => x.MediumId == id, cancellationToken);
-
-        return medium is null
-            ? null
-            : MapMedium(medium, languageService.CurrentLanguage);
     }
 
     public async Task AddAsync (MediumMaster medium,CancellationToken cancellationToken)
@@ -85,7 +106,7 @@ public  class MediumMasterService(ApplicationDbContext context,ILanguageService 
     }
 
     public Task<bool>IsExistsAsync(string medium,OperationType operation,int? mediumId,CancellationToken cancellationToken)
-    => context.MediumMasters.AnyAsync(x => x.Medium == medium &&
+    => context.MediumMasters.AnyAsync(x => x.MediumName == medium &&
     (mediumId == null || x.MediumId != mediumId),cancellationToken);
 
     public async Task<MediumMaster?> GetForUpdateAsync(int id,
@@ -94,21 +115,22 @@ public  class MediumMasterService(ApplicationDbContext context,ILanguageService 
         .Include(x => x.Translations)
         .FirstOrDefaultAsync(x => x.MediumId == id, cancellationToken);
 
-    private MediumMaster MapMedium(MediumMaster medium,string language)
+    private MediumMaster MapMedium(MediumMaster mediumMaster, string language)
     {
         return new MediumMaster
         {
-            MediumId = medium.MediumId,
-            Medium = TranslationHelper.GetTranslatedValue(
-                medium.Translations,
+            MediumId = mediumMaster.MediumId,
+
+            MediumName = TranslationHelper.GetTranslatedValue(
+                mediumMaster.Translations,
                 language,
                 x => x.LanguageCode,
                 x => x.MediumName,
-                medium.Medium),
-            
-            IsActive = medium.IsActive
+                mediumMaster.MediumName),
 
+            IsActive = mediumMaster.IsActive,
+
+            Translations = mediumMaster.Translations.ToList()
         };
     }
-
 }

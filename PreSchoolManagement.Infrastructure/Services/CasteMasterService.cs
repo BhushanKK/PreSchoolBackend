@@ -6,6 +6,7 @@ using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Domain.Dtos;
 using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
@@ -13,63 +14,94 @@ public class CasteMasterService(
     ApplicationDbContext context,
     ILanguageService languageService) : ICasteMasterService
 {
-    public async Task<List<CasteMasterQueryDto>> GetAllAsync(
-    bool applyFilter = false,
+    public async Task<PaginatedResult<CasteMasterQueryDto>> GetAllAsync(
+    PaginationRequest request,
     CancellationToken cancellationToken = default)
-{
-    var language = languageService.CurrentLanguage;
+    {
+        var language = languageService.CurrentLanguage;
 
-    var query =
-        from caste in context.CasteMasters.AsNoTracking()
+        var query = context.CasteMasters
+            .AsNoTracking()
+            .Where(x => !request.Filter || x.IsActive)
+            .Select(caste => new CasteMasterQueryDto
+            {
+                CasteId = caste.CasteId,
+                CategoryId = caste.CategoryId,
 
-        join category in context.CategoryMasters.AsNoTracking()
-            on caste.CategoryID equals category.CategoryId
+                CategoryName =
+                    caste.Category.Translations
+                        .Where(t => t.LanguageCode == language)
+                        .Select(t => t.CategoryName)
+                        .FirstOrDefault()
+                    ?? caste.Category.CategoryName,
 
-        join casteTranslation in context.CasteTranslations.AsNoTracking()
-            .Where(x => x.LanguageCode == language)
-            on caste.CasteID equals casteTranslation.CasteID into ct
-        from casteTranslation in ct.DefaultIfEmpty()
+                CasteName =
+                    caste.Translations
+                        .Where(t => t.LanguageCode == language)
+                        .Select(t => t.CasteName)
+                        .FirstOrDefault()
+                    ?? caste.CasteName,
 
-        join categoryTranslation in context.CategoryTranslations.AsNoTracking()
-            .Where(x => x.LanguageCode == language)
-            on category.CategoryId equals categoryTranslation.CategoryId into cat
-        from categoryTranslation in cat.DefaultIfEmpty()
+                IsActive = caste.IsActive
+            });
 
-        where !applyFilter || caste.IsActive
-
-        orderby caste.CategoryID
-
-        select new CasteMasterQueryDto
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
         {
-            CasteId = caste.CasteID,
-            CategoryId = category.CategoryId,
+            var search = $"%{request.SearchText.Trim()}%";
 
-            CategoryName = categoryTranslation != null
-                ? categoryTranslation.CategoryName
-                : category.CategoryName,
+            query = query.Where(x =>
+                EF.Functions.Like(x.CasteName, search) ||
+                EF.Functions.Like(x.CategoryName, search));
+        }
 
-            CasteName = casteTranslation != null
-                ? casteTranslation.CasteName
-                : caste.CasteName,
+        var totalCount = await query.CountAsync(cancellationToken);
 
-            IsActive = caste.IsActive
+        var items = await query
+            .OrderBy(x => x.CategoryName)
+            .ThenBy(x => x.CasteName)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .ToListAsync(cancellationToken);
+
+        return new PaginatedResult<CasteMasterQueryDto>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
         };
+    }
 
-    return await query.ToListAsync(cancellationToken);
-}
+    public async Task<List<CasteDropdownDto>> GetActiveCastesAsync(
+    CancellationToken cancellationToken)
+    {
+        var roles = await context.CasteMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.CasteName)
+            .ToListAsync(cancellationToken);
+
+        return roles.Select(x => new CasteDropdownDto
+        {
+            CasteId = x.CasteId,
+            CasteName = TranslationHelper.GetTranslatedValue(
+                x.Translations,
+                languageService.CurrentLanguage,
+                t => t.LanguageCode,
+                t => t.CasteName,
+                x.CasteName)
+        }).ToList();
+    }
 
     public async Task<CasteMaster?> GetByIdAsync(
         int id,
         CancellationToken cancellationToken)
     {
-        var castes = await context.CasteMasters
+        return await context.CasteMasters
             .AsNoTracking()
             .Include(x => x.Translations)
-            .FirstOrDefaultAsync(x => x.CasteID == id, cancellationToken);
-
-        return castes is null
-            ? null
-            : MapCaste(castes, languageService.CurrentLanguage);
+            .FirstOrDefaultAsync(x => x.CasteId == id, cancellationToken);
     }
 
     public async Task AddAsync(CasteMaster caste, CancellationToken cancellationToken)
@@ -127,19 +159,19 @@ public class CasteMasterService(
     }
 
     public Task<bool> IsExistsAsync(string caste, OperationType operation, int? casteId, CancellationToken cancellationToken)
-        => context.CasteMasters.AnyAsync(x => x.CasteName == caste && (casteId == null || x.CasteID != casteId), cancellationToken);
+        => context.CasteMasters.AnyAsync(x => x.CasteName == caste && (casteId == null || x.CasteId != casteId), cancellationToken);
 
     public async Task<CasteMaster?> GetForUpdateAsync(int id,
     CancellationToken cancellationToken)
     => await context.CasteMasters
         .Include(x => x.Translations)
-        .FirstOrDefaultAsync(x => x.CasteID == id, cancellationToken);
+        .FirstOrDefaultAsync(x => x.CasteId == id, cancellationToken);
 
     private CasteMaster MapCaste(CasteMaster caste, string language)
     {
         return new CasteMaster
         {
-            CasteID = caste.CasteID,
+            CasteId = caste.CasteId,
             CasteName = TranslationHelper.GetTranslatedValue(
                 caste.Translations,
                 language,

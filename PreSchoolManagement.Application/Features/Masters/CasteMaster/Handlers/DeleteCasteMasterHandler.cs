@@ -17,13 +17,13 @@ public class DeleteCasteMasterHandler(
 {
     public async Task<ApiResponse<int>> Handle(DeleteCasteMasterCommand request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters" ,EntityDescription.Caste.ToString());
+        localization.Get(LocaleEnums.Masters.ToString() ,EntityDescription.Caste.ToString());
 
         if (request.CasteId <= 0)
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.InvalidIdEntity("Masters" ,EntityDescription.Caste.ToString()), 
+                messageHelper.InvalidIdEntity(LocaleEnums.Masters.ToString() ,EntityDescription.Caste.ToString()), 
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -33,7 +33,7 @@ public class DeleteCasteMasterHandler(
         if (existing is null)
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters" ,EntityDescription.Caste.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString() ,EntityDescription.Caste.ToString()),
                 (int)HttpStatusCode.NotFound
             );
 
@@ -42,7 +42,7 @@ public class DeleteCasteMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             request.CasteId, 
-            messageHelper.DeletedEntity("Masters" ,EntityDescription.Caste.ToString()), 
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString() ,EntityDescription.Caste.ToString()), 
             (int)HttpStatusCode.OK
         );
     }

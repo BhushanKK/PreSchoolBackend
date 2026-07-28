@@ -23,7 +23,7 @@ public class CreateReligionMasterHandler(
 {
     public async Task<ApiResponse<int>> Handle(CreateReligionMasterCommand request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.Religion.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString());
 
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
@@ -33,13 +33,13 @@ public class CreateReligionMasterHandler(
             return ApiResponse<int>.FailureResponse(message, (int)HttpStatusCode.BadRequest);
         }
 
-        var exists = await service.IsExistsAsync(request.Religion ?? string.Empty, OperationType.Add, null, cancellationToken);
+        var exists = await service.IsExistsAsync(request.ReligionName ?? string.Empty, OperationType.Add, null, cancellationToken);
 
         if (exists)
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Religion.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(),EntityDescription.Religion.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -53,7 +53,7 @@ public class CreateReligionMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.ReligionId,
-            messageHelper.AddedEntity("Masters", EntityDescription.Religion.ToString()),
+            messageHelper.AddedEntity(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString()),
             (int)HttpStatusCode.Created
         );
     }

@@ -5,6 +5,7 @@ using PreSchoolManagement.Infrastructure.Data;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
@@ -12,34 +13,50 @@ public class DesignationMasterService(
     ApplicationDbContext context,
     ILanguageService languageService) : IDesignationMasterService
 {
-    public async Task<List<DesignationMaster>> GetAllAsync(
-    bool filter = false,
-    CancellationToken cancellationToken = default)
+    public async Task<PaginatedResult<DesignationMaster>> GetAllAsync(
+        PaginationRequest request,
+        CancellationToken cancellationToken)
     {
-        var designations = await context.DesignationMasters
+        IQueryable<DesignationMaster> query = context.DesignationMasters
             .AsNoTracking()
-            .Include(x => x.Translations)
+            .Include(x => x.Translations);
+
+        if (request.Filter)
+            query = query.Where(x => x.IsActive);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+            query = query.Where(x => x.DesignationName.Contains(request.SearchText));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(x => x.DesignationId)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
             .ToListAsync(cancellationToken);
 
-        return designations
-            .Select(designation => MapDesignation(designation, languageService.CurrentLanguage))
-            .ToList();
+        return new PaginatedResult<DesignationMaster>
+        {
+            Items = items
+                .Select(x => MapDesignation(x, languageService.CurrentLanguage))
+                .ToList(),
+
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
     }
 
     public async Task<DesignationMaster?> GetByIdAsync(
     int id,
     CancellationToken cancellationToken)
     {
-        var designation = await context.DesignationMasters
+        return await context.DesignationMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(
                 x => x.DesignationId == id,
                 cancellationToken);
-
-        return designation == null
-            ? null
-            : MapDesignation(designation, languageService.CurrentLanguage);
     }
 
     public async Task AddAsync(DesignationMaster designationMaster, CancellationToken cancellationToken)
@@ -51,7 +68,6 @@ public class DesignationMasterService(
             await context.DesignationMasters.AddAsync(designationMaster, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
-
         }
         catch (Exception ex)
         {
@@ -97,7 +113,7 @@ public class DesignationMasterService(
 
     public Task<bool> IsExistsAsync(string designation, OperationType operation, int? designationId, CancellationToken cancellationToken)
     => context.DesignationMasters.AnyAsync(
-        x => x.Designation == designation && (designationId == null || x.DesignationId != designationId),
+        x => x.DesignationName == designation && (designationId == null || x.DesignationId != designationId),
         cancellationToken);
 
     public async Task<DesignationMaster?> GetForUpdateAsync(int id,
@@ -113,12 +129,12 @@ public class DesignationMasterService(
         return new DesignationMaster
         {
             DesignationId = designation.DesignationId,
-            Designation = TranslationHelper.GetTranslatedValue(
+            DesignationName = TranslationHelper.GetTranslatedValue(
                 designation.Translations,
                 language,
                 x => x.LanguageCode,
-                x => x.Designation,
-                designation.Designation),
+                x => x.DesignationName,
+                designation.DesignationName),
 
             IsActive = designation.IsActive,
 

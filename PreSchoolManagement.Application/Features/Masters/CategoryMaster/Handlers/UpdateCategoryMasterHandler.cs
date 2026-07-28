@@ -40,7 +40,7 @@ public class UpdateCategoryMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Category.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Category.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -55,7 +55,7 @@ public class UpdateCategoryMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Category.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(),EntityDescription.Category.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -101,7 +101,7 @@ public class UpdateCategoryMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.CategoryId,
-            messageHelper.UpdatedEntity("Masters",EntityDescription.Category.ToString()),
+            messageHelper.UpdatedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Category.ToString()),
             (int)HttpStatusCode.OK
         );
     }

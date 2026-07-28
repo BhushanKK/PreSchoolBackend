@@ -1,6 +1,7 @@
 using MediatR;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Api.Endpoints;
 
@@ -11,12 +12,21 @@ public static class CasteMasterApi
         var group = app.MapGroup("/api/castemaster")
                        .WithTags("Caste Master");
 
-        group.MapGet("/{filter:bool}", GetAll)
+        group.MapGet("/", GetAll)
             .WithName("GetAllCastes")
             .WithSummary("Get all caste masters")
-            .WithDescription("Returns all caste master records.")
+            .WithDescription("Returns paginated caste master records.")
             .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status500InternalServerError).RequireAuthorization();
+            .Produces(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization();
+
+        group.MapGet("/dropdown", GetAllActiveCastes)
+            .WithName("GetAllActiveCastes")
+            .WithSummary("Get all active caste for dropdowns.")
+            .WithDescription("Returns paginated active caste.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization();
 
         group.MapGet("/{id:int}", GetById)
             .WithName("GetCasteById")
@@ -45,17 +55,27 @@ public static class CasteMasterApi
         return app;
     }
 
-    private static async Task<IResult> GetAll(bool filter,
+     private static async Task<IResult> GetAll(
+        [AsParameters] PaginationRequest request,
         ISender sender,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllCasteMasterQuery(filter),
+            new GetAllCasteMasterQuery(request),
             cancellationToken);
 
         return TypedResults.Ok(result);
     }
+    private static async Task<IResult> GetAllActiveCastes(
+        ISender sender,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new GetCasteDropdownQuery(),
+            cancellationToken);
 
+        return TypedResults.Ok(result);
+    }
     private static async Task<IResult> GetById(
         int id,
         ISender sender,

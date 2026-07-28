@@ -21,7 +21,7 @@ public class GetByIdMediumMasterHandler(
     {
         localization.Get("Masters",EntityDescription.Medium.ToString());
 
-        var medium = await service.GetByIdAsync(request.MediumId,cancellationToken);
+        var medium = await service.GetByIdAsync(request.mediumId,cancellationToken);
 
         if (medium is null)
         {

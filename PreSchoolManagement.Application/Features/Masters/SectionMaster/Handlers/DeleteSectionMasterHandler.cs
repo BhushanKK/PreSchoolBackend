@@ -19,7 +19,7 @@ public class DeleteSectionMasterHandler(
         DeleteSectionMasterCommand request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Section.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(),EntityDescription.Section.ToString());
 
         var entity = await service.GetByIdAsync(request.SectionId, cancellationToken);
 
@@ -27,7 +27,7 @@ public class DeleteSectionMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Section.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Section.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -37,7 +37,7 @@ public class DeleteSectionMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.SectionId,
-            messageHelper.DeletedEntity("Masters",EntityDescription.Section.ToString()),
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Section.ToString()),
             (int)HttpStatusCode.OK
         );
     }

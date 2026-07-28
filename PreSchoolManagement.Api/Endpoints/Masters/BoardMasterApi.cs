@@ -1,6 +1,7 @@
 using MediatR;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Api.Endpoints;
 
@@ -13,8 +14,8 @@ public static class BoardMasterApi
 
         group.MapGet("/", GetAll)
             .WithName("GetAllBoards")
-            .WithSummary("Get all Board masters")
-            .WithDescription("Returns all Board master records.")
+            .WithSummary("Get all paginated Board masters")
+            .WithDescription("Returns paginated Academic Year records.")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status500InternalServerError)
             .RequireAuthorization();
@@ -52,9 +53,15 @@ public static class BoardMasterApi
         return TypedResults.Ok(result);
     }
 
-    private static async Task<IResult> GetAll(ISender sender,CancellationToken cancellationToken)
+    private static async Task<IResult> GetAll(
+        [AsParameters] PaginationRequest request,
+        ISender sender,
+        CancellationToken cancellationToken)
     {
-        var result = await sender.Send(new GetAllBoardMasterQuery(),cancellationToken);
+        var result = await sender.Send(
+            new GetAllBoardMasterQuery(request),
+            cancellationToken);
+
         return TypedResults.Ok(result);
     }
 

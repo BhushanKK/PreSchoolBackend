@@ -23,7 +23,7 @@ public class DeleteDivisionMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Division.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Division.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -33,7 +33,7 @@ public class DeleteDivisionMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.DivisionId,
-            messageHelper.DeletedEntity("Masters",EntityDescription.Division.ToString()),
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Division.ToString()),
             (int)HttpStatusCode.OK
         );
     }

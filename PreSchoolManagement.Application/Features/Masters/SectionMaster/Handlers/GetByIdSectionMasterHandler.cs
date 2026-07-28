@@ -20,7 +20,7 @@ public class GetByIdSectionMasterHandler(
         GetByIdSectionMasterQuery request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.Section.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(), EntityDescription.Section.ToString());
 
         var Section = await service.GetByIdAsync(request.SectionId, cancellationToken);
 
@@ -28,7 +28,7 @@ public class GetByIdSectionMasterHandler(
         {
             return ApiResponse<SectionMaster?>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters", EntityDescription.Section.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.Section.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -36,7 +36,7 @@ public class GetByIdSectionMasterHandler(
         return ApiResponse<SectionMaster?>.SuccessResponse
         (
             Section,
-            messageHelper.RetrievedEntity("Masters", EntityDescription.Section.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(), EntityDescription.Section.ToString()),
             (int)HttpStatusCode.OK
         );
     }

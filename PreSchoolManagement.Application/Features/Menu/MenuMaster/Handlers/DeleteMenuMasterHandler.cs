@@ -4,12 +4,13 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class DeleteMenuMasterHandler(
-    IMenuMasterService service)
+    IMenuMasterService service,
+    IMessageHelper messageHelper)
     : IRequestHandler<DeleteMenuMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
@@ -22,18 +23,22 @@ public class DeleteMenuMasterHandler(
 
         if (entity is null)
         {
-            return ApiResponse<int>.FailureResponse(
-                MessageHelper.NotFound(EntityDescription.Menu.ToString()),
-                (int)HttpStatusCode.NotFound);
+            return ApiResponse<int>.FailureResponse
+            (
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Menu.ToString()),
+                (int)HttpStatusCode.NotFound
+            );
         }
 
         await service.DeleteAsync(
             request.MenuId,
             cancellationToken);
 
-        return ApiResponse<int>.SuccessResponse(
+        return ApiResponse<int>.SuccessResponse
+        (
             request.MenuId,
-            MessageHelper.Deleted(EntityDescription.Menu.ToString()),
-            (int)HttpStatusCode.OK);
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Menu.ToString()),
+            (int)HttpStatusCode.OK
+        );
     }
 }

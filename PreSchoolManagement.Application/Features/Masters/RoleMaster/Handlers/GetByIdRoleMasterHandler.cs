@@ -23,7 +23,7 @@ public class GetByIdRoleMasterHandler(IRoleMasterService service,
         {
             return ApiResponse<RoleMaster?>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters", EntityDescription.Role.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.Role.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -31,7 +31,7 @@ public class GetByIdRoleMasterHandler(IRoleMasterService service,
         return ApiResponse<RoleMaster?>.SuccessResponse
         (
             role,
-            messageHelper.RetrievedEntity("Masters", EntityDescription.Role.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(), EntityDescription.Role.ToString()),
             (int)HttpStatusCode.OK
         );
     }

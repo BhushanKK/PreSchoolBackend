@@ -1,8 +1,9 @@
 using MediatR;
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.ResponseModels;
 using SchoolManagement.Domain.Entities;
 
 namespace PreSchoolManagement.Application.Features.Queries;
 
-public sealed record GetAllStateMasterQuery(bool filter = false)
-    : IRequest<ApiResponse<List<StateMaster>>>;
+public sealed record GetAllStateMasterQuery(PaginationRequest Request)
+    : IRequest<ApiResponse<PaginatedResult<StateMaster>>>;

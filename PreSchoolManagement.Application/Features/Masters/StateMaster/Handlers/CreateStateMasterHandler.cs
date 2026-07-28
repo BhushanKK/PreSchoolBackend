@@ -48,7 +48,7 @@ public class CreateStateMasterHandler(
 
         return ApiResponse<int>.SuccessResponse
         (
-            entity.StateId, messageHelper.AddedEntity("Masters",
+            entity.StateId, messageHelper.AddedEntity(LocaleEnums.Masters.ToString(),
             EntityDescription.State.ToString()), (int)HttpStatusCode.Created
         );
     }

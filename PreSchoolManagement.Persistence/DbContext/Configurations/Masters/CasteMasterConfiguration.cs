@@ -10,7 +10,7 @@ public class CasteMasterConfiguration : IEntityTypeConfiguration<CasteMaster>
     {
         entity.ToTable("CasteMaster");
 
-        entity.HasKey(x => x.CasteID);
+        entity.HasKey(x => x.CasteId);
     }
 }
 
@@ -32,13 +32,13 @@ public class CasteTranslationConfiguration : IEntityTypeConfiguration<CasteTrans
 
         entity.HasIndex(x => new
         {
-            x.CasteID,
+            x.CasteId,
             x.LanguageCode
         }).IsUnique();
 
         entity.HasOne(x => x.Caste)
             .WithMany(x => x.Translations)
-            .HasForeignKey(x => x.CasteID)
+            .HasForeignKey(x => x.CasteId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

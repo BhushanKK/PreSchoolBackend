@@ -25,7 +25,7 @@ public class DeleteAcademicYearMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.AcademicYear.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.AcademicYear.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -35,7 +35,7 @@ public class DeleteAcademicYearMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.AcademicYearId,
-            messageHelper.DeletedEntity("Masters",EntityDescription.AcademicYear.ToString()),
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString(),EntityDescription.AcademicYear.ToString()),
             (int)HttpStatusCode.OK
         );
     }

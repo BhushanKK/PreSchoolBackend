@@ -5,6 +5,8 @@ using PreSchoolManagement.Infrastructure.Data;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Domain.Models;
+using PreSchoolManagement.Domain.Dtos;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
@@ -12,19 +14,38 @@ public class CategoryMasterService(
     ApplicationDbContext context,
     ILanguageService languageService) : ICategoryMasterService
 {
-    public async Task<List<CategoryMaster>> GetAllAsync(
-    bool filter = false,
-    CancellationToken cancellationToken = default)
+    public async Task<PaginatedResult<CategoryMaster>> GetAllAsync(
+        PaginationRequest request,
+        CancellationToken cancellationToken)
     {
-        var categories = await context.CategoryMasters
+        IQueryable<CategoryMaster> query = context.CategoryMasters
             .AsNoTracking()
-            .Include(x => x.Translations)
-            .Where(x => !filter || x.IsActive)
+            .Include(x => x.Translations);
+
+        if (request.Filter)
+            query = query.Where(x => x.IsActive);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+            query = query.Where(x => x.CategoryName.Contains(request.SearchText));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(x => x.CategoryId)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
             .ToListAsync(cancellationToken);
 
-        return categories
-            .Select(x => MapCategory(x, languageService.CurrentLanguage))
-            .ToList();
+        return new PaginatedResult<CategoryMaster>
+        {
+            Items = items
+                .Select(x => MapCategory(x,languageService.CurrentLanguage))
+                .ToList(),
+
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
     }
 
     public async Task<CategoryMaster?> GetByIdAsync(
@@ -38,7 +59,27 @@ public class CategoryMasterService(
                 x => x.CategoryId == id,
                 cancellationToken);
     }
+    public async Task<List<CategoryDropdownDto>> GetActiveCategoriesAsync(
+    CancellationToken cancellationToken)
+    {
+        var roles = await context.CategoryMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.CategoryName)
+            .ToListAsync(cancellationToken);
 
+        return roles.Select(x => new CategoryDropdownDto
+        {
+            CategoryId = x.CategoryId,
+            CategoryName = TranslationHelper.GetTranslatedValue(
+                x.Translations,
+                languageService.CurrentLanguage,
+                t => t.LanguageCode,
+                t => t.CategoryName,
+                x.CategoryName)
+        }).ToList();
+    }
     public async Task AddAsync(CategoryMaster category, CancellationToken cancellationToken)
     {
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);

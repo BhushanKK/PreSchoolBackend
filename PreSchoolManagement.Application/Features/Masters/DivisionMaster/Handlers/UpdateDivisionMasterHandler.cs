@@ -44,7 +44,7 @@ public class UpdateDivisionMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Division.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Division.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -61,7 +61,7 @@ public class UpdateDivisionMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Division.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(),EntityDescription.Division.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -104,7 +104,7 @@ public class UpdateDivisionMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.DivisionId,
-            messageHelper.UpdatedEntity("Masters",EntityDescription.Division.ToString()),
+            messageHelper.UpdatedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Division.ToString()),
             (int)HttpStatusCode.OK
         );
     }

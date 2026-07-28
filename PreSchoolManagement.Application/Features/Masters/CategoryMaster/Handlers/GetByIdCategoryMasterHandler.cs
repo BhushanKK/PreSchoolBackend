@@ -21,7 +21,7 @@ public class GetByIdCategoryMasterHandler(
         {
             return ApiResponse<CategoryMaster?>.FailureResponse
             (
-                messageHelper.InvalidIdEntity("Masters",EntityDescription.Category.ToString()),
+                messageHelper.InvalidIdEntity(LocaleEnums.Masters.ToString(),EntityDescription.Category.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -32,7 +32,7 @@ public class GetByIdCategoryMasterHandler(
         {
             return ApiResponse<CategoryMaster?>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Category.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Category.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -40,7 +40,7 @@ public class GetByIdCategoryMasterHandler(
         return ApiResponse<CategoryMaster?>.SuccessResponse
         (
             data,
-            messageHelper.RetrievedEntity("Masters",EntityDescription.Category.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Category.ToString()),
             (int)HttpStatusCode.OK
         );
     }

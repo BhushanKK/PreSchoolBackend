@@ -17,12 +17,12 @@ public class DeleteReligionMasterHandler(
 {
     public async Task<ApiResponse<int>> Handle(DeleteReligionMasterCommand request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.Religion.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString());
 
         if (request.ReligionId <= 0)
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.InvalidIdEntity("Masters", EntityDescription.Religion.ToString()),
+                messageHelper.InvalidIdEntity(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
 
@@ -40,7 +40,7 @@ public class DeleteReligionMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             request.ReligionId,
-            messageHelper.DeletedEntity("Masters", EntityDescription.Religion.ToString()),
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString(), EntityDescription.Religion.ToString()),
             (int)HttpStatusCode.OK
         );
     }

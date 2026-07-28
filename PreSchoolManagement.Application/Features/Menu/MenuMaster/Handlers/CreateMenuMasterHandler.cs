@@ -6,8 +6,8 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
 using SchoolManagement.Domain.Entities;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
@@ -15,7 +15,8 @@ public class CreateMenuMasterHandler(
     IMenuMasterService service,
     IValidator<CreateMenuMasterCommand> validator,
     IMapper mapper,
-    ICurrentUserService currentUser)
+    ICurrentUserService currentUser,
+    IMessageHelper messageHelper)
     : IRequestHandler<CreateMenuMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(
@@ -45,9 +46,11 @@ public class CreateMenuMasterHandler(
 
         if (exists)
         {
-            return ApiResponse<int>.FailureResponse(
-                MessageHelper.AlreadyExists(EntityDescription.Menu.ToString()),
-                (int)HttpStatusCode.Conflict);
+            return ApiResponse<int>.FailureResponse
+            (
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(),EntityDescription.Menu.ToString()),
+                (int)HttpStatusCode.Conflict
+            );
         }
 
         var entity = mapper.Map<MenuMaster>(request);
@@ -57,9 +60,11 @@ public class CreateMenuMasterHandler(
 
         await service.CreateAsync(entity, cancellationToken);
 
-        return ApiResponse<int>.SuccessResponse(
+        return ApiResponse<int>.SuccessResponse
+        (
             entity.MenuId,
-            MessageHelper.Added(EntityDescription.Menu.ToString()),
-            (int)HttpStatusCode.Created);
+            messageHelper.AddedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Menu.ToString()),
+            (int)HttpStatusCode.Created
+        );
     }
 }

@@ -7,21 +7,17 @@ using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Localization;
 using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 public class CreateFinancialYearMasterHandler(IFinancialYearMasterService service,
     IValidator<CreateFinancialYearMasterCommand> validator,
     IMapper mapper,ICurrentUserService currentUser,
-    IMessageHelper messageHelper,
-    ILocalizationService localization) 
+    IMessageHelper messageHelper) 
     : IRequestHandler<CreateFinancialYearMasterCommand, ApiResponse<int>>
 {
     public async Task<ApiResponse<int>> Handle(CreateFinancialYearMasterCommand request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.FinancialYear.ToString());
-        
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
         {
@@ -34,7 +30,7 @@ public class CreateFinancialYearMasterHandler(IFinancialYearMasterService servic
         if (exists)
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.FinancialYear.ToString()), 
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(),EntityDescription.FinancialYear.ToString()), 
                 (int)HttpStatusCode.Conflict
             );
 
@@ -47,7 +43,7 @@ public class CreateFinancialYearMasterHandler(IFinancialYearMasterService servic
         return ApiResponse<int>.SuccessResponse
         (
             entity.FinancialYearId, 
-            messageHelper.AddedEntity("Masters",EntityDescription.FinancialYear.ToString()), 
+            messageHelper.AddedEntity(LocaleEnums.Masters.ToString(),EntityDescription.FinancialYear.ToString()), 
             (int)HttpStatusCode.Created
         );
     }

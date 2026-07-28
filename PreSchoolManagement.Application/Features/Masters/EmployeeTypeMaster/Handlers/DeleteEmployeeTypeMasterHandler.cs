@@ -17,13 +17,13 @@ public class DeleteEmployeeTypeMasterHandler(
 {
     public async Task<ApiResponse<int>> Handle(DeleteEmployeeTypeMasterCommand request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.EmployeeType.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(), EntityDescription.EmployeeType.ToString());
 
         if (request.EmployeeTypeId <= 0)
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.InvalidIdEntity("Masters", EntityDescription.EmployeeType.ToString()),
+                messageHelper.InvalidIdEntity(LocaleEnums.Masters.ToString(), EntityDescription.EmployeeType.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -33,7 +33,7 @@ public class DeleteEmployeeTypeMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters", EntityDescription.EmployeeType.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.EmployeeType.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -43,7 +43,7 @@ public class DeleteEmployeeTypeMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             request.EmployeeTypeId,
-            messageHelper.DeletedEntity("Masters", EntityDescription.EmployeeType.ToString()),
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString(), EntityDescription.EmployeeType.ToString()),
             (int)HttpStatusCode.OK
         );
     }

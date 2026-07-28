@@ -3,12 +3,14 @@ using System.Net;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Domain.Dtos;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Application.Features.Queries;
 
 public sealed class GetParentMenuQueryHandler(
-    IMenuMasterService menuMasterService)
+    IMenuMasterService menuMasterService,
+    IMessageHelper messageHelper)
     : IRequestHandler<GetParentMenuQuery, ApiResponse<List<ParentMenuDto>>>
 {
     public async Task<ApiResponse<List<ParentMenuDto>>> Handle(
@@ -17,9 +19,11 @@ public sealed class GetParentMenuQueryHandler(
     {
         var parentMenus = await menuMasterService.GetParentMenusAsync(cancellationToken);
 
-        return ApiResponse<List<ParentMenuDto>>.SuccessResponse(
+        return ApiResponse<List<ParentMenuDto>>.SuccessResponse
+        (
             parentMenus,
-            MessageHelper.Retrieved(EntityDescription.Menu.ToString()),
-            (int)HttpStatusCode.OK);
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Menu.ToString()),
+            (int)HttpStatusCode.OK
+        );
     }
 }

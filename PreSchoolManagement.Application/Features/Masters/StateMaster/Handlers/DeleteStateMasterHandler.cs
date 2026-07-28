@@ -21,7 +21,7 @@ public class DeleteStateMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.InvalidIdEntity("Masters",EntityDescription.State.ToString()),
+                messageHelper.InvalidIdEntity(LocaleEnums.Masters.ToString(),EntityDescription.State.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -31,7 +31,7 @@ public class DeleteStateMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.State.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.State.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -41,7 +41,7 @@ public class DeleteStateMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             request.StateId,
-            messageHelper.DeletedEntity("Masters",EntityDescription.State.ToString()),
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString(),EntityDescription.State.ToString()),
             (int)HttpStatusCode.OK
         );
     }

@@ -6,7 +6,7 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
@@ -15,7 +15,8 @@ public class UpdateCommitteeMasterHandler(
     IValidator<UpdateCommitteeMasterCommand> validator,
     IMapper mapper,
     ICurrentUserService currentUser,
-    IFileStorageService fileStorage)
+    IFileStorageService fileStorage,
+    IMessageHelper messageHelper)
     : IRequestHandler<UpdateCommitteeMasterCommand, ApiResponse<Guid>>
 {
     public async Task<ApiResponse<Guid>> Handle(
@@ -41,7 +42,7 @@ public class UpdateCommitteeMasterHandler(
         {
             return ApiResponse<Guid>.FailureResponse
             (
-                MessageHelper.NotFound(EntityDescription.committee.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Committee.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -56,7 +57,7 @@ public class UpdateCommitteeMasterHandler(
         {
             return ApiResponse<Guid>.FailureResponse
             (
-                MessageHelper.AlreadyExists(EntityDescription.committee.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(),EntityDescription.Committee.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -91,7 +92,7 @@ public class UpdateCommitteeMasterHandler(
         return ApiResponse<Guid>.SuccessResponse
         (
             existing.CommitteeId,
-            MessageHelper.Updated(EntityDescription.committee.ToString()),
+            messageHelper.UpdatedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Committee.ToString()),
             (int)HttpStatusCode.OK
         );
     }

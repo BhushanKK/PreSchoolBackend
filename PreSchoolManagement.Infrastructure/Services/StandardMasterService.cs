@@ -1,36 +1,57 @@
+using Serilog;
 using Microsoft.EntityFrameworkCore;
 using PreSchoolManagement.Infrastructure.Interfaces;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
-using Serilog;
 using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
 public class StandardMasterService(ApplicationDbContext context,
 ILanguageService languageService) : IStandardMasterService
 {
-    public async Task<List<StandardMaster>> GetAllAsync(bool filter, CancellationToken cancellationToken = default)
+    public async Task<PaginatedResult<StandardMaster>> GetAllAsync(
+        PaginationRequest request,
+        CancellationToken cancellationToken)
     {
-        var standards = await context.StandardMasters
+        IQueryable<StandardMaster> query = context.StandardMasters
             .AsNoTracking()
-            .Include(x => x.Translations)
+            .Include(x => x.Translations);
+
+        if (request.Filter)
+            query = query.Where(x => x.IsActive);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+            query = query.Where(x => x.StandardName.Contains(request.SearchText));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(x => x.StandardId)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
             .ToListAsync(cancellationToken);
 
-        return standards.Select(x =>MapStandard(x,languageService.CurrentLanguage)).ToList();
+        return new PaginatedResult<StandardMaster>
+        {
+            Items = items
+                .Select(x => MapStandard(x, languageService.CurrentLanguage))
+                .ToList(),
+
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
     }
 
     public async Task<StandardMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        var standard =await context.StandardMasters
+        return await context.StandardMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(x => x.StandardId == id,cancellationToken);
-
-        return standard is null 
-            ? null
-            : MapStandard(standard,languageService.CurrentLanguage);
     }
 
     public async Task AddAsync(StandardMaster Standard, CancellationToken cancellationToken)
@@ -114,8 +135,10 @@ ILanguageService languageService) : IStandardMasterService
                 x => x.LanguageCode,
                 x => x.StandardName,
                 standard.StandardName),
-            
-            IsActive = standard.IsActive
+
+            IsActive = standard.IsActive,
+
+            Translations = standard.Translations.ToList()
         };
     }
 }

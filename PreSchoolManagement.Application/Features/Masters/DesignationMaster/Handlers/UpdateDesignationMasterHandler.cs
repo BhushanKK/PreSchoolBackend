@@ -42,14 +42,14 @@ public class UpdateDesignationMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.designation.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Designation.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
 
         var isExist = await service.IsExistsAsync
         (
-            request.Designation,
+            request.DesignationName,
             OperationType.Update,
             request.DesignationId,
             cancellationToken
@@ -60,8 +60,8 @@ public class UpdateDesignationMasterHandler(
             return ApiResponse<int>.FailureResponse
             (
                 messageHelper.AlreadyExistsEntity(
-                    "Masters",
-                    EntityDescription.designation.ToString()),
+                    LocaleEnums.Masters.ToString(),
+                    EntityDescription.Designation.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -83,11 +83,11 @@ public class UpdateDesignationMasterHandler(
                 entity.Translations.Add(new DesignationTranslation
                 {
                     LanguageCode = dto.LanguageCode,
-                    Designation = dto.Designation
+                    DesignationName = dto.DesignationName
                 });
             }
             else
-                translation.Designation = dto.Designation;
+                translation.DesignationName = dto.DesignationName;
         }
 
         // Remove deleted translations
@@ -104,7 +104,7 @@ public class UpdateDesignationMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.DesignationId,
-            messageHelper.UpdatedEntity("Masters",EntityDescription.designation.ToString()),
+            messageHelper.UpdatedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Designation.ToString()),
             (int)HttpStatusCode.OK
         );
     }

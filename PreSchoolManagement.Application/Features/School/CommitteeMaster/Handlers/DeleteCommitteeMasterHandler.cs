@@ -4,21 +4,25 @@ using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
-using PreSchoolManagement.Shared.Utils;
+using PreSchoolManagement.Shared.Common;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
-public class DeleteCommitteeMasterHandler(ICommitteeMasterService service, IFileStorageService fileStorage)
+public class DeleteCommitteeMasterHandler(
+    ICommitteeMasterService service, 
+    IFileStorageService fileStorage,
+    IMessageHelper messageHelper)
     : IRequestHandler<DeleteCommitteeMasterCommand, ApiResponse<Guid>>
 {
     public async Task<ApiResponse<Guid>> Handle(DeleteCommitteeMasterCommand request,CancellationToken cancellationToken)
     {
         if (request.CommitteeId == Guid.Empty)
         {
-            return ApiResponse<Guid>.FailureResponse(
-                MessageHelper.InvalidId(
-                    EntityDescription.committee.ToString()),
-                (int)HttpStatusCode.BadRequest);
+            return ApiResponse<Guid>.FailureResponse
+            (
+                messageHelper.InvalidIdEntity(LocaleEnums.Masters.ToString(),EntityDescription.Committee.ToString()),
+                (int)HttpStatusCode.BadRequest
+            );
         }
 
         var entity = await service.GetByIdAsync(request.CommitteeId,cancellationToken);
@@ -27,8 +31,7 @@ public class DeleteCommitteeMasterHandler(ICommitteeMasterService service, IFile
         {
             return ApiResponse<Guid>.FailureResponse
             (
-                MessageHelper.NotFound(
-                    EntityDescription.committee.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Committee.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -43,8 +46,7 @@ public class DeleteCommitteeMasterHandler(ICommitteeMasterService service, IFile
         return ApiResponse<Guid>.SuccessResponse
         (
             entity.CommitteeId,
-            MessageHelper.Deleted(
-                EntityDescription.committee.ToString()),
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Committee.ToString()),
             (int)HttpStatusCode.OK
         );
     }

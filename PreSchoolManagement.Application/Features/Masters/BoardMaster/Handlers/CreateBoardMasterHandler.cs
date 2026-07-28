@@ -37,7 +37,7 @@ public class CreateBoardMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Board.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(),EntityDescription.Board.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -50,7 +50,7 @@ public class CreateBoardMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.BoardId,
-            messageHelper.AddedEntity("Masters",EntityDescription.Board.ToString()),
+            messageHelper.AddedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Board.ToString()),
             (int)HttpStatusCode.Created
         );
     }

@@ -5,6 +5,7 @@ using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using Serilog;
 using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
@@ -12,33 +13,48 @@ public class DivisionMasterService(
     ApplicationDbContext context,
     ILanguageService languageService) : IDivisionMasterService
 {
-    public async Task<List<DivisionMaster>> GetAllAsync(
-    bool filter = false,
-    CancellationToken cancellationToken = default)
+    public async Task<PaginatedResult<DivisionMaster>> GetAllAsync(
+        PaginationRequest request,
+        CancellationToken cancellationToken)
     {
-        var divisions = await context.DivisionMasters
+        IQueryable<DivisionMaster> query = context.DivisionMasters
             .AsNoTracking()
-            .Include(x => x.Translations)
-            .Where(x => !filter || x.IsActive)
+            .Include(x => x.Translations);
+
+        if (request.Filter)
+            query = query.Where(x => x.IsActive);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+            query = query.Where(x => x.DivisionName.Contains(request.SearchText));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(x => x.DivisionId)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
             .ToListAsync(cancellationToken);
 
-        return divisions
-            .Select(division => MapDivision(division, languageService.CurrentLanguage))
-            .ToList();
+        return new PaginatedResult<DivisionMaster>
+        {
+            Items = items
+                .Select(x => MapDivision(x, languageService.CurrentLanguage))
+                .ToList(),
+
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
     }
 
     public async Task<DivisionMaster?> GetByIdAsync(
         int id,
         CancellationToken cancellationToken)
     {
-        var division = await context.DivisionMasters
+        return await context.DivisionMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(x => x.DivisionId == id, cancellationToken);
-
-        return division is null
-            ? null
-            : MapDivision(division, languageService.CurrentLanguage);
     }
 
     public async Task AddAsync(DivisionMaster Division, CancellationToken cancellationToken)
@@ -116,6 +132,7 @@ public class DivisionMasterService(
         return new DivisionMaster
         {
             DivisionId = division.DivisionId,
+
             DivisionName = TranslationHelper.GetTranslatedValue(
                 division.Translations,
                 language,
@@ -124,7 +141,6 @@ public class DivisionMasterService(
                 division.DivisionName),
 
             IsActive = division.IsActive,
-
             Translations = division.Translations.ToList()
         };
     }

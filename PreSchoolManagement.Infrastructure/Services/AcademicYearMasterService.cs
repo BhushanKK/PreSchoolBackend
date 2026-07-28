@@ -5,6 +5,7 @@ using PreSchoolManagement.Infrastructure.Data;
 using SchoolManagement.Domain.Entities;
 using Serilog;
 using PreSchoolManagement.Shared.Common;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Infrastructure.Services;
 
@@ -12,21 +13,41 @@ public class AcademicYearMasterService(
     ApplicationDbContext context,
     ILanguageService languageService) : IAcademicYearMasterService
 {
-    public async Task<List<AcademicYearMaster>> GetAllAsync(bool filter,
+    public async Task<PaginatedResult<AcademicYearMaster>> GetAllAsync(
+        PaginationRequest request,
         CancellationToken cancellationToken)
     {
-        var academicYear = await context.AcademicYearMasters
+        IQueryable<AcademicYearMaster> query = context.AcademicYearMasters
             .AsNoTracking()
-            .Where(x => !filter || x.IsActive)
-            .Include(x => x.Translations)
+            .Include(x => x.Translations);
+
+        if (request.Filter)
+            query = query.Where(x => x.IsActive);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+            query = query.Where(x => x.AcademicYearName.Contains(request.SearchText));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(x => x.AcademicYearId)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
             .ToListAsync(cancellationToken);
 
-        return academicYear
-            .Select(year => MapAcademicYear(year, languageService.CurrentLanguage))
-            .ToList();
-    }   
+        return new PaginatedResult<AcademicYearMaster>
+        {
+            Items = items
+                .Select(x => MapAcademicYear(x, languageService.CurrentLanguage))
+                .ToList(),
 
-    public async Task<AcademicYearMaster?> GetByIdAsync(int id,CancellationToken cancellationToken)
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
+    }
+
+    public async Task<AcademicYearMaster?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
         return await context.AcademicYearMasters
             .AsNoTracking()

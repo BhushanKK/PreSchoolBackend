@@ -21,7 +21,7 @@ public class UpdateEmployeeTypeMasterHandler(
 {
     public async Task<ApiResponse<int>> Handle(UpdateEmployeeTypeMasterCommand request,CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.EmployeeType.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(),EntityDescription.EmployeeType.ToString());
 
         var validationResult = await validator.ValidateAsync(request,cancellationToken);
         if(!validationResult.IsValid)
@@ -39,7 +39,7 @@ public class UpdateEmployeeTypeMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.EmployeeType.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.EmployeeType.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -56,7 +56,7 @@ public class UpdateEmployeeTypeMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.EmployeeType.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(),EntityDescription.EmployeeType.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -70,7 +70,7 @@ public class UpdateEmployeeTypeMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.EmployeeTypeId,
-            messageHelper.UpdatedEntity("Masters",EntityDescription.EmployeeType.ToString()),
+            messageHelper.UpdatedEntity(LocaleEnums.Masters.ToString(),EntityDescription.EmployeeType.ToString()),
             (int)HttpStatusCode.OK
         );
     }

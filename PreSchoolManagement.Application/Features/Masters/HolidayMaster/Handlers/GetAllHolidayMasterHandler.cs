@@ -7,24 +7,25 @@ using SchoolManagement.Domain.Entities;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Shared.Common;
 using PreSchoolManagement.Shared.Localization;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Application.Features.Handlers;
 
 public class GetAllHolidayMasterHandler(IHolidayMasterService service,IMessageHelper messageHelper,
     ILocalizationService localization)
-    : IRequestHandler<GetAllHolidayMasterQuery, ApiResponse<List<HolidayMaster>>>
+    : IRequestHandler<GetAllHolidayMasterQuery, ApiResponse<PaginatedResult<HolidayMaster>>>
 {
-    public async Task<ApiResponse<List<HolidayMaster>>> Handle(
+    public async Task<ApiResponse<PaginatedResult<HolidayMaster>>> Handle(
         GetAllHolidayMasterQuery request, CancellationToken cancellationToken)
     {
 
-        var Holidays = await service.GetAllAsync(request.filter, cancellationToken);
-        localization.Get("Masters", EntityDescription.Holiday.ToString());
+        var Holidays = await service.GetAllAsync(request.Request, cancellationToken);
+        localization.Get(LocaleEnums.Masters.ToString(), EntityDescription.Holiday.ToString());
 
-        return ApiResponse<List<HolidayMaster>>.SuccessResponse
+        return ApiResponse<PaginatedResult<HolidayMaster>>.SuccessResponse
         (
             Holidays,
-            messageHelper.RetrievedEntity("Masters", EntityDescription.Holiday.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(), EntityDescription.Holiday.ToString()),
             (int)HttpStatusCode.OK
         );
     }

@@ -25,7 +25,7 @@ public class UpdateStandardMasterHandler(
         UpdateStandardMasterCommand request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.Standard.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(), EntityDescription.Standard.ToString());
 
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
@@ -46,7 +46,7 @@ public class UpdateStandardMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters", EntityDescription.Standard.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.Standard.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -63,7 +63,7 @@ public class UpdateStandardMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.Standard.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(), EntityDescription.Standard.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -106,7 +106,7 @@ public class UpdateStandardMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.StandardId,
-            messageHelper.UpdatedEntity("Masters",EntityDescription.Standard.ToString()),
+            messageHelper.UpdatedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Standard.ToString()),
             (int)HttpStatusCode.OK
         );
     }

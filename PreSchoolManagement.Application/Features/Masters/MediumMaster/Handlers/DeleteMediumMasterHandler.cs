@@ -17,7 +17,7 @@ public class DeleteMediumMasterHandler (
 {
     public async Task<ApiResponse<int>> Handle (DeleteMediumMasterCommand request,CancellationToken cancellationToken)
     {
-        localization.Get("Masters",EntityDescription.Medium.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(),EntityDescription.Medium.ToString());
 
         var entity = await service.GetByIdAsync(request.MediumId,cancellationToken);
          
@@ -25,7 +25,7 @@ public class DeleteMediumMasterHandler (
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.Medium.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Medium.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -35,7 +35,7 @@ public class DeleteMediumMasterHandler (
         return ApiResponse<int>.SuccessResponse
         (
             entity.MediumId,
-            messageHelper.DeletedEntity("Masters",EntityDescription.Medium.ToString()),
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Medium.ToString()),
             (int)HttpStatusCode.OK
         );
     }

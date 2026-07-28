@@ -1,6 +1,7 @@
 using MediatR;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Api.Endpoints;
 
@@ -11,7 +12,7 @@ public static class SectionMasterApi
         var group = app.MapGroup("/api/SectionMaster")
                        .WithTags("Section Master");
 
-        group.MapGet("/{filter:bool}", GetAll)
+        group.MapGet("/", GetAll)
             .WithName("GetAllSections")
             .WithSummary("Get all Section masters")
             .WithDescription("Returns all Section master records.")
@@ -46,12 +47,13 @@ public static class SectionMasterApi
         return app;
     }
 
-    private static async Task<IResult> GetAll(bool filter,
+    private static async Task<IResult> GetAll(
+        [AsParameters] PaginationRequest request, 
         ISender sender,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetAllSectionMasterQuery(filter),
+            new GetAllSectionMasterQuery(request),
             cancellationToken);
 
         return TypedResults.Ok(result);

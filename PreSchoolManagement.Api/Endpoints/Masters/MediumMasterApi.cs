@@ -1,6 +1,7 @@
 using MediatR;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 
 namespace PreSchoolManagement.Api.Endpoints;
 
@@ -13,8 +14,8 @@ public static class MediumMasterApi
 
         group.MapGet("/", GetAll)
             .WithName("GetAllMedium")
-            .WithSummary("Get all Medium masters")
-            .WithDescription("Returns all Medium master records.")
+            .WithSummary("Get all Medium masters with Paginations")
+            .WithDescription("Returns all Medium master records with Paginations.")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status500InternalServerError)
             .RequireAuthorization();
@@ -47,9 +48,12 @@ public static class MediumMasterApi
     }
 
 
-    private static async Task<IResult> GetAll (ISender sender ,CancellationToken cancellationToken)
+    private static async Task<IResult> GetAll (
+        [AsParameters] PaginationRequest request, 
+        ISender sender,
+        CancellationToken cancellationToken)
     {
-        var result = await sender.Send(new GetAllMediumMasterQuery(),cancellationToken);
+        var result = await sender.Send(new GetAllMediumMasterQuery(request),cancellationToken);
         return TypedResults.Ok(result);
     }
 

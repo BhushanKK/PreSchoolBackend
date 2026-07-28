@@ -1,6 +1,7 @@
 using System.Net;
 using MediatR;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
@@ -12,28 +13,28 @@ namespace PreSchoolManagement.Application.Features.Handlers;
 public class GetAllDesignationMasterHandler(
     IDesignationMasterService service,
     IMessageHelper messageHelper)
-    :IRequestHandler<GetAllDesignationMasterQuery,ApiResponse<List<DesignationMaster>>>
+    :IRequestHandler<GetAllDesignationMasterQuery,ApiResponse<PaginatedResult<DesignationMaster>>>
 {
-    public async Task<ApiResponse<List<DesignationMaster>>> Handle(GetAllDesignationMasterQuery request,
+    public async Task<ApiResponse<PaginatedResult<DesignationMaster>>> Handle(GetAllDesignationMasterQuery request,
     CancellationToken cancellationToken)
     {
-        var data = await service.GetAllAsync(request.filter,cancellationToken);
+        var data = await service.GetAllAsync(request.Request,cancellationToken);
 
         if(data !=null)
         {
-            return ApiResponse<List<DesignationMaster>>.SuccessResponse
+            return ApiResponse<PaginatedResult<DesignationMaster>>.SuccessResponse
             (
                 data,
-                messageHelper.RetrievedEntity("Masters",EntityDescription.designation.ToString()),
+                messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Designation.ToString()),
                 (int)HttpStatusCode.OK
             );
         }
 
         else
         {
-            return ApiResponse<List<DesignationMaster>>.FailureResponse
+            return ApiResponse<PaginatedResult<DesignationMaster>>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.designation.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.Designation.ToString()),
                 (int)HttpStatusCode.OK
             );
         }

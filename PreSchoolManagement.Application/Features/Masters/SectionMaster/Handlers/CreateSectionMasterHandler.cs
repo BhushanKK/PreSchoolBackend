@@ -36,7 +36,7 @@ public class CreateSectionMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Section.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(),EntityDescription.Section.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -50,7 +50,7 @@ public class CreateSectionMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.SectionId,
-            messageHelper.AddedEntity("Masters",EntityDescription.Section.ToString()),
+            messageHelper.AddedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Section.ToString()),
             (int)HttpStatusCode.Created
         );
     }

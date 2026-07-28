@@ -18,13 +18,13 @@ public class GetByIdCasteMasterHandler(
 {
     public async Task<ApiResponse<CasteMaster?>> Handle(GetByIdCasteMasterQuery request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters" ,EntityDescription.Caste.ToString());
+        localization.Get(LocaleEnums.Masters.ToString() ,EntityDescription.Caste.ToString());
         
         if (request.CasteId <= 0)
         {
             return ApiResponse<CasteMaster?>.FailureResponse
             (
-                messageHelper.InvalidIdEntity("Masters" ,EntityDescription.Caste.ToString()), 
+                messageHelper.InvalidIdEntity(LocaleEnums.Masters.ToString() ,EntityDescription.Caste.ToString()), 
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -35,7 +35,7 @@ public class GetByIdCasteMasterHandler(
         {
             return ApiResponse<CasteMaster?>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters" ,EntityDescription.Caste.ToString()), 
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString() ,EntityDescription.Caste.ToString()), 
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -43,7 +43,7 @@ public class GetByIdCasteMasterHandler(
         return ApiResponse<CasteMaster?>.SuccessResponse
         (
             data, 
-            messageHelper.RetrievedEntity("Masters" ,EntityDescription.Caste.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString() ,EntityDescription.Caste.ToString()),
             (int)HttpStatusCode.OK
         );
     }

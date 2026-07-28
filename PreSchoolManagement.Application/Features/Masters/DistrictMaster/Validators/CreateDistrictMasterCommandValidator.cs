@@ -1,5 +1,6 @@
 using FluentValidation;
 using PreSchoolManagement.Application.Features.Commands;
+using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Shared.Extensions;
 using PreSchoolManagement.Shared.Localization;
 
@@ -35,9 +36,9 @@ public class UpdateDistrictMasterCommandValidator
             .When(x => x.StateId.HasValue)
             .WithMessage(
                 localizer.Get(
-                    "ValidationMessages",
+                    LocaleEnums.ValidationMessages.ToString(),
                     "GreaterThan",
-                    localizer.Get("ValidationMessages", "State"),
+                    localizer.Get(LocaleEnums.ValidationMessages.ToString(), "State"),
                     "0"));
     }
 }

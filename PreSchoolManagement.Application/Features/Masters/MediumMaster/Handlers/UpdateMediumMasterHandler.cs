@@ -23,7 +23,7 @@ public class UpdateMediumMasterHandler(
 {
     public async Task<ApiResponse<int>> Handle(UpdateMediumMasterCommand request, CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.Medium.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(), EntityDescription.Medium.ToString());
 
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
@@ -39,19 +39,19 @@ public class UpdateMediumMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters", EntityDescription.Medium.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.Medium.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
 
-        var isExists = await service.IsExistsAsync(request.Medium ?? string.Empty,
+        var isExists = await service.IsExistsAsync(request.MediumName ?? string.Empty,
         OperationType.Update, request.MediumId, cancellationToken);
 
         if (isExists)
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.Medium.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(), EntityDescription.Medium.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -97,7 +97,7 @@ public class UpdateMediumMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.MediumId,
-            messageHelper.UpdatedEntity("Masters",EntityDescription.Medium.ToString()),
+            messageHelper.UpdatedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Medium.ToString()),
             (int)HttpStatusCode.OK
         );
     }

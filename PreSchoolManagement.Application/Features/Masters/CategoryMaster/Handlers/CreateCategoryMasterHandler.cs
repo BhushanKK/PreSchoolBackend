@@ -43,7 +43,7 @@ public class CreateCategoryMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters",EntityDescription.Category.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(),EntityDescription.Category.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -57,7 +57,7 @@ public class CreateCategoryMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.CategoryId,
-            messageHelper.AddedEntity("Masters",EntityDescription.Category.ToString()),
+            messageHelper.AddedEntity(LocaleEnums.Masters.ToString(),EntityDescription.Category.ToString()),
             (int)HttpStatusCode.Created
         );
     }

@@ -4,8 +4,8 @@ namespace SchoolManagement.Domain.Entities;
 
 public class CasteMaster : BaseEntity
 {
-    public int CasteID { get; set; }
-    public int CategoryID { get; set; }
+    public int CasteId { get; set; }
+    public int CategoryId { get; set; }
     public string CasteName { get; set; } = string.Empty;
     public bool IsActive { get; set; } = false;
     public virtual ICollection<CasteTranslation> Translations { get; set; }
@@ -16,7 +16,7 @@ public class CasteMaster : BaseEntity
 public class CasteTranslation
 {
     public int CasteTranslationId { get; set; }
-    public int CasteID { get; set; }
+    public int CasteId { get; set; }
     public string LanguageCode { get; set; } = string.Empty;
     public string CasteName { get; set; } = string.Empty;
     [JsonIgnore]

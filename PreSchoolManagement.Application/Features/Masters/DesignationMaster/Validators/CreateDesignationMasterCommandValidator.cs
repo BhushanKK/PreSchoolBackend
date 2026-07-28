@@ -11,7 +11,7 @@ public class CreateDesignationMasterCommandValidator
     public CreateDesignationMasterCommandValidator(
         ILocalizationService localizer)
     {
-        RuleFor(x => x.Designation!)
+        RuleFor(x => x.DesignationName!)
             .Required(localizer, "Designation")
             .MaxLengthLocalized(localizer, "Designation", 100);
     }
@@ -26,7 +26,7 @@ public class UpdateDesignationMasterCommandValidator
         RuleFor(x => x.DesignationId)
             .RequiredId(localizer, "DesignationId");
 
-        RuleFor(x => x.Designation!)
+        RuleFor(x => x.DesignationName!)
             .Required(localizer, "Designation")
             .MaxLengthLocalized(localizer, "Designation", 100);
     }

@@ -21,7 +21,7 @@ public class DeleteDistrictMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.InvalidIdEntity("Masters",EntityDescription.District.ToString()),
+                messageHelper.InvalidIdEntity(LocaleEnums.Masters.ToString(),EntityDescription.District.ToString()),
                 (int)HttpStatusCode.BadRequest
             );
         }
@@ -32,7 +32,7 @@ public class DeleteDistrictMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.District.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.District.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -42,7 +42,7 @@ public class DeleteDistrictMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             request.DistrictId,
-            messageHelper.DeletedEntity("Masters",EntityDescription.District.ToString()),
+            messageHelper.DeletedEntity(LocaleEnums.Masters.ToString(),EntityDescription.District.ToString()),
             (int)HttpStatusCode.OK
         );
     }

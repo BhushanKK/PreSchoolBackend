@@ -40,7 +40,7 @@ public class CreateRoleMasterHandler(
         {
             return ApiResponse<int>.FailureResponse
             (
-                messageHelper.AlreadyExistsEntity("Masters", EntityDescription.Role.ToString()),
+                messageHelper.AlreadyExistsEntity(LocaleEnums.Masters.ToString(), EntityDescription.Role.ToString()),
                 (int)HttpStatusCode.Conflict
             );
         }
@@ -55,7 +55,7 @@ public class CreateRoleMasterHandler(
         return ApiResponse<int>.SuccessResponse
         (
             entity.RoleId,
-            messageHelper.AddedEntity("Masters", EntityDescription.Role.ToString()),
+            messageHelper.AddedEntity(LocaleEnums.Masters.ToString(), EntityDescription.Role.ToString()),
             (int)HttpStatusCode.Created
         );
     }

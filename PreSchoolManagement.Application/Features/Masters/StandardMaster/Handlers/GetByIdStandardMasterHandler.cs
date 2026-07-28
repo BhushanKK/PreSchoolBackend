@@ -20,7 +20,7 @@ public class GetByIdStandardMasterHandler(
         GetByIdStandardMasterQuery request,
         CancellationToken cancellationToken)
     {
-        localization.Get("Masters", EntityDescription.Standard.ToString());
+        localization.Get(LocaleEnums.Masters.ToString(), EntityDescription.Standard.ToString());
 
         var Standard = await service.GetByIdAsync(request.StandardID, cancellationToken);
 
@@ -28,7 +28,7 @@ public class GetByIdStandardMasterHandler(
         {
             return ApiResponse<StandardMaster?>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters", EntityDescription.Standard.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(), EntityDescription.Standard.ToString()),
                 (int)HttpStatusCode.NotFound
             );
         }
@@ -36,7 +36,7 @@ public class GetByIdStandardMasterHandler(
         return ApiResponse<StandardMaster?>.SuccessResponse
         (
             Standard,
-            messageHelper.RetrievedEntity("Masters", EntityDescription.Standard.ToString()),
+            messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(), EntityDescription.Standard.ToString()),
             (int)HttpStatusCode.OK
         );
     }

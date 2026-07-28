@@ -1,6 +1,7 @@
 using System.Net;
 using MediatR;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.ResponseModels;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Interfaces;
@@ -12,28 +13,28 @@ namespace PreSchoolManagement.Application.Features.Handlers;
 public class GetAllStateMasterHandler(
     IStateMasterService service,
     IMessageHelper messageHelper)
-    :IRequestHandler<GetAllStateMasterQuery, ApiResponse<List<StateMaster>>>
+    :IRequestHandler<GetAllStateMasterQuery, ApiResponse<PaginatedResult<StateMaster>>>
 {
-    public async Task<ApiResponse<List<StateMaster>>> Handle(
+    public async Task<ApiResponse<PaginatedResult<StateMaster>>> Handle(
         GetAllStateMasterQuery request, CancellationToken cancellationToken)
     {
         
-        var data = await service.GetAllAsync(cancellationToken);
+        var data = await service.GetAllAsync(request.Request,cancellationToken);
 
         if(data != null)
         {
-            return ApiResponse<List<StateMaster>>.SuccessResponse
+            return ApiResponse<PaginatedResult<StateMaster>>.SuccessResponse
             (
                 data,
-                messageHelper.RetrievedEntity("Masters",EntityDescription.State.ToString()),
+                messageHelper.RetrievedEntity(LocaleEnums.Masters.ToString(),EntityDescription.State.ToString()),
                 (int)HttpStatusCode.OK
             );
         }
         else
         {
-            return ApiResponse<List<StateMaster>>.FailureResponse
+            return ApiResponse<PaginatedResult<StateMaster>>.FailureResponse
             (
-                messageHelper.NotFoundEntity("Masters",EntityDescription.State.ToString()),
+                messageHelper.NotFoundEntity(LocaleEnums.Masters.ToString(),EntityDescription.State.ToString()),
                 (int)HttpStatusCode.OK
             );
         }

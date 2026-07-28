@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PreSchoolManagement.Api.HttpRequests;
 using PreSchoolManagement.Application.Features.Commands;
 using PreSchoolManagement.Application.Features.Queries;
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Infrastructure.Interfaces;
 
 namespace PreSchoolManagement.Api.Endpoints;
@@ -14,10 +15,10 @@ public static class CommitteeMasterApi
         var group = app.MapGroup("/api/CommitteeMaster")
                         .WithTags("Committee Master");
 
-        group.MapGet("/{filter:bool}", GetAll)
+        group.MapGet("/", GetAll)
             .WithName("GetAllCommittee")
-            .WithSummary("Get all committee master records.")
-            .WithDescription("Return all committee master record")
+            .WithSummary("Get all committee master records with pagination.")
+            .WithDescription("Return all committee master record with pagination")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status500InternalServerError)
             .RequireAuthorization();
@@ -50,9 +51,12 @@ public static class CommitteeMasterApi
         return app;
     }
 
-    private static async Task<IResult> GetAll(bool filter, ISender sender, CancellationToken cancellationToken)
+    private static async Task<IResult> GetAll(
+        [AsParameters] PaginationRequest request, 
+        ISender sender, 
+        CancellationToken cancellationToken)
     {
-        var result = await sender.Send(new GetAllCommitteeMasterQuery(filter), cancellationToken);
+        var result = await sender.Send(new GetAllCommitteeMasterQuery(request), cancellationToken);
         return TypedResults.Ok(result);
     }
 

@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using PreSchoolManagement.Domain.Dtos;
+using PreSchoolManagement.Domain.Models;
 using PreSchoolManagement.Domain.Utils;
 using PreSchoolManagement.Infrastructure.Data;
 using PreSchoolManagement.Infrastructure.Interfaces;
@@ -13,35 +15,72 @@ public class RoleMasterService(
     ILanguageService languageService)
     : IRoleMasterService
 {
-    public async Task<List<RoleMaster>> GetAllAsync(
+    public async Task<PaginatedResult<RoleMaster>> GetAllAsync(
+        PaginationRequest request,
         CancellationToken cancellationToken)
     {
-        var roles = await context.RoleMasters
+        IQueryable<RoleMaster> query = context.RoleMasters
             .AsNoTracking()
-            .Include(x => x.Translations)
+            .Include(x => x.Translations);
+
+        if (request.Filter)
+            query = query.Where(x => x.IsActive);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+            query = query.Where(x => x.RoleName.Contains(request.SearchText));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(x => x.RoleId)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
             .ToListAsync(cancellationToken);
 
-        return roles
-            .Select(role => MapRole(role, languageService.CurrentLanguage))
-            .ToList();
+        return new PaginatedResult<RoleMaster>
+        {
+            Items = items
+                .Select(x => MapRole(x, languageService.CurrentLanguage))
+                .ToList(),
+
+            TotalCount = totalCount,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
     }
 
     public async Task<RoleMaster?> GetByIdAsync(
         int id,
         CancellationToken cancellationToken)
     {
-        var role = await context.RoleMasters
+        return await context.RoleMasters
             .AsNoTracking()
             .Include(x => x.Translations)
             .FirstOrDefaultAsync(
                 x => x.RoleId == id,
                 cancellationToken);
-
-        return role == null
-            ? null
-            : MapRole(role, languageService.CurrentLanguage);
     }
+    public async Task<List<RoleDropdownDto>> GetActiveRolesAsync(
+    CancellationToken cancellationToken)
+    {
+        var roles = await context.RoleMasters
+            .AsNoTracking()
+            .Include(x => x.Translations)
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.RoleName)
+            .ToListAsync(cancellationToken);
 
+        return roles.Select(x => new RoleDropdownDto
+        {
+            RoleId = x.RoleId,
+            RoleName = TranslationHelper.GetTranslatedValue(
+                x.Translations,
+                languageService.CurrentLanguage,
+                t => t.LanguageCode,
+                t => t.RoleName,
+                x.RoleName)
+        }).ToList();
+    }
     public async Task<RoleMaster?> GetForUpdateAsync(
         int id,
         CancellationToken cancellationToken)
@@ -137,7 +176,7 @@ public class RoleMasterService(
             cancellationToken);
     }
 
-    private RoleMaster MapRole(RoleMaster role,string language)
+    private RoleMaster MapRole(RoleMaster role, string language)
     {
         return new RoleMaster
         {
