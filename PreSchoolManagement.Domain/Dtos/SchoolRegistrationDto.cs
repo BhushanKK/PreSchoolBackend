@@ -1,27 +1,24 @@
+using System.Text.Json.Serialization;
 using SchoolManagement.Shared.Enums;
 
-namespace SchoolManagement.Domain.Entities;
+namespace PreSchoolManagement.Domain.Dtos;
 
-public class SchoolRegistration : BaseEntity
+public class SchoolRegistrationDto
 {
+    [JsonIgnore]
     public Guid SchoolRegistrationId { get; set; }
-
-    // Institute Information
     public Guid CommitteeId { get; set; }
-    public string SchoolName { get; set; } = string.Empty;
 
-    // Address
+    public string SchoolName { get; set; } = string.Empty;
     public string? SchoolAddress { get; set; }
     public string? Taluka { get; set; }
     public string? District { get; set; }
     public string? Pincode { get; set; }
 
-    // Contact Information
     public string? SchoolContactNo { get; set; }
     public string? MobileNo { get; set; }
     public string? SchoolEmailId { get; set; }
 
-    // School Details
     public int? SectionId { get; set; }
     public int? MediumId { get; set; }
     public int? BoardId { get; set; }
@@ -37,17 +34,10 @@ public class SchoolRegistration : BaseEntity
 
     public string? SchoolAddressForDocuments { get; set; }
 
-    public bool SmsFacility { get; set; }
-    public bool EmailFacility { get; set; }
-    public bool MobileAppFacility { get; set; }
-    public bool ScholarshipFacility { get; set; }
-
-    public DateOnly? SubscriptionValidityDate { get; set; }
-
-    public bool IsActive { get; set; } = true;
-
+    // New Fields
     public string? SchoolNameInRegional { get; set; }
     public string? SchoolNameEnglish { get; set; }
+
     public string? RecognitionNumber { get; set; }
     public string? UDISECode { get; set; }
 
@@ -57,4 +47,13 @@ public class SchoolRegistration : BaseEntity
     public string? Village { get; set; }
     public int? StateId { get; set; }
     public string? Landmark { get; set; }
+
+    public bool SmsFacility { get; set; }
+    public bool EmailFacility { get; set; }
+    public bool MobileAppFacility { get; set; }
+    public bool ScholarshipFacility { get; set; }
+
+    public DateOnly? SubscriptionValidityDate { get; set; }
+
+    public bool IsActive { get; set; } = true;
 }

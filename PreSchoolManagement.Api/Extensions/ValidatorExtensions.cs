@@ -31,6 +31,7 @@ public static class ValidatorExtensions
         services.AddValidatorsFromAssemblyContaining<CreateBoardMasterCommandValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateMediumMasterCommandValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateSchoolDetailsMasterCommandValidator>();
+        services.AddValidatorsFromAssemblyContaining<CreateSchoolRegistrationCommandValidator>();
 
         return services;
     }

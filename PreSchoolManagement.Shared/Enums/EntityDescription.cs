@@ -21,9 +21,7 @@ public enum EntityDescription
     Committee,
     Board,
     Medium,
-<<<<<<< HEAD
-    SchoolDetails
-=======
+    SchoolDetails,
     Chairman,
->>>>>>> 2e917797cec0c42b6834791c4b9cfc5e4a3b6b54
+    SchoolRegistrations
 }

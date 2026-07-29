@@ -7,6 +7,5 @@ public partial class ApplicationDbContext
 {
     public DbSet<SchoolRegistration> SchoolRegistrations => Set<SchoolRegistration>();
     public DbSet<CommitteeMaster> CommitteeMasters => Set<CommitteeMaster>();
-
     public DbSet<SchoolDetailsMaster> SchoolDetailsMasters => Set<SchoolDetailsMaster>();
 }
