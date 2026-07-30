@@ -23,5 +23,6 @@ public enum EntityDescription
     Medium,
     SchoolDetails,
     Chairman,
-    SchoolRegistrations
+    SchoolRegistrations,
+    SchoolStandardMapping
 }
