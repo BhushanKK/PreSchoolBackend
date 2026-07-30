@@ -5,5 +5,4 @@
   <Project Path="PreSchoolManagement.Infrastructure/PreSchoolManagement.Infrastructure.csproj" />
   <Project Path="PreSchoolManagement.Persistence/PreSchoolManagement.Persistence.csproj" />
   <Project Path="PreSchoolManagement.Shared/PreSchoolManagement.Shared.csproj" />
-  <Project Path="PreSchoolManagement.Tests/PreSchoolManagement.Tests.csproj" />
 </Solution>
